@@ -9,7 +9,7 @@
       href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <title>SPK Coffee Shop – Metode Tsukamoto</title>
+    <title>SpotWise – Pilih Tempat Terbaik</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link
       rel="stylesheet"
@@ -57,33 +57,68 @@
         line-height: 1.5;
       }
 
-      /* HEADER */
-      header {
-        text-align: center;
-        padding: 2.2rem 1rem 1.8rem;
-        border-bottom: 1px solid var(--border);
-        background: var(--surface);
+      /* TOPBAR */
+      .topbar {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 20px 16px 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px 16px;
       }
-      header h1 {
-        font-size: 1.75rem;
-        font-weight: 700;
-        color: var(--accent-text);
-        letter-spacing: -0.5px;
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: var(--text);
       }
-      header p {
+      .brand:hover {
+        text-decoration: none;
+      }
+      .brand-mark {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: #171717;
+        color: #fff;
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+      }
+      .brand-mark svg {
+        width: 22px;
+        height: 22px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.7;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .brand-text strong {
+        display: block;
+        font-size: 1.05rem;
+        font-weight: 600;
+        line-height: 1.2;
+        letter-spacing: -0.01em;
+      }
+      .brand-text small {
+        display: block;
         color: var(--muted);
-        margin-top: 0.35rem;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
+        line-height: 1.3;
       }
 
       /* STEPS */
       .steps {
         display: flex;
-        justify-content: center;
         align-items: center;
-        padding: 1.1rem 1rem;
+        gap: 2px;
+        padding: 5px;
         background: var(--surface);
-        border-bottom: 1px solid var(--border);
+        border: 1px solid rgb(23 23 23 / 0.08);
+        border-radius: 999px;
       }
       .step-item {
         display: flex;
@@ -116,7 +151,7 @@
         flex-shrink: 0;
       }
       .step-line {
-        width: 32px;
+        width: 24px;
         height: 1px;
         background: var(--border);
         flex-shrink: 0;
@@ -124,10 +159,11 @@
 
       /* MAIN */
       main {
-        max-width: 940px;
+        max-width: 1120px;
         margin: 0 auto;
-        padding: 2rem 1rem 4rem;
+        padding: 1.25rem 1rem 4rem;
       }
+
       .section {
         display: none;
       }
@@ -693,32 +729,522 @@
       /* =================================================================
        FILTER PANEL (.flt-*) — redesign Step 2
        ================================================================= */
-      .flt-layout {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-        align-items: start;
+      /* HERO STRIP */
+      .hero-strip {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 20px 28px;
+        padding: 22px 0 26px;
       }
-      .flt-panel {
-        background: var(--card);
-        border-radius: 16px;
-        padding: 24px;
-        box-shadow: var(--shadow);
+      .hero-copy {
+        flex: 1 1 100%;
       }
-      .flt-head {
+      .eyebrow {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        margin-bottom: 20px;
+        gap: 10px;
+        margin-bottom: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--muted);
       }
-      .flt-head h2 {
-        font-size: 1.25rem;
+      .eyebrow-dot {
+        width: 8px;
+        height: 8px;
+        flex-shrink: 0;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 0 4px rgb(255 122 47 / 0.14);
+      }
+      .hero-title {
+        font-size: clamp(1.8rem, 1rem + 2.2vw, 2.6rem);
+        line-height: 1.08;
+        font-weight: 500;
+        letter-spacing: -0.035em;
+        color: var(--text);
+        text-wrap: balance;
+      }
+      .hero-title span {
+        display: block;
+        color: var(--muted);
+      }
+      .hero-meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 14px 18px;
+      }
+      .date-chip {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .date-circle {
+        width: 88px;
+        height: 88px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: #fff;
+        border: 1px solid rgb(23 23 23 / 0.1);
+        font-size: 2rem;
+        font-weight: 500;
+        letter-spacing: -0.03em;
+        font-variant-numeric: tabular-nums;
+      }
+      .date-text {
+        font-size: 0.95rem;
+        font-weight: 500;
+        line-height: 1.3;
+      }
+      .hero-divider {
+        width: 1px;
+        height: 44px;
+        background: var(--border);
+      }
+      .data-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        padding: 6px 6px 6px 22px;
+        border-radius: 999px;
+        background: var(--accent);
+        color: #171717;
+        font-size: 0.92rem;
+        font-weight: 600;
+      }
+      .data-pill-ico {
+        width: 38px;
+        height: 38px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: #fff;
+      }
+      .data-pill-ico svg {
+        width: 18px;
+        height: 18px;
+        fill: none;
+        stroke: #171717;
+        stroke-width: 2.2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      @media (min-width: 1000px) {
+        .hero-strip {
+          flex-wrap: nowrap;
+          justify-content: space-between;
+        }
+        .hero-meta {
+          order: -1;
+          flex-shrink: 0;
+        }
+        .hero-copy {
+          flex: 0 1 620px;
+        }
+      }
+
+      /* BENTO */
+      .flt-layout {
+        display: grid;
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        gap: 16px;
+        align-items: stretch;
+      }
+      .flt-panel {
+        min-width: 0;
+        background: var(--card);
+        border-radius: 28px;
+        padding: 22px 24px 24px;
+        border: 1px solid rgb(23 23 23 / 0.05);
+        box-shadow:
+          0 1px 2px rgb(23 23 23 / 0.04),
+          0 12px 32px -16px rgb(23 23 23 / 0.12);
+      }
+      .c-loc {
+        grid-column: span 4;
+      }
+      .c-time {
+        grid-column: span 3;
+      }
+      .c-weight {
+        grid-column: span 5;
+        grid-row: span 3;
+        display: flex;
+        flex-direction: column;
+      }
+      .c-weight .flt-sec {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+      }
+      .c-weight .flt-wrow:last-child {
+        margin-bottom: 0;
+      }
+      .c-price,
+      .c-dist {
+        grid-column: span 7;
+      }
+      .bento-head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 18px;
+        min-height: 40px;
+      }
+      .bento-ico {
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+        color: var(--text);
+      }
+      .bento-head h2 {
+        font-size: 1.02rem;
         font-weight: 600;
         letter-spacing: -0.01em;
+        line-height: 1.25;
+      }
+      .bento-act {
+        margin-left: auto;
       }
       .flt-sec + .flt-sec {
         margin-top: 24px;
+      }
+      .flt-sublabel-top {
+        margin-top: 0;
+      }
+      .flt-panel input.flt-time {
+        font-size: 2rem;
+        font-weight: 500;
+        letter-spacing: -0.02em;
+        padding: 10px 16px;
+        border-radius: 18px;
+      }
+      .c-time .info-box {
+        margin-top: 16px;
+      }
+
+      /* Kotak info waktu */
+      .flt-panel.c-time .info-box {
+        align-items: center;
+        gap: 12px;
+        padding: 12px 14px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        font-size: 0.85rem;
+        line-height: 1.35;
+        color: var(--muted);
+      }
+      .info-box-ico {
+        width: 38px;
+        height: 38px;
+        flex-shrink: 0;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: #fff;
+        border: 1px solid var(--border);
+        color: var(--text);
+      }
+      .flt-panel.c-time .info-box strong {
+        display: block;
+        font-size: 1rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        color: var(--text);
+      }
+
+      /* Ikon pin yang bisa ditekan + tombol pilih di peta */
+      .bento-ico-btn {
+        padding: 0;
+        font: inherit;
+        background: #fff;
+        cursor: pointer;
+        transition:
+          background 0.18s,
+          color 0.18s,
+          border-color 0.18s;
+      }
+      .bento-ico-btn:hover {
+        background: #171717;
+        border-color: #171717;
+        color: #fff;
+      }
+      .bento-ico-btn:focus-visible,
+      .map-pick-btn:focus-visible,
+      .map-modal-close:focus-visible {
+        outline: 2px solid var(--accent-text);
+        outline-offset: 2px;
+      }
+      .map-pick-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin: 2px 0 14px;
+        padding: 12px 16px;
+        border: 0;
+        border-radius: 999px;
+        background: #171717;
+        color: #fff;
+        font: inherit;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.18s;
+      }
+      .map-pick-btn:hover {
+        background: #333;
+      }
+      .map-pick-btn svg {
+        width: 17px;
+        height: 17px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.7;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      /* Modal peta */
+      .map-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 2000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        background: rgb(23 23 23 / 0.5);
+        -webkit-backdrop-filter: blur(4px);
+        backdrop-filter: blur(4px);
+      }
+      .map-modal[hidden] {
+        display: none;
+      }
+      body.modal-open {
+        overflow: hidden;
+      }
+      .map-modal-card {
+        width: min(760px, 100%);
+        max-height: calc(100dvh - 32px);
+        display: flex;
+        flex-direction: column;
+        background: var(--card);
+        border-radius: 28px;
+        box-shadow: 0 24px 60px -20px rgb(23 23 23 / 0.5);
+        overflow: hidden;
+      }
+      .map-modal-head {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 20px 20px 14px 22px;
+      }
+      .map-modal-title {
+        flex: 1;
+        min-width: 0;
+      }
+      .map-modal-title h2 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+      .map-modal-title p {
+        margin-top: 2px;
+        font-size: 0.82rem;
+        line-height: 1.4;
+        color: var(--muted);
+      }
+      .map-modal-close {
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+        display: grid;
+        place-items: center;
+        border: 1px solid var(--border);
+        border-radius: 50%;
+        background: #fff;
+        color: var(--text);
+        cursor: pointer;
+      }
+      .map-modal-close:hover {
+        background: var(--track);
+      }
+      .map-modal-close svg {
+        width: 16px;
+        height: 16px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+      }
+      #pickerMap {
+        height: min(440px, 52dvh);
+        min-height: 240px;
+        margin: 0 20px;
+        border-radius: 20px;
+        border: 1px solid var(--border);
+        cursor: crosshair;
+      }
+      .map-modal-foot {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 20px 20px;
+      }
+      .map-coords {
+        flex: 1;
+        min-width: 0;
+        font-size: 0.85rem;
+        font-variant-numeric: tabular-nums;
+        color: var(--muted);
+      }
+      .map-modal-foot .btn {
+        padding: 12px 20px;
+        border-radius: 999px;
+        font-family: inherit;
+      }
+      .pick-pin {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: #171717;
+        border: 3px solid #fff;
+        box-shadow: 0 2px 8px rgb(0 0 0 / 0.4);
+        display: grid;
+        place-items: center;
+      }
+      .pick-pin::after {
+        content: "";
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--accent);
+      }
+      @media (max-width: 639px) {
+        .map-modal {
+          align-items: flex-end;
+          padding: 8px;
+        }
+        .map-modal-card {
+          border-radius: 24px;
+        }
+        .map-modal-foot {
+          flex-wrap: wrap;
+        }
+        .map-coords {
+          flex: 1 1 100%;
+        }
+        .map-modal-foot .btn-outline {
+          flex: 0 0 auto;
+        }
+        .map-modal-foot .btn-primary {
+          flex: 1;
+        }
+      }
+
+      /* Cincin total bobot */
+      .weight-ring-wrap {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        margin-bottom: 22px;
+      }
+      .weight-ring {
+        position: relative;
+        width: 112px;
+        height: 112px;
+        flex-shrink: 0;
+        display: grid;
+        place-items: center;
+        padding: 14px;
+        border-radius: 50%;
+        background: #171717;
+      }
+      .weight-ring svg {
+        position: absolute;
+        inset: 10px;
+        width: calc(100% - 20px);
+        height: calc(100% - 20px);
+      }
+      .ring-bg {
+        fill: none;
+        stroke: rgb(255 255 255 / 0.16);
+        stroke-width: 7;
+      }
+      .ring-fg {
+        fill: none;
+        stroke: var(--accent);
+        stroke-width: 7;
+        stroke-linecap: round;
+        transition: stroke-dashoffset 0.4s;
+      }
+      .ring-num {
+        position: relative;
+        font-size: 1.6rem;
+        font-weight: 500;
+        line-height: 1;
+        letter-spacing: -0.03em;
+        color: #fff;
+        font-variant-numeric: tabular-nums;
+      }
+      .ring-cap {
+        position: absolute;
+        bottom: 27px;
+        font-size: 0.6rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgb(255 255 255 / 0.72);
+      }
+      .weight-ring-text p {
+        margin-bottom: 8px;
+        font-size: 0.85rem;
+        line-height: 1.45;
+        color: var(--muted);
+      }
+
+      @media (max-width: 1023px) {
+        .flt-layout {
+          grid-template-columns: repeat(6, minmax(0, 1fr));
+        }
+        .c-loc,
+        .c-time {
+          grid-column: span 3;
+        }
+        .c-weight {
+          grid-column: span 6;
+          grid-row: auto;
+        }
+        .c-price,
+        .c-dist {
+          grid-column: span 6;
+        }
+      }
+      @media (max-width: 639px) {
+        .c-loc,
+        .c-time {
+          grid-column: span 6;
+        }
+        .flt-panel {
+          padding: 18px 18px 20px;
+          border-radius: 24px;
+        }
+        .date-circle {
+          width: 72px;
+          height: 72px;
+          font-size: 1.6rem;
+        }
       }
 
       .flt-label {
@@ -806,7 +1332,7 @@
         width: 100%;
         background: var(--bg);
         border: 1px solid var(--border);
-        border-radius: 10px;
+        border-radius: 14px;
         color: var(--text);
         padding: 10px 12px;
         font: inherit;
@@ -1064,26 +1590,55 @@
         bottom: 12px;
         z-index: 5;
         display: flex;
-        gap: 12px;
-        margin-top: 20px;
-        padding: 12px;
-        background: var(--card);
-        border-radius: 16px;
-        box-shadow:
-          0 -2px 10px rgb(23 23 23 / 0.05),
-          var(--shadow);
+        align-items: center;
+        gap: 10px;
+        margin-top: 16px;
+        padding: 10px;
+        background: rgb(255 255 255 / 0.94);
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+        border-radius: 999px;
+        border: 1px solid rgb(23 23 23 / 0.06);
+        box-shadow: 0 12px 32px -12px rgb(23 23 23 / 0.25);
       }
       .flt-footer .btn {
-        padding: 13px 18px;
-        border-radius: 10px;
+        padding: 14px 24px;
+        border-radius: 999px;
         font-family: inherit;
       }
       .flt-footer .btn-outline {
-        flex: 0 0 34%;
+        flex: 0 0 auto;
         background: var(--card);
       }
       .flt-footer .btn-primary {
         flex: 1;
+      }
+      .flt-footer .flt-pill-btn {
+        flex: 0 0 auto;
+        padding: 11px 18px;
+      }
+      @media (max-width: 639px) {
+        .flt-footer {
+          flex-wrap: wrap;
+          border-radius: 28px;
+        }
+        .flt-footer .btn-primary {
+          order: -1;
+          flex: 1 1 100%;
+        }
+        .flt-footer {
+          padding: 8px;
+          gap: 8px;
+        }
+        .flt-footer .btn-primary {
+          padding: 13px 18px;
+        }
+        .flt-footer .btn-outline,
+        .flt-footer .flt-pill-btn {
+          flex: 1 1 0;
+          padding: 9px 14px;
+          font-size: 0.85rem;
+        }
       }
 
       .flt-panel :focus-visible,
@@ -1094,14 +1649,20 @@
       }
 
       @media (max-width: 767px) {
-        .flt-layout {
-          grid-template-columns: 1fr;
-        }
-        .flt-panel {
-          padding: 20px;
-        }
         .flt-wlabel {
           width: 104px;
+        }
+      }
+      @media (max-width: 380px) {
+        .flt-wrow {
+          gap: 10px;
+        }
+        .flt-wlabel {
+          width: 84px;
+          font-size: 0.84rem;
+        }
+        .flt-wrow .flt-badge {
+          width: 40px;
         }
       }
       @media (prefers-reduced-motion: reduce) {
@@ -1122,246 +1683,189 @@
       </div>
     </div>
 
-    <header>
-      <h1>☕ SPK Coffee Shop</h1>
-      <p>
-        Sistem Pendukung Keputusan – Metode Fuzzy Tsukamoto &nbsp;|&nbsp;
-        Kabupaten Sleman &amp; Kota Yogyakarta
-      </p>
+    <header class="topbar">
+      <a class="brand" href="./index.html" aria-label="SpotWise, kembali ke beranda">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z" /><circle cx="12" cy="10" r="2.5" /></svg>
+        </span>
+        <span class="brand-text">
+          <strong>SpotWise</strong>
+          <small>Pemilihan tempat terbaik</small>
+        </span>
+      </a>
+      <nav class="steps" aria-label="Langkah">
+        <div class="step-item active" id="stepEl2">
+          <div class="step-num">1</div>
+          Preferensi
+        </div>
+        <div class="step-line"></div>
+        <div class="step-item" id="stepEl3">
+          <div class="step-num">2</div>
+          Hasil
+        </div>
+      </nav>
     </header>
-
-    <div class="steps">
-      <div class="step-item active" id="stepEl2">
-        <div class="step-num">1</div>
-        Preferensi
-      </div>
-      <div class="step-line"></div>
-      <div class="step-item" id="stepEl3">
-        <div class="step-num">2</div>
-        Hasil
-      </div>
-    </div>
 
     <main>
       <!-- STEP 1: PREFERENCES (the file is uploaded on the homepage) -->
       <section class="section active" id="sec2">
+        <!-- HERO: tujuan halaman -->
+        <div class="hero-strip">
+          <div class="hero-copy">
+            <p class="eyebrow">
+              <span class="eyebrow-dot" aria-hidden="true"></span>Sistem
+              Pendukung Keputusan · Fuzzy Tsukamoto
+            </p>
+            <h1 class="hero-title">
+              Temukan tempat terbaik
+              <span>dari data yang kamu unggah.</span>
+            </h1>
+          </div>
+          <div class="hero-meta">
+            <div class="date-chip">
+              <span class="date-circle" id="dateDay" aria-hidden="true">–</span>
+              <span class="date-text" id="dateText">Hari ini</span>
+            </div>
+            <span class="hero-divider" aria-hidden="true"></span>
+            <span class="data-pill" id="dataPill" role="status">
+              <span id="dataPillText">Memuat data…</span>
+              <span class="data-pill-ico" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
+              </span>
+            </span>
+          </div>
+        </div>
+
         <div class="flt-layout">
-          <!-- PANEL FILTER -->
-          <div class="flt-panel" role="group" aria-labelledby="fltTitle">
-            <div class="flt-head">
-              <h2 id="fltTitle">Filter</h2>
-              <button type="button" class="flt-pill-btn" id="fltReset">
-                Reset filter
+          <!-- LOKASI -->
+          <section class="bento-card flt-panel c-loc" aria-labelledby="tLoc">
+            <div class="bento-head">
+              <button
+                type="button"
+                class="bento-ico bento-ico-btn"
+                id="btnPickMap"
+                aria-label="Pilih titik lokasi di peta"
+                title="Pilih titik di peta"
+              >
+                <svg class="flt-ico" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z" />
+                  <circle cx="12" cy="10" r="2.5" />
+                </svg>
+              </button>
+              <h2 id="tLoc">Lokasi kamu</h2>
+              <button
+                type="button"
+                class="flt-pill-btn bento-act"
+                id="btnRedetect"
+              >
+                ↺ Ulang
               </button>
             </div>
+            <div class="loc-row">
+              <span class="loc-status loading" id="locStatus" role="status"
+                >📡 Mendeteksi lokasi otomatis...</span
+              >
+            </div>
+            <button type="button" class="map-pick-btn" id="btnPickMapInline">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z" />
+                <circle cx="12" cy="10" r="2.5" />
+              </svg>
+              Pilih titik di peta
+            </button>
+            <div class="flt-two">
+              <div>
+                <label class="flt-sublabel" for="inputLat">Latitude</label>
+                <input
+                  type="number"
+                  id="inputLat"
+                  class="flt-input"
+                  placeholder="-7.75638"
+                  step="any"
+                />
+              </div>
+              <div>
+                <label class="flt-sublabel" for="inputLng">Longitude</label>
+                <input
+                  type="number"
+                  id="inputLng"
+                  class="flt-input"
+                  placeholder="110.39322"
+                  step="any"
+                />
+              </div>
+            </div>
+            <p class="flt-help">
+              Koordinat dapat diedit manual jika deteksi tidak akurat.
+            </p>
+          </section>
 
-            <!-- Waktu Kunjungan -->
-            <div class="flt-sec">
-              <div class="flt-label">
+          <!-- JAM -->
+          <section class="bento-card flt-panel c-time" aria-labelledby="tTime">
+            <div class="bento-head">
+              <span class="bento-ico">
                 <svg class="flt-ico" viewBox="0 0 24 24" aria-hidden="true">
                   <circle cx="12" cy="12" r="9" />
-                  <path d="M12 7v5l3 2" /></svg
-                >Waktu kunjungan
-              </div>
-              <div class="info-box" id="timeInfoBox">
-                <span class="info-box-icon">📅</span>
-                <span id="timeInfoText">Mendeteksi waktu...</span>
-              </div>
-              <p class="flt-help">
-                Sistem otomatis menggunakan hari dan jam saat ini untuk
-                menyaring kedai yang <strong>sedang buka</strong>. Hanya kedai
-                yang buka sekarang yang akan diproses.
-              </p>
-              <label class="flt-sublabel" for="inputJam"
-                >Estimasi jam pulang</label
-              >
-              <input
-                type="time"
-                id="inputJam"
-                class="flt-input"
-                value="22:00"
-              />
+                  <path d="M12 7v5l3 2" />
+                </svg>
+              </span>
+              <h2 id="tTime">Jam pulang</h2>
             </div>
+            <label class="flt-sublabel flt-sublabel-top" for="inputJam"
+              >Estimasi jam pulang</label
+            >
+            <input
+              type="time"
+              id="inputJam"
+              class="flt-input flt-time"
+              value="22:00"
+            />
+            <div class="info-box" id="timeInfoBox">
+              <span class="info-box-ico" aria-hidden="true">
+                <svg class="flt-ico" viewBox="0 0 24 24">
+                  <rect x="3" y="5" width="18" height="16" rx="3" />
+                  <path d="M3 10h18M8 3v4M16 3v4" />
+                </svg>
+              </span>
+              <span id="timeInfoText">Mendeteksi waktu...</span>
+            </div>
+          </section>
 
-            <!-- Lokasi -->
-            <div class="flt-sec">
-              <div class="flt-label">
+          <!-- BOBOT -->
+          <section class="bento-card flt-panel c-weight" aria-labelledby="tWeight">
+            <div class="bento-head">
+              <span class="bento-ico">
                 <svg class="flt-ico" viewBox="0 0 24 24" aria-hidden="true">
-                  <path
-                    d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"
-                  />
-                  <circle cx="12" cy="10" r="2.5" /></svg
-                >Lokasi kamu
-              </div>
-              <div class="loc-row">
-                <span class="loc-status loading" id="locStatus" role="status"
-                  >📡 Mendeteksi lokasi otomatis...</span
-                >
-                <button type="button" class="flt-pill-btn" id="btnRedetect">
-                  ↺ Ulang
-                </button>
-              </div>
-              <div class="flt-two">
-                <div>
-                  <label class="flt-sublabel" for="inputLat">Latitude</label>
-                  <input
-                    type="number"
-                    id="inputLat"
-                    class="flt-input"
-                    placeholder="-7.75638"
-                    step="any"
-                  />
-                </div>
-                <div>
-                  <label class="flt-sublabel" for="inputLng">Longitude</label>
-                  <input
-                    type="number"
-                    id="inputLng"
-                    class="flt-input"
-                    placeholder="110.39322"
-                    step="any"
-                  />
-                </div>
-              </div>
-              <p class="flt-help">
-                Koordinat dapat diedit manual jika deteksi tidak akurat.
-              </p>
+                  <path d="M4 7h9M17 7h3M4 17h3M11 17h9" />
+                  <circle cx="15" cy="7" r="2" />
+                  <circle cx="9" cy="17" r="2" />
+                </svg>
+              </span>
+              <h2 id="tWeight">Bobot prioritas</h2>
+              <span class="flt-hint bento-act">Total = 100</span>
             </div>
-
-            <!-- Harga: slider ganda + histogram -->
-            <div class="flt-sec">
-              <div class="flt-label-row">
-                <div class="flt-label">
-                  <svg class="flt-ico" viewBox="0 0 24 24" aria-hidden="true">
-                    <path
-                      d="M3 7h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"
-                    />
-                    <path d="M3 7l12-3v3" />
-                    <circle cx="16.5" cy="13.5" r="1" /></svg
-                  >Rentang harga per orang
+            <div class="weight-ring-wrap">
+              <div class="weight-ring" aria-hidden="true">
+                <svg viewBox="0 0 120 120">
+                  <circle class="ring-bg" cx="60" cy="60" r="50" />
+                  <circle
+                    class="ring-fg"
+                    id="ringFg"
+                    cx="60"
+                    cy="60"
+                    r="50"
+                    transform="rotate(-90 60 60)"
+                  />
+                </svg>
+                <span class="ring-num" id="ringNum">100</span>
+                <span class="ring-cap">total</span>
+              </div>
+              <div class="weight-ring-text">
+                <p>Atur seberapa penting tiap kriteria. Total harus tepat 100.</p>
+                <div class="weight-total ok" id="weightTotal" role="status">
+                  Total: 100 ✓
                 </div>
-                <span class="flt-hint" id="fltAvg" hidden></span>
               </div>
-              <div
-                class="flt-hist"
-                id="fltHist"
-                aria-hidden="true"
-                hidden
-              ></div>
-              <div class="flt-dual" id="fltDual">
-                <div class="flt-dual-track">
-                  <div class="flt-dual-fill"></div>
-                </div>
-                <input
-                  type="range"
-                  id="fltPriceMin"
-                  min="0"
-                  max="50000"
-                  step="1000"
-                  value="0"
-                  aria-label="Harga minimum per orang"
-                />
-                <input
-                  type="range"
-                  id="fltPriceMax"
-                  min="0"
-                  max="50000"
-                  step="1000"
-                  value="50000"
-                  aria-label="Harga maksimum per orang"
-                />
-              </div>
-              <div class="flt-badges" id="fltPriceBadges">
-                <span
-                  class="flt-badge flt-badge-pos flt-badge-l"
-                  id="fltBadgeMin"
-                  >Rp0</span
-                >
-                <span
-                  class="flt-badge flt-badge-pos flt-badge-r"
-                  id="fltBadgeMax"
-                  >Rp50.000</span
-                >
-              </div>
-              <div class="flt-ends">
-                <span id="fltEndLo">Rp0</span
-                ><span id="fltEndHi">Rp50.000</span>
-              </div>
-              <!-- sumber nilai asli yang dibaca logika filter -->
-              <input
-                type="number"
-                id="inputHargaMin"
-                class="flt-sr"
-                tabindex="-1"
-                aria-hidden="true"
-                placeholder="0"
-                min="0"
-                step="1000"
-                value="0"
-              />
-              <input
-                type="number"
-                id="inputHargaMax"
-                class="flt-sr"
-                tabindex="-1"
-                aria-hidden="true"
-                placeholder="50000"
-                min="0"
-                step="1000"
-                value="50000"
-              />
-            </div>
-
-            <!-- Jarak: slider tunggal -->
-            <div class="flt-sec">
-              <div class="flt-label-row">
-                <div class="flt-label">
-                  <svg class="flt-ico" viewBox="0 0 24 24" aria-hidden="true">
-                    <circle cx="6" cy="18" r="2" />
-                    <circle cx="18" cy="6" r="2" />
-                    <path d="M8 18h6a3 3 0 0 0 0-6h-4a3 3 0 0 1 0-6h6" /></svg
-                  >Jarak maksimal dari lokasiku
-                </div>
-                <span class="flt-hint">0 = semua jarak</span>
-              </div>
-              <div class="flt-single">
-                <input
-                  type="range"
-                  id="fltJarak"
-                  class="flt-range"
-                  min="0"
-                  max="100"
-                  step="0.5"
-                  value="0"
-                  aria-label="Jarak maksimal dalam kilometer"
-                />
-              </div>
-              <div class="flt-badges" id="fltJarakBadges">
-                <span class="flt-badge flt-badge-pos" id="fltBadgeJarak"
-                  >Semua</span
-                >
-              </div>
-              <div class="flt-ends"><span>0 km</span><span>100 km</span></div>
-              <input
-                type="number"
-                id="inputJarak"
-                class="flt-sr"
-                tabindex="-1"
-                aria-hidden="true"
-                placeholder="0 = semua jarak"
-                min="0"
-                max="100"
-                step="0.5"
-                value="0"
-              />
-            </div>
-          </div>
-
-          <!-- PANEL BOBOT -->
-          <div class="flt-panel" role="group" aria-labelledby="fltWTitle">
-            <div class="flt-head">
-              <h2 id="fltWTitle">Bobot prioritas</h2>
-              <span class="flt-hint">Total = 100</span>
             </div>
             <div class="flt-sec">
               <div class="flt-wrow">
@@ -1424,18 +1928,144 @@
                 />
                 <span class="flt-badge" id="valPopularitas">15</span>
               </div>
-              <div class="weight-total ok" id="weightTotal" role="status">
-                Total: 100 ✓
-              </div>
             </div>
-          </div>
+          </section>
+
+          <!-- HARGA -->
+          <section class="bento-card flt-panel c-price" aria-labelledby="tPrice">
+            <div class="bento-head">
+              <span class="bento-ico">
+                <svg class="flt-ico" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M3 7h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" />
+                  <path d="M3 7l12-3v3" />
+                  <circle cx="16.5" cy="13.5" r="1" />
+                </svg>
+              </span>
+              <h2 id="tPrice">Rentang harga per orang</h2>
+              <span class="flt-hint bento-act" id="fltAvg" hidden></span>
+            </div>
+            <div class="flt-sec">
+              <div class="flt-hist" id="fltHist" aria-hidden="true" hidden></div>
+              <div class="flt-dual" id="fltDual">
+                <div class="flt-dual-track">
+                  <div class="flt-dual-fill"></div>
+                </div>
+                <input
+                  type="range"
+                  id="fltPriceMin"
+                  min="0"
+                  max="50000"
+                  step="1000"
+                  value="0"
+                  aria-label="Harga minimum per orang"
+                />
+                <input
+                  type="range"
+                  id="fltPriceMax"
+                  min="0"
+                  max="50000"
+                  step="1000"
+                  value="50000"
+                  aria-label="Harga maksimum per orang"
+                />
+              </div>
+              <div class="flt-badges" id="fltPriceBadges">
+                <span
+                  class="flt-badge flt-badge-pos flt-badge-l"
+                  id="fltBadgeMin"
+                  >Rp0</span
+                >
+                <span
+                  class="flt-badge flt-badge-pos flt-badge-r"
+                  id="fltBadgeMax"
+                  >Rp50.000</span
+                >
+              </div>
+              <div class="flt-ends">
+                <span id="fltEndLo">Rp0</span><span id="fltEndHi">Rp50.000</span>
+              </div>
+              <!-- sumber nilai asli yang dibaca logika filter -->
+              <input
+                type="number"
+                id="inputHargaMin"
+                class="flt-sr"
+                tabindex="-1"
+                aria-hidden="true"
+                placeholder="0"
+                min="0"
+                step="1000"
+                value="0"
+              />
+              <input
+                type="number"
+                id="inputHargaMax"
+                class="flt-sr"
+                tabindex="-1"
+                aria-hidden="true"
+                placeholder="50000"
+                min="0"
+                step="1000"
+                value="50000"
+              />
+            </div>
+          </section>
+
+          <!-- JARAK -->
+          <section class="bento-card flt-panel c-dist" aria-labelledby="tDist">
+            <div class="bento-head">
+              <span class="bento-ico">
+                <svg class="flt-ico" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="6" cy="18" r="2" />
+                  <circle cx="18" cy="6" r="2" />
+                  <path d="M8 18h6a3 3 0 0 0 0-6h-4a3 3 0 0 1 0-6h6" />
+                </svg>
+              </span>
+              <h2 id="tDist">Jarak maksimal dari lokasiku</h2>
+              <span class="flt-hint bento-act">0 = semua jarak</span>
+            </div>
+            <div class="flt-sec">
+              <div class="flt-single">
+                <input
+                  type="range"
+                  id="fltJarak"
+                  class="flt-range"
+                  min="0"
+                  max="100"
+                  step="0.5"
+                  value="0"
+                  aria-label="Jarak maksimal dalam kilometer"
+                />
+              </div>
+              <div class="flt-badges" id="fltJarakBadges">
+                <span class="flt-badge flt-badge-pos" id="fltBadgeJarak"
+                  >Semua</span
+                >
+              </div>
+              <div class="flt-ends"><span>0 km</span><span>100 km</span></div>
+              <input
+                type="number"
+                id="inputJarak"
+                class="flt-sr"
+                tabindex="-1"
+                aria-hidden="true"
+                placeholder="0 = semua jarak"
+                min="0"
+                max="100"
+                step="0.5"
+                value="0"
+              />
+            </div>
+          </section>
         </div>
 
         <!-- FOOTER AKSI (sticky) -->
         <div class="flt-footer">
           <button class="btn btn-outline" id="btnBack">← Beranda</button>
+          <button type="button" class="flt-pill-btn" id="fltReset">
+            Reset filter
+          </button>
           <button class="btn btn-primary" id="btnProcess">
-            Proses Tsukamoto →
+            Temukan tempat terbaik →
           </button>
         </div>
       </section>
@@ -1489,6 +2119,33 @@
       </section>
     </main>
 
+    <!-- PICKER TITIK LOKASI -->
+    <div class="map-modal" id="mapModal" role="dialog" aria-modal="true" aria-labelledby="mapModalTitle" hidden>
+      <div class="map-modal-card">
+        <div class="map-modal-head">
+          <span class="bento-ico" aria-hidden="true">
+            <svg class="flt-ico" viewBox="0 0 24 24">
+              <path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z" />
+              <circle cx="12" cy="10" r="2.5" />
+            </svg>
+          </span>
+          <div class="map-modal-title">
+            <h2 id="mapModalTitle">Pilih titik lokasi</h2>
+            <p>Ketuk peta untuk menaruh penanda, lalu geser untuk menyesuaikan. Titik abu-abu adalah tempat dari datamu.</p>
+          </div>
+          <button type="button" class="map-modal-close" id="mapModalClose" aria-label="Tutup">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+          </button>
+        </div>
+        <div id="pickerMap"></div>
+        <div class="map-modal-foot">
+          <span class="map-coords" id="mapCoords" role="status">Belum ada titik dipilih</span>
+          <button type="button" class="btn btn-outline" id="mapCancel">Batal</button>
+          <button type="button" class="btn btn-primary" id="mapConfirm" disabled>Gunakan titik ini</button>
+        </div>
+      </div>
+    </div>
+
     <script>
       // =====================================================================
       // STATE
@@ -1532,12 +2189,33 @@
           "Jumat",
           "Sabtu",
         ];
-        const now = new Date();
-        const dayName = days[now.getDay()];
-        const hh = String(now.getHours()).padStart(2, "0");
-        const mm = String(now.getMinutes()).padStart(2, "0");
-        document.getElementById("timeInfoText").innerHTML =
-          `Hari ini: <strong>${dayName}, ${hh}:${mm} WIB</strong> — filter hanya kedai yang sedang buka`;
+        const months = [
+          "Januari",
+          "Februari",
+          "Maret",
+          "April",
+          "Mei",
+          "Juni",
+          "Juli",
+          "Agustus",
+          "September",
+          "Oktober",
+          "November",
+          "Desember",
+        ];
+        function tick() {
+          const now = new Date();
+          const dayName = days[now.getDay()];
+          const hh = String(now.getHours()).padStart(2, "0");
+          const mm = String(now.getMinutes()).padStart(2, "0");
+          document.getElementById("dateDay").textContent = now.getDate();
+          document.getElementById("dateText").innerHTML =
+            `${dayName},<br />${months[now.getMonth()]}`;
+          document.getElementById("timeInfoText").innerHTML =
+            `<strong>${dayName}, ${hh}:${mm} WIB</strong>Hanya kedai yang sedang buka yang diproses`;
+        }
+        tick();
+        setInterval(tick, 30000);
       })();
 
       // =====================================================================
@@ -1548,6 +2226,11 @@
 
       function goHome() {
         window.location.replace(HOME_URL);
+      }
+
+      function updateDataPill() {
+        document.getElementById("dataPillText").textContent =
+          shops.length.toLocaleString("id-ID") + " tempat siap dibandingkan";
       }
 
       function handleFile(file) {
@@ -1562,6 +2245,9 @@
             });
             shops = raw.map(parseShop).filter(Boolean);
             if (!shops.length) throw new Error("tidak ada data kedai yang terbaca");
+            updateDataPill();
+            // refreshes the price histogram and the result count, which depend on `shops`
+            goToStep(2);
           } catch (err) {
             alert("Gagal membaca file Excel: " + err.message);
             try {
@@ -1636,6 +2322,9 @@
       // =====================================================================
       // GEOLOCATION — auto on page load
       // =====================================================================
+      // True once the user picked a point on the map: a late GPS answer must not overwrite it.
+      let locationPicked = false;
+
       function detectLocation() {
         const st = document.getElementById("locStatus");
         st.className = "loc-status loading";
@@ -1648,6 +2337,7 @@
         }
         navigator.geolocation.getCurrentPosition(
           (pos) => {
+            if (locationPicked) return;
             userLat = pos.coords.latitude;
             userLng = pos.coords.longitude;
             document.getElementById("inputLat").value = userLat.toFixed(6);
@@ -1656,6 +2346,7 @@
             st.textContent = `✓ Lokasi terdeteksi: ${userLat.toFixed(5)}, ${userLng.toFixed(5)}`;
           },
           () => {
+            if (locationPicked) return;
             st.className = "loc-status err";
             st.textContent =
               "✗ Gagal deteksi. Silakan masukkan koordinat manual di bawah.";
@@ -1666,9 +2357,10 @@
 
       // Auto-detect on page load
       window.addEventListener("DOMContentLoaded", detectLocation);
-      document
-        .getElementById("btnRedetect")
-        .addEventListener("click", detectLocation);
+      document.getElementById("btnRedetect").addEventListener("click", () => {
+        locationPicked = false;
+        detectLocation();
+      });
 
       // Sync manual inputs to userLat/Lng
       document.getElementById("inputLat").addEventListener("input", (e) => {
@@ -2489,7 +3181,7 @@
 
         // ---- Jumlah hasil di tombol utama ----
         const btnProcess = $("btnProcess");
-        const DEFAULT_LABEL = "Proses Tsukamoto →";
+        const DEFAULT_LABEL = "Temukan tempat terbaik →";
         let countTimer = null;
         function updateCount() {
           if (!shops.length || !userLat || !userLng) {
@@ -2504,7 +3196,7 @@
               maxJarak: num(nJarak),
               departMinutes: h * 60 + m,
             }).length;
-            btnProcess.textContent = `Tampilkan ${n.toLocaleString("id-ID")} hasil →`;
+            btnProcess.textContent = `Pilih yang terbaik dari ${n.toLocaleString("id-ID")} tempat →`;
           } catch (e) {
             btnProcess.textContent = DEFAULT_LABEL;
           }
@@ -2547,6 +3239,169 @@
         };
 
         refreshAll();
+      })();
+    </script>
+    <script>
+      // Cincin total bobot: mengikuti teks #weightTotal yang diperbarui logika slider.
+      (function () {
+        const total = document.getElementById("weightTotal"),
+          fg = document.getElementById("ringFg"),
+          num = document.getElementById("ringNum");
+        const C = 2 * Math.PI * 50;
+        fg.style.strokeDasharray = C;
+        function sync() {
+          const t = parseInt((total.textContent.match(/\d+/) || [100])[0], 10);
+          fg.style.strokeDashoffset = C * (1 - Math.max(0, Math.min(100, t)) / 100);
+          fg.style.stroke = t === 100 ? "" : "var(--red)";
+          num.textContent = t;
+        }
+        new MutationObserver(sync).observe(total, {
+          childList: true,
+          characterData: true,
+          subtree: true,
+        });
+        sync();
+      })();
+    </script>
+    <script>
+      // Pilih titik lokasi di peta: nilainya masuk ke input#inputLat/#inputLng,
+      // jadi logika lokasi dan filter yang sudah ada memakainya tanpa perubahan.
+      (function () {
+        const $ = (id) => document.getElementById(id);
+        const modal = $("mapModal"),
+          coords = $("mapCoords"),
+          confirmBtn = $("mapConfirm");
+        let map = null,
+          marker = null,
+          picked = null,
+          shopLayer = null,
+          opener = null;
+
+        function setPicked(lat, lng) {
+          picked = { lat, lng };
+          if (!marker) {
+            marker = L.marker([lat, lng], {
+              draggable: true,
+              keyboard: false,
+              icon: L.divIcon({
+                html: '<div class="pick-pin"></div>',
+                className: "",
+                iconSize: [30, 30],
+                iconAnchor: [15, 15],
+              }),
+            }).addTo(map);
+            marker.on("dragend", () => {
+              const p = marker.getLatLng();
+              setPicked(p.lat, p.lng);
+            });
+          } else {
+            marker.setLatLng([lat, lng]);
+          }
+          coords.textContent = `Lat ${lat.toFixed(5)}, Lng ${lng.toFixed(5)}`;
+          confirmBtn.disabled = false;
+        }
+
+        function open(trigger) {
+          opener = trigger;
+          modal.hidden = false;
+          document.body.classList.add("modal-open");
+
+          if (!map) {
+            map = L.map("pickerMap");
+            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+              attribution:
+                '© <a href="https://openstreetmap.org">OpenStreetMap</a>',
+              maxZoom: 18,
+            }).addTo(map);
+            map.on("click", (e) => setPicked(e.latlng.lat, e.latlng.lng));
+          }
+
+          // Gray dots: the places from the uploaded file, as a reference for where to point.
+          if (shopLayer) shopLayer.remove();
+          const spots = shops.filter((s) => s.lat && s.lng);
+          shopLayer = L.layerGroup(
+            spots.map((s) =>
+              L.circleMarker([s.lat, s.lng], {
+                radius: 3,
+                weight: 0,
+                fillColor: "#a8a399",
+                fillOpacity: 0.85,
+                interactive: false,
+              }),
+            ),
+          ).addTo(map);
+
+          const lat = parseFloat($("inputLat").value),
+            lng = parseFloat($("inputLng").value);
+          if (lat && lng) {
+            map.setView([lat, lng], 15);
+            setPicked(lat, lng);
+          } else {
+            picked = null;
+            if (marker) marker.remove();
+            marker = null;
+            coords.textContent = "Belum ada titik dipilih";
+            confirmBtn.disabled = true;
+            if (spots.length)
+              map.fitBounds(L.latLngBounds(spots.map((s) => [s.lat, s.lng])), {
+                padding: [24, 24],
+              });
+            else map.setView([-7.7956, 110.3695], 12);
+          }
+          setTimeout(() => map.invalidateSize(), 50);
+          $("mapModalClose").focus();
+        }
+
+        function close() {
+          modal.hidden = true;
+          document.body.classList.remove("modal-open");
+          if (opener) opener.focus();
+        }
+
+        confirmBtn.addEventListener("click", () => {
+          if (!picked) return;
+          const lat = picked.lat.toFixed(6),
+            lng = picked.lng.toFixed(6);
+          $("inputLat").value = lat;
+          $("inputLng").value = lng;
+          ["inputLat", "inputLng"].forEach((id) =>
+            $(id).dispatchEvent(new Event("input", { bubbles: true })),
+          );
+          locationPicked = true;
+          const st = $("locStatus");
+          st.className = "loc-status ok";
+          st.textContent = `✓ Titik dipilih di peta: ${picked.lat.toFixed(5)}, ${picked.lng.toFixed(5)}`;
+          close();
+        });
+
+        ["btnPickMap", "btnPickMapInline"].forEach((id) =>
+          $(id).addEventListener("click", (e) => open(e.currentTarget)),
+        );
+        $("mapCancel").addEventListener("click", close);
+        $("mapModalClose").addEventListener("click", close);
+        modal.addEventListener("click", (e) => {
+          if (e.target === modal) close();
+        });
+        document.addEventListener("keydown", (e) => {
+          if (modal.hidden) return;
+          if (e.key === "Escape") return close();
+          if (e.key !== "Tab") return;
+          const items = [
+            ...modal.querySelectorAll(
+              "button:not([disabled]), [href], [tabindex]:not([tabindex='-1'])",
+            ),
+          ].filter((el) => el.offsetParent !== null);
+          if (!items.length) return;
+          const first = items[0],
+            last = items[items.length - 1];
+          if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        });
       })();
     </script>
   </body>

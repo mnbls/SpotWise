@@ -19,7 +19,7 @@
 
 ## Alur Aplikasi
 1. **Beranda** → satu-satunya tempat upload (`.xlsx`); Mulai nonaktif sampai file ada. File disimpan di `sessionStorage` (`spk_upload`)
-2. **Preferensi** (langkah 1 di app) → rentang harga, jarak maks, jam pulang, lokasi (GPS/manual), bobot 4 kriteria (total 100)
+2. **Preferensi** (langkah 1 di app, tata letak bento: topbar, hero "Temukan tempat terbaik dari data yang kamu unggah", lalu kartu Lokasi / Jam pulang / Bobot (dengan cincin total) / Rentang harga / Jarak) → lokasi (GPS/manual), jam pulang, rentang harga, jarak maks, bobot 4 kriteria (total 100)
 3. **Hasil** (langkah 2 di app) → Top 3 + peta Leaflet + Ringkasan Analisis + tabel semua hasil
 
 `app.html` tidak punya halaman upload. Dibuka tanpa file, ia langsung mengarahkan ke `index.html`. "← Beranda" mempertahankan file; "Ganti Data" menghapusnya.
@@ -55,7 +55,7 @@ Format angka Indonesia: titik ribuan (`25.000`→25000), koma desimal (`4,7`→4
 - Jarak: rumus Haversine (inline)
 
 ## Hal yang Perlu Diketahui
-- GPS auto-detect saat app dibuka; fallback: input manual lat/lng
+- Lokasi: GPS auto-detect saat app dibuka; atau pilih titik di peta (ikon pin / tombol "Pilih titik di peta" membuka modal Leaflet, titik abu-abu = tempat dari data); atau ketik lat/lng manual. Titik dari peta menang atas GPS yang datang terlambat, sampai "Ulang" ditekan
 - Bobot 4 slider saling terkait (total selalu 100, minimum 10 per slider)
 - `sessionStorage` kunci `spk_upload` dipakai untuk menitipkan file dari dashboard ke app
 - Commit tanpa Claude sebagai contributor (author `SpotWise <noreply@github.com>`, tanpa trailer Co-Authored-By)
