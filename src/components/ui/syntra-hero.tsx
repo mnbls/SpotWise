@@ -16,6 +16,7 @@ import {
 import type { MotionValue } from 'motion/react'
 import {
   ArrowRight,
+  Check,
   FileSpreadsheet,
   ListChecks,
   ListFilter,
@@ -207,6 +208,16 @@ const BLOCK_CSS = `
   .n3-flip:focus-visible .n3-flip-box {
     transform: translateZ(calc(var(--d) * -1));
   }
+}
+
+/* A button that cannot be used yet: dimmed, no pointer, and its label no longer flips. */
+.n3-flip:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.n3-flip:disabled:hover .n3-flip-box {
+  transform: translateZ(calc(var(--d) * -1)) rotateX(0deg);
 }
 
 .n3-dot {
@@ -1855,9 +1866,9 @@ const ICONS = { criteria: ListChecks, trophy: Trophy, sigma: Sigma }
 // The rise is a CSS animation (n3-rise), so the copy plays in from the first paint rather than after hydration.
 const rise = (delay: number) => ({ style: { animationDelay: `${delay}s` } })
 
-type HeroCopyProps = { onUpload: (file: File) => void; onStart: () => void }
+type HeroCopyProps = { onUpload: (file: File) => void; onStart: () => void; fileName: string | null }
 
-const HeroCopy = ({ onUpload, onStart }: HeroCopyProps) => {
+const HeroCopy = ({ onUpload, onStart, fileName }: HeroCopyProps) => {
   const fileRef = useRef<HTMLInputElement>(null)
 
   const handleUploadClick = () => {
@@ -1920,6 +1931,8 @@ const HeroCopy = ({ onUpload, onStart }: HeroCopyProps) => {
         <button
           type='button'
           onClick={onStart}
+          disabled={!fileName}
+          title={fileName ? undefined : 'Unggah data dulu untuk memulai'}
           className='n3-flip border-(color:--color-n3-line) text-(color:--color-n3-ink) focus-visible:outline-(color:--color-n3-accent) inline-flex h-13 items-center rounded-full border bg-white/50 px-6 text-[16px] focus-visible:outline-2 focus-visible:outline-offset-2 sm:h-14'
         >
           <FlipLabel className='gap-3'>
@@ -1930,6 +1943,22 @@ const HeroCopy = ({ onUpload, onStart }: HeroCopyProps) => {
           </FlipLabel>
         </button>
       </div>
+
+      <p
+        {...rise(0.48)}
+        aria-live='polite'
+        className='n3-rise text-(color:--color-n3-grey) mt-4 flex min-h-6 items-center gap-2 text-[14px]'
+      >
+        {fileName ? (
+          <>
+            <Check className='text-(color:--color-n3-accent) size-4 shrink-0' strokeWidth={2} aria-hidden />
+            <span className='text-(color:--color-n3-ink) font-medium break-all'>{fileName}</span>
+            <span>siap dipakai. Tekan Mulai untuk lanjut.</span>
+          </>
+        ) : (
+          'Unggah file Excel dulu untuk bisa memulai.'
+        )}
+      </p>
 
       <dl {...rise(0.58)} className='n3-rise mt-12 grid grid-cols-3 sm:flex sm:items-stretch lg:mt-20'>
         {METRICS.map(({ value, label, icon }, i) => {
@@ -2056,12 +2085,12 @@ const HeroFloor = () => {
 }
 
 // ───── hero ─────
-const Hero = ({ onUpload, onStart }: HeroCopyProps) => {
+const Hero = ({ onUpload, onStart, fileName }: HeroCopyProps) => {
   return (
     <section id='top' aria-labelledby='n3-title' className='n3-hero relative isolate overflow-x-clip'>
       <HeroFloor />
       <div className='n3-frame mx-auto grid max-w-360 items-center gap-6 pt-6 pb-12 lg:min-h-[inherit] lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-12 lg:py-10 xl:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] xl:gap-20'>
-        <HeroCopy onUpload={onUpload} onStart={onStart} />
+        <HeroCopy onUpload={onUpload} onStart={onStart} fileName={fileName} />
         <CoreVisual />
       </div>
     </section>
@@ -2069,7 +2098,7 @@ const Hero = ({ onUpload, onStart }: HeroCopyProps) => {
 }
 
 // ───── navbar ─────
-const Navbar = ({ onStart }: { onStart: () => void }) => {
+const Navbar = ({ onStart, canStart }: { onStart: () => void; canStart: boolean }) => {
   const [scrolled, setScrolled] = useState(false)
 
   const wrapRef = useRef<HTMLDivElement>(null)
@@ -2120,6 +2149,8 @@ const Navbar = ({ onStart }: { onStart: () => void }) => {
               <button
                 type='button'
                 onClick={onStart}
+                disabled={!canStart}
+                title={canStart ? undefined : 'Unggah data dulu untuk memulai'}
                 className='n3-flip bg-(color:--color-n3-ink) focus-visible:outline-(color:--color-n3-accent) inline-flex h-11 items-center rounded-full px-5 text-[15px] font-medium text-white focus-visible:outline-2 focus-visible:outline-offset-2 sm:h-13 sm:px-6 sm:text-[16px]'
               >
                 <FlipLabel className='gap-2'>
@@ -2145,21 +2176,24 @@ export type CoreHeroProps = {
   // Called with the Excel file picked by "Upload Data".
   onUpload?: (file: File) => void
 
-  // Called by "Mulai".
+  // Called by "Mulai", which stays disabled until a file has been uploaded.
   onStart?: () => void
+
+  // Name of the uploaded file, or null before any upload.
+  fileName?: string | null
 }
 
 const noop = () => {}
 
-const CoreHero = ({ onUpload = noop, onStart = noop }: CoreHeroProps) => (
+const CoreHero = ({ onUpload = noop, onStart = noop, fileName = null }: CoreHeroProps) => (
   <>
     <style>{BLOCK_CSS}</style>
     <div
       style={motionVars}
       className='n3-root n3-bg font-(family-name:--font-n3-sans) text-(color:--color-n3-ink) w-full antialiased'
     >
-      <Navbar onStart={onStart} />
-      <Hero onUpload={onUpload} onStart={onStart} />
+      <Navbar onStart={onStart} canStart={!!fileName} />
+      <Hero onUpload={onUpload} onStart={onStart} fileName={fileName} />
     </div>
   </>
 )

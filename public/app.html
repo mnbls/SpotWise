@@ -415,7 +415,7 @@ uploadZone.addEventListener('drop', e => {
 });
 fileInput.addEventListener('change', e => { if (e.target.files[0]) handleFile(e.target.files[0]); });
 
-function handleFile(file) {
+function handleFile(file, onLoaded) {
   const reader = new FileReader();
   reader.onload = e => {
     try {
@@ -426,12 +426,13 @@ function handleFile(file) {
       document.getElementById('dataCount').textContent = shops.length + ' kedai kopi';
       document.getElementById('dataFileName').textContent = '📄 ' + file.name;
       document.getElementById('dataPreview').classList.add('show');
+      if (onLoaded) onLoaded();
     } catch(err) { alert('Gagal membaca file Excel: ' + err.message); }
   };
   reader.readAsBinaryString(file);
 }
 
-// File handed over from the landing page (Upload Data button), loaded once on arrival.
+// File handed over from the landing page (Upload Data, then Mulai): load it and skip straight to Preferensi.
 (async function loadHandedOverFile() {
   let raw = null;
   try { raw = sessionStorage.getItem('spk_upload'); sessionStorage.removeItem('spk_upload'); } catch (e) {}
@@ -439,7 +440,7 @@ function handleFile(file) {
   try {
     const { name, dataUrl } = JSON.parse(raw);
     const blob = await (await fetch(dataUrl)).blob();
-    handleFile(new File([blob], name, { type: blob.type }));
+    handleFile(new File([blob], name, { type: blob.type }), () => goToStep(2));
   } catch (e) { /* fall back to the manual upload step */ }
 })();
 
