@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import type { CSSProperties, MouseEvent, PointerEvent as ReactPointerEvent, ReactNode, SVGProps } from 'react'
 import {
-  AnimatePresence,
   LazyMotion,
   animate,
   domAnimation,
@@ -20,14 +19,12 @@ import {
   FileSpreadsheet,
   ListChecks,
   ListFilter,
-  Menu,
   MousePointer2,
   Play,
   Scale,
   Sigma,
   Trophy,
-  Upload,
-  X
+  Upload
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -797,17 +794,12 @@ const EASE = [0.22, 1, 0.36, 1] as const
 // Indonesian copy for the SPK landing page.
 const COPY = {
   eyebrow: 'Sistem Pendukung Keputusan',
-  headline: ['Cari kedai kopi', 'terbaikmu dengan', 'Fuzzy'],
+  headline: ['Temukan tempat', 'terbaik dengan', 'Fuzzy'],
   accentWord: 'Tsukamoto.',
-  body: 'Unggah data kedai, atur harga, jarak, jam, dan prioritasmu. Sistem menyaring lalu menghitung skor dengan logika fuzzy, dan menampilkan 3 rekomendasi terbaik lengkap dengan peta.',
+  body: 'Unggah data tempat, atur harga, jarak, jam, dan prioritasmu. Sistem menyaring lalu menghitung skor dengan logika fuzzy, dan menampilkan 3 rekomendasi terbaik lengkap dengan peta.',
   primaryCta: 'Upload Data',
   secondaryCta: 'Mulai'
 }
-
-const NAV_LINKS = [
-  { label: 'Beranda', href: '#top' },
-  { label: 'Cara Kerja', href: '#cara-kerja' }
-]
 
 const METRICS = [
   { value: '4', label: 'Kriteria penilaian', icon: 'criteria' },
@@ -2079,11 +2071,8 @@ const Hero = ({ onUpload, onStart }: HeroCopyProps) => {
 // ───── navbar ─────
 const Navbar = ({ onStart }: { onStart: () => void }) => {
   const [scrolled, setScrolled] = useState(false)
-  const [open, setOpen] = useState(false)
 
   const wrapRef = useRef<HTMLDivElement>(null)
-
-  const reduce = useReducedMotion()
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 12)
@@ -2114,18 +2103,10 @@ const Navbar = ({ onStart }: { onStart: () => void }) => {
     return () => observer.disconnect()
   }, [])
 
-  const handleMenuToggle = () => {
-    setOpen(v => !v)
-  }
-
-  const handleMenuClose = () => {
-    setOpen(false)
-  }
-
   return (
     <LazyMotion features={domAnimation}>
       <header ref={wrapRef} className='n3-drop sticky top-0 z-50'>
-        <div className={cn('n3-nav-bar', (scrolled || open) && 'n3-nav-bar-scrolled')}>
+        <div className={cn('n3-nav-bar', scrolled && 'n3-nav-bar-scrolled')}>
           <nav
             aria-label='Utama'
             className='n3-frame mx-auto flex h-18 max-w-360 items-center justify-between lg:h-24'
@@ -2134,19 +2115,6 @@ const Navbar = ({ onStart }: { onStart: () => void }) => {
               <SyntraMark className='size-9' />
               <span className='text-[26px] font-medium tracking-[-0.04em]'>SpotWise</span>
             </a>
-
-            <ul className='hidden items-center gap-10 lg:flex'>
-              {NAV_LINKS.map(({ label, href }) => (
-                <li key={label}>
-                  <a
-                    href={href}
-                    className='text-(color:--color-n3-ink) hover:text-(color:--color-n3-accent) focus-visible:text-(color:--color-n3-accent) inline-flex items-center py-2 text-[16px] transition-colors duration-200 focus-visible:outline-none'
-                  >
-                    {label}
-                  </a>
-                </li>
-              ))}
-            </ul>
 
             <div className='flex items-center gap-2 sm:gap-4'>
               <button
@@ -2159,45 +2127,8 @@ const Navbar = ({ onStart }: { onStart: () => void }) => {
                   <ArrowRight className='size-4' strokeWidth={1.8} aria-hidden />
                 </FlipLabel>
               </button>
-              <button
-                type='button'
-                aria-label={open ? 'Tutup menu' : 'Buka menu'}
-                aria-expanded={open}
-                aria-controls='n3-mobile-menu'
-                onClick={handleMenuToggle}
-                className='text-(color:--color-n3-ink) grid size-11 cursor-pointer place-items-center rounded-full lg:hidden'
-              >
-                {open ? <X className='size-5' strokeWidth={1.6} /> : <Menu className='size-5' strokeWidth={1.6} />}
-              </button>
             </div>
           </nav>
-
-          <AnimatePresence initial={false}>
-            {open && (
-              <m.div
-                id='n3-mobile-menu'
-                initial={reduce ? false : { opacity: 0, y: -6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={reduce ? { opacity: 0 } : { opacity: 0, y: -6 }}
-                transition={{ duration: 0.22, ease: EASE }}
-                className='n3-frame pb-5 lg:hidden'
-              >
-                <ul className='border-(color:--color-n3-ink)/8 flex flex-col border-t pt-2'>
-                  {NAV_LINKS.map(({ label, href }) => (
-                    <li key={label}>
-                      <a
-                        href={href}
-                        onClick={handleMenuClose}
-                        className='text-(color:--color-n3-ink) flex h-12 items-center text-[16px]'
-                      >
-                        {label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </m.div>
-            )}
-          </AnimatePresence>
         </div>
       </header>
     </LazyMotion>
