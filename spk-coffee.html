@@ -294,18 +294,23 @@
         <div class="card-title">⚖️ Bobot Prioritas Kriteria (Total = 100)</div>
         <div class="weight-row">
           <div class="weight-label">Harga <small>Keterjangkauan</small></div>
-          <div class="weight-slider-wrap"><input type="range" id="sliderHarga" min="10" max="80" step="5" value="40"></div>
-          <div class="weight-val" id="valHarga">40</div>
+          <div class="weight-slider-wrap"><input type="range" id="sliderHarga" min="10" max="70" step="5" value="35"></div>
+          <div class="weight-val" id="valHarga">35</div>
         </div>
         <div class="weight-row">
           <div class="weight-label">Jarak <small>Kedekatan lokasi</small></div>
-          <div class="weight-slider-wrap"><input type="range" id="sliderJarak" min="10" max="80" step="5" value="35"></div>
-          <div class="weight-val" id="valJarak">35</div>
+          <div class="weight-slider-wrap"><input type="range" id="sliderJarak" min="10" max="70" step="5" value="30"></div>
+          <div class="weight-val" id="valJarak">30</div>
         </div>
         <div class="weight-row">
           <div class="weight-label">Jam Operasional <small>Kesesuaian waktu</small></div>
-          <div class="weight-slider-wrap"><input type="range" id="sliderJam" min="10" max="80" step="5" value="25"></div>
-          <div class="weight-val" id="valJam">25</div>
+          <div class="weight-slider-wrap"><input type="range" id="sliderJam" min="10" max="70" step="5" value="20"></div>
+          <div class="weight-val" id="valJam">20</div>
+        </div>
+        <div class="weight-row">
+          <div class="weight-label">Popularitas <small>Rating &amp; ulasan</small></div>
+          <div class="weight-slider-wrap"><input type="range" id="sliderPopularitas" min="10" max="70" step="5" value="15"></div>
+          <div class="weight-val" id="valPopularitas">15</div>
         </div>
         <div class="weight-total ok" id="weightTotal">Total: 100 ✓</div>
       </div>
@@ -363,7 +368,7 @@ let shops = [];
 let userLat = null, userLng = null;
 let mapInstance = null;
 let tableOpen = false;
-let weights = { harga: 40, jarak: 35, jam: 25 };
+let weights = { harga: 35, jarak: 30, jam: 20, popularitas: 15 };
 let nowDay = new Date().getDay();      // 0=Sun … 6=Sat
 let nowMinutes = new Date().getHours() * 60 + new Date().getMinutes();
 
@@ -500,7 +505,7 @@ document.getElementById('inputLng').addEventListener('input', e => { userLng = p
 // =====================================================================
 // WEIGHT SLIDERS
 // =====================================================================
-const sliderKeys = ['harga','jarak','jam'];
+const sliderKeys = ['harga','jarak','jam','popularitas'];
 function cap(s) { return s[0].toUpperCase() + s.slice(1); }
 
 function updateWeightUI() {
@@ -624,40 +629,70 @@ function tsukamotoJam(shop, departMinutes) {
   return tsukamotoDefuzz(mu_cukup, mu_terbatas);
 }
 
+// Popularitas: gabungan himpunan BAGUS/BURUK dari rating dan jumlah ulasan
+function tsukamotoPopularitas(shop) {
+  const rating = shop.rating  || 0;
+  const ulasan  = shop.ulasan || 0;
+
+  // μ_RATING_BAGUS: 0 jika <3.5, naik linier ke 1 di ≥4.5
+  const mu_rating_bagus  = rating >= 4.5 ? 1.0 : rating >= 3.5 ? (rating - 3.5) : 0.0;
+  // μ_RATING_BURUK: 1 jika <3.0, turun linier ke 0 di ≥4.0
+  const mu_rating_buruk  = rating >= 4.0 ? 0.0 : rating >= 3.0 ? (4.0 - rating) : 1.0;
+
+  // μ_ULASAN_BANYAK: 0 jika <100, naik linier ke 1 di ≥500
+  const mu_ulasan_banyak  = ulasan >= 500 ? 1.0 : ulasan >= 100 ? (ulasan - 100) / 400 : 0.0;
+  // μ_ULASAN_SEDIKIT: 1 jika <50, turun linier ke 0 di ≥300
+  const mu_ulasan_sedikit = ulasan >= 300 ? 0.0 : ulasan >= 50  ? (300 - ulasan) / 250 : 1.0;
+
+  // Rule 1: IF Rating=BAGUS AND Ulasan=BANYAK  THEN Popularitas=BAIK
+  const alpha_baik  = Math.min(mu_rating_bagus, mu_ulasan_banyak);
+  // Rule 2: IF Rating=BURUK OR  Ulasan=SEDIKIT THEN Popularitas=BURUK
+  const alpha_buruk = Math.max(mu_rating_buruk, mu_ulasan_sedikit);
+
+  return tsukamotoDefuzz(alpha_baik, alpha_buruk);
+}
+
 function processShops(prefs) {
   const { userMin, userMax, maxJarak, departMinutes } = prefs;
-  const results = [];
+  if (!userLat || !userLng) return [];
 
-  for (const shop of shops) {
-    // Hard filters
-    if (!shop.bisa_tempat) continue;
-    if (!shop.lat || !shop.lng) continue;
-    if (!userLat || !userLng) continue;
-
-    // Distance filter
-    const distance = haversine(userLat, userLng, shop.lat, shop.lng);
-    if (maxJarak > 0 && distance > maxJarak) continue;
-
-    // Price filter: shop must be affordable (harga_min ≤ user max)
-    if (userMax > 0 && shop.harga_min > userMax) continue;
-
-    // Currently open filter (using auto-detected day & time)
+  // ── TAHAP 1: FILTER KERAS ─────────────────────────────────────────
+  // Buang data yang tidak memenuhi kriteria sebelum scoring
+  const filtered = shops.filter(shop => {
+    if (!shop.bisa_tempat) return false;
+    if (!shop.lat || !shop.lng) return false;
+    if (userMax > 0 && shop.harga_min > userMax) return false;   // harga terlalu mahal
     if (!shop.buka_24jam) {
       const hours = getTodayHours(shop);
-      if (!hours) continue;                           // closed today
-      if (nowMinutes < hours.buka || nowMinutes >= hours.tutup) continue; // not open now
+      if (!hours) return false;                                    // tutup hari ini
+      if (nowMinutes < hours.buka || nowMinutes >= hours.tutup) return false; // belum/sudah tutup
     }
+    return true;
+  });
 
-    const sHarga = tsukamotoHarga(shop, userMin, userMax);
-    const sJarak = tsukamotoJarak(distance, maxJarak);
-    const sJam   = tsukamotoJam(shop, departMinutes);
+  // Hitung jarak lalu filter berdasarkan maxJarak
+  const withDist = filtered
+    .map(shop => ({ shop, distance: haversine(userLat, userLng, shop.lat, shop.lng) }))
+    .filter(({ distance }) => maxJarak <= 0 || distance <= maxJarak);
 
-    const finalScore = (weights.harga * sHarga + weights.jarak * sJarak + weights.jam * sJam) / 100;
-    results.push({ shop, distance, scores: { harga: sHarga, jarak: sJarak, jam: sJam }, finalScore });
-  }
+  // ── TAHAP 2: SCORING TSUKAMOTO ────────────────────────────────────
+  const scored = withDist.map(({ shop, distance }) => {
+    const sHarga       = tsukamotoHarga(shop, userMin, userMax);
+    const sJarak       = tsukamotoJarak(distance, maxJarak);
+    const sJam         = tsukamotoJam(shop, departMinutes);
+    const sPopularitas = tsukamotoPopularitas(shop);
+    const finalScore   = (
+      weights.harga       * sHarga       +
+      weights.jarak       * sJarak       +
+      weights.jam         * sJam         +
+      weights.popularitas * sPopularitas
+    ) / 100;
+    return { shop, distance, scores: { harga: sHarga, jarak: sJarak, jam: sJam, popularitas: sPopularitas }, finalScore };
+  });
 
-  results.sort((a, b) => b.finalScore - a.finalScore);
-  return results;
+  // ── TAHAP 3: URUT BERDASARKAN SKOR TERTINGGI (SESUAI BOBOT PRIORITAS) ──
+  scored.sort((a, b) => b.finalScore - a.finalScore);
+  return scored;
 }
 
 // =====================================================================
@@ -674,13 +709,13 @@ function generateReason(item) {
   const r = [];
   if (scores.harga >= 0.9) r.push(`harga sangat pas di kantong (mulai ${formatRp(shop.harga_min)})`);
   else if (scores.harga >= 0.7) r.push(`harga sesuai budget (mulai ${formatRp(shop.harga_min)})`);
-  else if (scores.harga >= 0.5) r.push(`harga dalam batas`);
+  else if (scores.harga >= 0.5) r.push(`harga masih dalam batas`);
   if (scores.jarak >= 0.85) r.push(`sangat dekat (${distance.toFixed(1)} km)`);
   else if (scores.jarak >= 0.5) r.push(`jarak terjangkau (${distance.toFixed(1)} km)`);
   if (scores.jam >= 0.9) r.push(`masih buka sampai kamu pulang`);
   else if (scores.jam >= 0.5) r.push(`jam tutup mendekati waktu kepulanganmu`);
-  if (shop.rating >= 4.7) r.push(`rating sangat tinggi (${shop.rating}★)`);
-  else if (shop.rating >= 4.5) r.push(`rating bagus (${shop.rating}★)`);
+  if (scores.popularitas >= 0.8) r.push(`sangat populer (${shop.rating}★, ${Math.round(shop.ulasan).toLocaleString('id-ID')} ulasan)`);
+  else if (scores.popularitas >= 0.6) r.push(`cukup populer (${shop.rating}★)`);
   if (!r.length) r.push('memenuhi semua kriteria');
   return r.join(', ') + '.';
 }
@@ -751,6 +786,7 @@ function renderResults(results) {
         <div class="score-pill"><span class="sp-label">Harga (${weights.harga}%)</span><span class="sp-val ${sc(scores.harga)}">${(scores.harga*100).toFixed(0)}</span></div>
         <div class="score-pill"><span class="sp-label">Jarak (${weights.jarak}%)</span><span class="sp-val ${sc(scores.jarak)}">${(scores.jarak*100).toFixed(0)}</span></div>
         <div class="score-pill"><span class="sp-label">Jam (${weights.jam}%)</span><span class="sp-val ${sc(scores.jam)}">${(scores.jam*100).toFixed(0)}</span></div>
+        <div class="score-pill"><span class="sp-label">Popularitas (${weights.popularitas}%)</span><span class="sp-val ${sc(scores.popularitas)}">${(scores.popularitas*100).toFixed(0)}</span></div>
       </div>
       <div class="rc-reason">💡 ${generateReason(item)}</div>
       ${shop.link ? `<div style="margin-top:0.85rem"><a href="${shop.link}" target="_blank" rel="noopener">🗺️ Buka di Google Maps</a></div>` : ''}
