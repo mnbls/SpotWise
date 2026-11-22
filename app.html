@@ -10,6 +10,7 @@
       rel="stylesheet"
     />
     <title>SpotWise – Pilih Tempat Terbaik</title>
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link
       rel="stylesheet"
@@ -59,9 +60,9 @@
 
       /* TOPBAR */
       .topbar {
-        max-width: 1120px;
+        max-width: 1480px;
         margin: 0 auto;
-        padding: 20px 16px 0;
+        padding: 20px clamp(16px, 3vw, 48px) 0;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -71,43 +72,22 @@
       .brand {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 10px;
         color: var(--text);
       }
       .brand:hover {
         text-decoration: none;
       }
-      .brand-mark {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        background: #171717;
-        color: #fff;
-        display: grid;
-        place-items: center;
+      .brand-logo {
+        width: 36px;
+        height: 36px;
         flex-shrink: 0;
       }
-      .brand-mark svg {
-        width: 22px;
-        height: 22px;
-        fill: none;
-        stroke: currentColor;
-        stroke-width: 1.7;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-      }
-      .brand-text strong {
-        display: block;
-        font-size: 1.05rem;
-        font-weight: 600;
-        line-height: 1.2;
-        letter-spacing: -0.01em;
-      }
-      .brand-text small {
-        display: block;
-        color: var(--muted);
-        font-size: 0.85rem;
-        line-height: 1.3;
+      .brand-name {
+        font-size: 26px;
+        font-weight: 500;
+        letter-spacing: -0.04em;
+        line-height: 1;
       }
 
       /* STEPS */
@@ -159,9 +139,9 @@
 
       /* MAIN */
       main {
-        max-width: 1120px;
+        max-width: 1480px;
         margin: 0 auto;
-        padding: 1.25rem 1rem 4rem;
+        padding: 1.25rem clamp(16px, 3vw, 48px) 4rem;
       }
 
       .section {
@@ -427,7 +407,7 @@
 
       /* MAP */
       #map {
-        height: 320px;
+        height: clamp(320px, 32vw, 440px);
         border-radius: var(--r);
         border: 1px solid var(--border);
         box-shadow: var(--shadow);
@@ -740,27 +720,13 @@
       .hero-copy {
         flex: 1 1 100%;
       }
-      .eyebrow {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 12px;
-        font-size: 0.75rem;
-        font-weight: 500;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
+      .hero-sub {
+        margin-top: 14px;
+        font-size: 0.95rem;
         color: var(--muted);
       }
-      .eyebrow-dot {
-        width: 8px;
-        height: 8px;
-        flex-shrink: 0;
-        border-radius: 50%;
-        background: var(--accent);
-        box-shadow: 0 0 0 4px rgb(255 122 47 / 0.14);
-      }
       .hero-title {
-        font-size: clamp(1.8rem, 1rem + 2.2vw, 2.6rem);
+        font-size: clamp(1.8rem, 1rem + 2.2vw, 3rem);
         line-height: 1.08;
         font-weight: 500;
         letter-spacing: -0.035em;
@@ -843,7 +809,7 @@
           flex-shrink: 0;
         }
         .hero-copy {
-          flex: 0 1 620px;
+          flex: 0 1 720px;
         }
       }
 
@@ -1685,13 +1651,21 @@
 
     <header class="topbar">
       <a class="brand" href="./index.html" aria-label="SpotWise, kembali ke beranda">
-        <span class="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z" /><circle cx="12" cy="10" r="2.5" /></svg>
-        </span>
-        <span class="brand-text">
-          <strong>SpotWise</strong>
-          <small>Pemilihan tempat terbaik</small>
-        </span>
+        <svg class="brand-logo" viewBox="-27 -27 54 54" aria-hidden="true">
+          <defs>
+            <linearGradient id="swMark" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#FF9A5C" />
+              <stop offset="1" stop-color="#FF7A2F" />
+            </linearGradient>
+          </defs>
+          <g fill="url(#swMark)">
+            <path d="M11 0H19A3 3 0 0 1 22 3V11A11 11 0 0 1 11 22H3A3 3 0 0 1 0 19V11A11 11 0 0 1 11 0Z" transform="rotate(0) translate(-25 -25)" />
+            <path d="M11 0H19A3 3 0 0 1 22 3V11A11 11 0 0 1 11 22H3A3 3 0 0 1 0 19V11A11 11 0 0 1 11 0Z" transform="rotate(90) translate(-25 -25)" opacity="0.9" />
+            <path d="M11 0H19A3 3 0 0 1 22 3V11A11 11 0 0 1 11 22H3A3 3 0 0 1 0 19V11A11 11 0 0 1 11 0Z" transform="rotate(180) translate(-25 -25)" opacity="0.8" />
+            <path d="M11 0H19A3 3 0 0 1 22 3V11A11 11 0 0 1 11 22H3A3 3 0 0 1 0 19V11A11 11 0 0 1 11 0Z" transform="rotate(270) translate(-25 -25)" opacity="0.9" />
+          </g>
+        </svg>
+        <span class="brand-name">SpotWise</span>
       </a>
       <nav class="steps" aria-label="Langkah">
         <div class="step-item active" id="stepEl2">
@@ -1712,14 +1686,13 @@
         <!-- HERO: tujuan halaman -->
         <div class="hero-strip">
           <div class="hero-copy">
-            <p class="eyebrow">
-              <span class="eyebrow-dot" aria-hidden="true"></span>Sistem
-              Pendukung Keputusan · Fuzzy Tsukamoto
-            </p>
             <h1 class="hero-title">
               Temukan tempat terbaik
               <span>dari data yang kamu unggah.</span>
             </h1>
+            <p class="hero-sub">
+              Sistem pendukung keputusan dengan metode Fuzzy Tsukamoto.
+            </p>
           </div>
           <div class="hero-meta">
             <div class="date-chip">
@@ -2103,7 +2076,7 @@
               <thead>
                 <tr>
                   <th>Rank</th>
-                  <th>Nama Kedai</th>
+                  <th>Nama Tempat</th>
                   <th>Kecamatan</th>
                   <th>Jarak</th>
                   <th>Harga Min</th>
@@ -2212,7 +2185,7 @@
           document.getElementById("dateText").innerHTML =
             `${dayName},<br />${months[now.getMonth()]}`;
           document.getElementById("timeInfoText").innerHTML =
-            `<strong>${dayName}, ${hh}:${mm} WIB</strong>Hanya kedai yang sedang buka yang diproses`;
+            `<strong>${dayName}, ${hh}:${mm} WIB</strong>Hanya tempat yang sedang buka yang diproses`;
         }
         tick();
         setInterval(tick, 30000);
@@ -2244,7 +2217,7 @@
               defval: "",
             });
             shops = raw.map(parseShop).filter(Boolean);
-            if (!shops.length) throw new Error("tidak ada data kedai yang terbaca");
+            if (!shops.length) throw new Error("tidak ada data tempat yang terbaca");
             updateDataPill();
             // refreshes the price histogram and the result count, which depend on `shops`
             goToStep(2);
@@ -2756,9 +2729,9 @@
             })),
           },
           sessions: {
-            label: "Kedai Buka per Jam",
+            label: "Tempat Buka per Jam",
             value: results.length,
-            note: `Persentase kedai yang buka tiap jam hari ini, dari ${results.length} kedai yang lolos filter.`,
+            note: `Persentase tempat yang buka tiap jam hari ini, dari ${results.length} tempat yang lolos filter.`,
             unit: "%",
             desktop: [hours.map((h) => share(results, h))],
             mobile: [hours.map((h) => share(top10, h))],
@@ -2770,7 +2743,7 @@
             },
           },
           categories: {
-            title: "Peta Skor Kedai",
+            title: "Peta Skor Tempat",
             groups,
             periods: [
               { label: "Skor Akhir", total: avgOf((r) => r.finalScore), compare },
@@ -2783,7 +2756,7 @@
             ],
             items,
             table: {
-              columns: ["Kedai", "Jarak", "Harga Mulai", "Rating"],
+              columns: ["Tempat", "Jarak", "Harga Mulai", "Rating"],
               rows: results.slice(0, 3).map((r) => ({
                 label: r.shop.nama,
                 values: [
@@ -2875,9 +2848,9 @@
         // Alert
         const alertEl = document.getElementById("alertArea");
         if (!results.length) {
-          alertEl.innerHTML = `<div class="alert alert-warn">⚠️ Tidak ada kedai yang memenuhi semua filter saat ini. Coba: perlebar rentang harga, tambah jarak, atau mundurkan waktu kepulangan.</div>`;
+          alertEl.innerHTML = `<div class="alert alert-warn">⚠️ Tidak ada tempat yang memenuhi semua filter saat ini. Coba: perlebar rentang harga, tambah jarak, atau mundurkan waktu kepulangan.</div>`;
         } else {
-          alertEl.innerHTML = `<div class="alert alert-info">✓ Ditemukan <strong>${results.length} kedai</strong> yang sesuai kriteria. Menampilkan 3 rekomendasi terbaik.</div>`;
+          alertEl.innerHTML = `<div class="alert alert-info">✓ Ditemukan <strong>${results.length} tempat</strong> yang sesuai kriteria. Menampilkan 3 rekomendasi terbaik.</div>`;
         }
 
         // Top 3 cards
