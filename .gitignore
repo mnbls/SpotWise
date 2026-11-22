@@ -1,3 +1,5 @@
 .claude/
 .impeccable/
 *.bkp
+node_modules/
+dist/

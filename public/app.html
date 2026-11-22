@@ -431,6 +431,18 @@ function handleFile(file) {
   reader.readAsBinaryString(file);
 }
 
+// File handed over from the landing page (Upload Data button), loaded once on arrival.
+(async function loadHandedOverFile() {
+  let raw = null;
+  try { raw = sessionStorage.getItem('spk_upload'); sessionStorage.removeItem('spk_upload'); } catch (e) {}
+  if (!raw) return;
+  try {
+    const { name, dataUrl } = JSON.parse(raw);
+    const blob = await (await fetch(dataUrl)).blob();
+    handleFile(new File([blob], name, { type: blob.type }));
+  } catch (e) { /* fall back to the manual upload step */ }
+})();
+
 function parseShop(row) {
   try {
     const num   = s => parseFloat(String(s||'0').replace(/\./g,'').replace(',','.')) || 0;
