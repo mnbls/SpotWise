@@ -45,6 +45,7 @@ const BLOCK_CSS = `
 .n3-root {
   --n3-gutter: 20px;
   --n3-nav-space: 76px; /* replaced by the measured height of the real nav */
+  --n3-pad-y: clamp(0.75rem, 3vh, 2.5rem); /* hero top and bottom padding on desktop */
 }
 
 @media (min-width: 640px) {
@@ -79,6 +80,13 @@ const BLOCK_CSS = `
   font-size: clamp(2.5rem, 1.1rem + 3.6vw, 4.35rem);
   line-height: 1.06;
   letter-spacing: -0.035em;
+}
+
+/* On desktop the headline also follows the screen height, so the hero fits one screen at 100% zoom. */
+@media (min-width: 1024px) {
+  .n3-h1 {
+    font-size: clamp(2.25rem, min(1.1rem + 3.6vw, 6.8vh), 4.35rem);
+  }
 }
 
 .n3-bg {
@@ -1760,7 +1768,7 @@ const CoreVisual = () => {
           ref={visualRef}
           onPointerMove={handlePointerMove}
           onPointerLeave={handlePointerLeave}
-          className='n3-enter @container relative -my-[6%] -ml-[12.5%] aspect-square w-[125%] max-w-none md:mx-auto md:my-0 md:w-full md:max-w-[840px] lg:mx-0 lg:w-[104%] lg:max-w-none'
+          className='n3-enter @container relative -my-[6%] -ml-[12.5%] aspect-square w-[125%] max-w-none md:mx-auto md:my-0 md:w-full md:max-w-[840px] lg:mx-auto lg:w-[min(104%,calc(100dvh_-_var(--n3-nav-space)_-_2*var(--n3-pad-y)))] lg:max-w-none'
         >
           <div className='absolute inset-0'>
             <div aria-hidden className='n3-halo pointer-events-none absolute inset-[6%]' />
@@ -1892,7 +1900,7 @@ const HeroCopy = ({ onUpload, onStart, fileName }: HeroCopyProps) => {
         {COPY.eyebrow}
       </p>
 
-      <h1 id='n3-title' {...rise(0.18)} className='n3-rise n3-h1 text-(color:--color-n3-ink) mt-7 font-normal'>
+      <h1 id='n3-title' {...rise(0.18)} className='n3-rise n3-h1 text-(color:--color-n3-ink) mt-[clamp(1rem,3vh,1.75rem)] font-normal'>
         {COPY.headline.map((line, i) => (
           <span key={line} className='block'>
             {line}
@@ -1903,12 +1911,12 @@ const HeroCopy = ({ onUpload, onStart, fileName }: HeroCopyProps) => {
 
       <p
         {...rise(0.3)}
-        className='n3-rise text-(color:--color-n3-grey) mt-7 max-w-[30rem] text-[17px] leading-[1.6] lg:text-[19px]'
+        className='n3-rise text-(color:--color-n3-grey) mt-[clamp(1rem,3vh,1.75rem)] max-w-[30rem] text-[17px] leading-[1.6] lg:text-[clamp(16px,2.3vh,19px)]'
       >
         {COPY.body}
       </p>
 
-      <div {...rise(0.4)} className='n3-rise mt-9 flex flex-wrap items-center gap-3'>
+      <div {...rise(0.4)} className='n3-rise mt-[clamp(1.25rem,3.5vh,2.25rem)] flex flex-wrap items-center gap-3'>
         <input
           ref={fileRef}
           type='file'
@@ -1960,7 +1968,7 @@ const HeroCopy = ({ onUpload, onStart, fileName }: HeroCopyProps) => {
         )}
       </p>
 
-      <dl {...rise(0.58)} className='n3-rise mt-12 grid grid-cols-3 sm:flex sm:items-stretch lg:mt-20'>
+      <dl {...rise(0.58)} className='n3-rise mt-12 grid grid-cols-3 sm:flex sm:items-stretch lg:mt-[clamp(1.25rem,4.5vh,5rem)]'>
         {METRICS.map(({ value, label, icon }, i) => {
           const Icon = ICONS[icon]
 
@@ -2089,7 +2097,7 @@ const Hero = ({ onUpload, onStart, fileName }: HeroCopyProps) => {
   return (
     <section id='top' aria-labelledby='n3-title' className='n3-hero relative isolate overflow-x-clip'>
       <HeroFloor />
-      <div className='n3-frame mx-auto grid max-w-360 items-center gap-6 pt-6 pb-12 lg:min-h-[inherit] lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-12 lg:py-10 xl:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] xl:gap-20'>
+      <div className='n3-frame mx-auto grid max-w-360 items-center gap-6 pt-6 pb-12 lg:min-h-[inherit] lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-12 lg:py-(--n3-pad-y) xl:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] xl:gap-20'>
         <HeroCopy onUpload={onUpload} onStart={onStart} fileName={fileName} />
         <CoreVisual />
       </div>
@@ -2138,7 +2146,7 @@ const Navbar = ({ onStart, canStart }: { onStart: () => void; canStart: boolean 
         <div className={cn('n3-nav-bar', scrolled && 'n3-nav-bar-scrolled')}>
           <nav
             aria-label='Utama'
-            className='n3-frame mx-auto flex h-18 max-w-360 items-center justify-between lg:h-24'
+            className='n3-frame mx-auto flex h-18 max-w-360 items-center justify-between lg:h-20'
           >
             <a href='#top' aria-label='SpotWise beranda' className='text-(color:--color-n3-ink) flex items-center gap-2.5'>
               <SyntraMark className='size-9' />
