@@ -1,0 +1,20 @@
+@import 'tailwindcss';
+
+/* Only light mode exists here, so `dark:` must never follow the OS setting. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Tokens mapped to the homepage palette (see syntra-hero.tsx). Emitted on :root and :host,
+   so they also apply inside the shadow root. This file is never loaded by the homepage. */
+@theme {
+  --color-background: #f8f7f3;
+  --color-foreground: #171717;
+  --color-card: #ffffff;
+  --color-card-foreground: #171717;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #171717;
+  --color-muted: #efede7;
+  --color-muted-foreground: #74716c;
+  --color-border: #d9d6d0;
+  --color-ring: #ff7a2f;
+  --color-accent: #ff7a2f;
+}

@@ -1,5 +1,9 @@
 @import 'tailwindcss';
 
+/* The bento ships its own stylesheet (src/bento.css) inside a shadow root. */
+@source not './components/ui/analytics-bento.tsx';
+@source not './bento-entry.tsx';
+
 html,
 body {
   margin: 0;

@@ -6,7 +6,8 @@
 ## Struktur (Vite + React + TS + Tailwind v4, struktur shadcn)
 - `src/components/ui/syntra-hero.tsx` — dashboard/landing: hero 3D, kartu 3D = penjelasan metode, tombol Upload Data & Mulai
 - `src/demo.tsx` — Upload Data menyimpan file ke `sessionStorage`; Mulai nonaktif sampai ada file, lalu membuka app
-- `public/app.html` — aplikasi SPK (HTML tunggal, JS biasa, tampilan di-restyle kontributor lain). Memuat file titipan dashboard otomatis dan langsung ke langkah Preferensi
+- `app.html` (root) — aplikasi SPK (HTML + JS biasa, tampilan di-restyle kontributor lain). Entry HTML kedua Vite (`vite.config.ts`), jadi skrip bento ikut ter-bundle di dev dan build. Memuat file titipan dashboard otomatis dan langsung ke langkah Preferensi
+- `src/components/ui/analytics-bento.tsx` — "Ringkasan Analisis" di halaman Hasil (4 kartu SVG, tanpa library chart). Dipasang sebagai React island di `#bentoRoot` lewat `src/bento-entry.tsx` (`window.SpotwiseBento.mount/unmount`), di dalam shadow DOM agar CSS Tailwind tidak bentrok dengan CSS app. Gayanya di `src/bento.css` (token palet beranda). Datanya dihitung di `buildBentoData()` di `app.html` dari `results`
 - Dev: `npm run dev` (port 5174) · Build: `npm run build` → `dist/`
 - Deploy: `.github/workflows/deploy.yml`. Di GitHub Pages, sumber harus **GitHub Actions** (bukan "Deploy from a branch")
 
