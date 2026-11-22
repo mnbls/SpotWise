@@ -1,881 +1,2403 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SPK Coffee Shop – Metode Tsukamoto</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg: #0d0f18;
-      --surface: #161923;
-      --card: #1e2235;
-      --border: #2a2f4a;
-      --accent: #c9a96e;
-      --accent-dim: #9c7f52;
-      --green: #5a9e6e;
-      --red: #d47878;
-      --text: #e8e2d8;
-      --muted: #9499b8;
-      --r: 10px;
-    }
-    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.5; }
-
-    /* HEADER */
-    header { text-align: center; padding: 2.2rem 1rem 1.8rem; border-bottom: 1px solid var(--border); background: var(--surface); }
-    header h1 { font-size: 1.75rem; font-weight: 700; color: var(--accent); letter-spacing: -0.5px; }
-    header p { color: var(--muted); margin-top: 0.35rem; font-size: 0.9rem; }
-
-    /* STEPS */
-    .steps { display: flex; justify-content: center; align-items: center; padding: 1.1rem 1rem; background: var(--surface); border-bottom: 1px solid var(--border); }
-    .step-item { display: flex; align-items: center; gap: 0.45rem; padding: 0.4rem 1rem; border-radius: 999px; font-size: 0.84rem; color: var(--muted); transition: all 0.2s; }
-    .step-item.active { background: var(--accent); color: #0d0f18; font-weight: 600; }
-    .step-item.done { color: var(--green); }
-    .step-num { width: 21px; height: 21px; border-radius: 50%; border: 2px solid currentColor; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; flex-shrink: 0; }
-    .step-line { width: 32px; height: 1px; background: var(--border); flex-shrink: 0; }
-
-    /* MAIN */
-    main { max-width: 940px; margin: 0 auto; padding: 2rem 1rem 4rem; }
-    .section { display: none; }
-    .section.active { display: block; }
-
-    /* UPLOAD */
-    .upload-zone { border: 2px dashed var(--border); border-radius: var(--r); padding: 3.5rem 2rem; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--card); }
-    .upload-zone:hover, .upload-zone.drag-over { border-color: var(--accent); background: rgba(201,169,110,0.05); }
-    .upload-icon { font-size: 2.6rem; margin-bottom: 0.9rem; }
-    .upload-zone h2 { font-size: 1.1rem; margin-bottom: 0.4rem; }
-    .upload-zone p { color: var(--muted); font-size: 0.87rem; }
-    #fileInput { display: none; }
-
-    .data-preview { display: none; margin-top: 1.4rem; background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 1.1rem 1.4rem; align-items: center; justify-content: space-between; }
-    .data-preview.show { display: flex; }
-    .data-info { display: flex; align-items: center; gap: 0.9rem; }
-    .badge-green { background: var(--green); color: #0d0f18; border-radius: 999px; padding: 0.22rem 0.85rem; font-size: 0.8rem; font-weight: 600; }
-
-    /* BUTTONS */
-    .btn { padding: 0.6rem 1.3rem; border-radius: 8px; border: none; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: all 0.2s; }
-    .btn-primary { background: var(--accent); color: #0d0f18; }
-    .btn-primary:hover { background: #d4b278; }
-    .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
-    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
-    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
-    .btn-sm { padding: 0.38rem 0.85rem; font-size: 0.82rem; }
-
-    /* CARDS */
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 1.4rem; }
-    .card-title { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 1.1rem; }
-    .prefs-grid { display: grid; gap: 1.1rem; }
-
-    /* FORM */
-    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; }
-    .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.9rem; }
-    .inp-group { margin-bottom: 0.85rem; }
-    .inp-group:last-child { margin-bottom: 0; }
-    label { display: block; font-size: 0.84rem; color: var(--muted); margin-bottom: 0.32rem; }
-    input[type="number"], input[type="time"] {
-      width: 100%; background: var(--surface); border: 1px solid var(--border);
-      border-radius: 6px; color: var(--text); padding: 0.58rem 0.82rem;
-      font-size: 0.92rem; outline: none; transition: border-color 0.2s;
-    }
-    input:focus { border-color: var(--accent); }
-    input::placeholder { color: var(--muted); }
-
-    /* INFO BOX */
-    .info-box {
-      display: flex; align-items: center; gap: 0.8rem;
-      padding: 0.75rem 1rem; border-radius: 8px;
-      background: rgba(201,169,110,0.08); border: 1px solid rgba(201,169,110,0.2);
-      font-size: 0.87rem; margin-bottom: 1rem;
-    }
-    .info-box-icon { font-size: 1.1rem; flex-shrink: 0; }
-    .info-box strong { color: var(--accent); }
-
-    /* LOC STATUS */
-    .loc-row { display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.9rem; }
-    .loc-status { font-size: 0.82rem; flex: 1; }
-    .loc-status.ok { color: var(--green); }
-    .loc-status.err { color: var(--red); }
-    .loc-status.loading { color: var(--accent); }
-
-    /* WEIGHT SLIDERS */
-    .weight-row { display: flex; align-items: center; gap: 0.9rem; margin-bottom: 0.9rem; }
-    .weight-label { width: 150px; font-size: 0.87rem; flex-shrink: 0; }
-    .weight-label small { display: block; font-size: 0.74rem; color: var(--muted); margin-top: 1px; }
-    .weight-slider-wrap { flex: 1; }
-    input[type="range"] { width: 100%; accent-color: var(--accent); cursor: pointer; }
-    .weight-val { width: 42px; text-align: right; font-weight: 700; font-size: 1rem; color: var(--accent); flex-shrink: 0; }
-    .weight-total { text-align: right; font-size: 0.8rem; margin-top: 0.25rem; }
-    .weight-total.ok { color: var(--green); }
-    .weight-total.err { color: var(--red); }
-
-    /* ACTION */
-    .action-row { display: flex; justify-content: space-between; align-items: center; margin-top: 1.6rem; }
-    .hidden { display: none !important; }
-
-    /* MAP */
-    #map { height: 320px; border-radius: var(--r); border: 1px solid var(--border); }
-
-    /* RESULTS */
-    .results-header { display: flex; justify-content: space-between; align-items: center; margin: 1.8rem 0 1rem; }
-    .results-header h2 { font-size: 1.1rem; }
-    .top3-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(265px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-
-    .result-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 1.35rem; position: relative; overflow: hidden; }
-    .result-card.rank-1 { border-color: var(--accent); }
-    .result-card.rank-2 { border-color: #9a9a9a; }
-    .result-card.rank-3 { border-color: #c07844; }
-    .rank-badge { position: absolute; top: 0; right: 0; padding: 0.26rem 0.72rem; font-size: 0.7rem; font-weight: 700; border-bottom-left-radius: 8px; }
-    .rank-1 .rank-badge { background: var(--accent); color: #0d0f18; }
-    .rank-2 .rank-badge { background: #9a9a9a; color: #0d0f18; }
-    .rank-3 .rank-badge { background: #c07844; color: #fff; }
-
-    .rc-name { font-size: 0.98rem; font-weight: 700; margin-bottom: 0.28rem; padding-right: 70px; }
-    .rc-loc { font-size: 0.79rem; color: var(--muted); margin-bottom: 0.85rem; }
-    .rc-score-bar { height: 5px; background: var(--border); border-radius: 999px; margin-bottom: 0.9rem; overflow: hidden; }
-    .rc-score-fill { height: 100%; background: linear-gradient(90deg, var(--accent-dim), var(--accent)); border-radius: 999px; }
-    .rc-meta { display: flex; flex-direction: column; gap: 0.32rem; font-size: 0.83rem; }
-    .rc-meta-item { display: flex; justify-content: space-between; }
-    .rc-meta-item .lbl { color: var(--muted); }
-    .rc-meta-item .val { font-weight: 600; }
-
-    .score-breakdown { display: flex; gap: 0.4rem; margin-top: 0.9rem; font-size: 0.74rem; }
-    .score-pill { flex: 1; text-align: center; padding: 0.28rem; background: var(--surface); border-radius: 6px; }
-    .score-pill .sp-label { color: var(--muted); display: block; margin-bottom: 2px; }
-    .sp-val { font-weight: 700; }
-    .sp-val.high { color: var(--green); }
-    .sp-val.mid { color: var(--accent); }
-    .sp-val.low { color: var(--red); }
-
-    .rc-reason { margin-top: 0.9rem; padding: 0.7rem 0.85rem; background: var(--surface); border-radius: 6px; font-size: 0.79rem; color: var(--muted); line-height: 1.4; }
-
-    /* TABLE */
-    .table-wrap { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
-    .table-toggle { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.4rem; cursor: pointer; user-select: none; }
-    .table-toggle:hover { background: rgba(255,255,255,0.025); }
-    .table-toggle h3 { font-size: 0.93rem; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
-    thead th { background: var(--surface); padding: 0.62rem 0.9rem; text-align: left; color: var(--muted); font-weight: 600; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.05em; }
-    tbody tr { border-bottom: 1px solid var(--border); }
-    tbody tr:last-child { border: none; }
-    tbody td { padding: 0.65rem 0.9rem; vertical-align: middle; }
-    tbody tr:hover { background: rgba(255,255,255,0.02); }
-    .tbl-score-bar { display: inline-block; width: 60px; height: 4px; background: var(--border); border-radius: 999px; vertical-align: middle; overflow: hidden; margin-left: 0.4rem; }
-    .tbl-score-fill { height: 100%; background: var(--accent); border-radius: 999px; }
-
-    /* ALERT */
-    .alert { padding: 0.8rem 1rem; border-radius: 8px; font-size: 0.87rem; margin-bottom: 0.9rem; }
-    .alert-warn { background: rgba(192,88,88,0.1); border: 1px solid var(--red); color: #e8a0a0; }
-    .alert-info { background: rgba(90,158,110,0.1); border: 1px solid var(--green); color: #90d4a8; }
-
-    /* LOADING */
-    .loading-overlay { display: none; position: fixed; inset: 0; background: rgba(13,15,24,0.88); z-index: 999; justify-content: center; align-items: center; flex-direction: column; gap: 1rem; }
-    .loading-overlay.show { display: flex; }
-    .spinner { width: 36px; height: 36px; border-radius: 50%; border: 3px solid var(--border); border-top-color: var(--accent); animation: spin 0.75s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-
-    @media (max-width: 600px) {
-      .form-row-2, .form-row-3 { grid-template-columns: 1fr; }
-      .top3-grid { grid-template-columns: 1fr; }
-      .step-item { padding: 0.38rem 0.6rem; font-size: 0.78rem; }
-      .step-line { width: 18px; }
-      .weight-label { width: 115px; }
-    }
-  </style>
-</head>
-<body>
-
-<div class="loading-overlay" id="loadingOverlay">
-  <div class="spinner"></div>
-  <div style="color:var(--muted);font-size:0.9rem">Memproses Tsukamoto...</div>
-</div>
-
-<header>
-  <h1>☕ SPK Coffee Shop</h1>
-  <p>Sistem Pendukung Keputusan – Metode Fuzzy Tsukamoto &nbsp;|&nbsp; Kabupaten Sleman &amp; Kota Yogyakarta</p>
-</header>
-
-<div class="steps">
-  <div class="step-item active" id="stepEl1"><div class="step-num">1</div> Upload Data</div>
-  <div class="step-line"></div>
-  <div class="step-item" id="stepEl2"><div class="step-num">2</div> Preferensi</div>
-  <div class="step-line"></div>
-  <div class="step-item" id="stepEl3"><div class="step-num">3</div> Hasil</div>
-</div>
-
-<main>
-
-  <!-- STEP 1: UPLOAD -->
-  <section class="section active" id="sec1">
-    <div class="upload-zone" id="uploadZone">
-      <div class="upload-icon">📂</div>
-      <h2>Upload File Data Coffee Shop</h2>
-      <p style="margin-top:0.5rem">Drag &amp; drop file <strong>.xlsx</strong> ke sini, atau klik untuk memilih</p>
-      <p style="margin-top:0.8rem;font-size:0.76rem">
-        Kolom wajib: <code>nama_maps · harga_min · harga_max · lat · lng · bisa_di_tempat · buka_24_jam · senin_buka · senin_tutup</code> (dst. per hari)
-      </p>
-      <input type="file" id="fileInput" accept=".xlsx,.xls">
-    </div>
-    <div class="data-preview" id="dataPreview">
-      <div class="data-info">
-        <span class="badge-green" id="dataCount">0 kedai</span>
-        <span id="dataFileName" style="font-size:0.87rem;color:var(--muted)"></span>
-      </div>
-      <button class="btn btn-primary" id="btnToPrefs">Lanjut ke Preferensi →</button>
-    </div>
-  </section>
-
-  <!-- STEP 2: PREFERENCES -->
-  <section class="section" id="sec2">
-    <div class="prefs-grid">
-
-      <!-- Waktu Sekarang (auto) -->
-      <div class="card">
-        <div class="card-title">🕐 Waktu Kunjungan</div>
-        <div class="info-box" id="timeInfoBox">
-          <span class="info-box-icon">📅</span>
-          <span id="timeInfoText">Mendeteksi waktu...</span>
-        </div>
-        <p style="font-size:0.82rem;color:var(--muted)">
-          Sistem otomatis menggunakan hari dan jam saat ini untuk menyaring kedai yang <strong style="color:var(--text)">sedang buka</strong>. Hanya kedai yang buka sekarang yang akan diproses.
-        </p>
-        <div class="inp-group" style="margin-top:1rem;margin-bottom:0">
-          <label>⏰ Estimasi Jam Pulang</label>
-          <input type="time" id="inputJam" value="22:00">
-        </div>
-      </div>
-
-      <!-- Lokasi -->
-      <div class="card">
-        <div class="card-title">📍 Lokasi Kamu</div>
-        <div class="loc-row">
-          <span class="loc-status loading" id="locStatus">📡 Mendeteksi lokasi otomatis...</span>
-          <button class="btn btn-outline btn-sm" id="btnRedetect">↺ Ulang</button>
-        </div>
-        <div class="form-row-2">
-          <div class="inp-group">
-            <label>Latitude</label>
-            <input type="number" id="inputLat" placeholder="-7.75638" step="any">
-          </div>
-          <div class="inp-group" style="margin-bottom:0">
-            <label>Longitude</label>
-            <input type="number" id="inputLng" placeholder="110.39322" step="any">
-          </div>
-        </div>
-        <p style="font-size:0.78rem;color:var(--muted);margin-top:0.5rem">Koordinat dapat diedit manual jika deteksi tidak akurat.</p>
-      </div>
-
-      <!-- Harga & Jarak -->
-      <div class="card">
-        <div class="card-title">💰 Rentang Harga &amp; Jarak</div>
-        <div class="form-row-2" style="margin-bottom:0.9rem">
-          <div class="inp-group">
-            <label>Harga Min per Orang (Rp)</label>
-            <input type="number" id="inputHargaMin" placeholder="0" min="0" step="1000" value="0">
-          </div>
-          <div class="inp-group">
-            <label>Harga Maks per Orang (Rp)</label>
-            <input type="number" id="inputHargaMax" placeholder="50000" min="0" step="1000" value="50000">
-          </div>
-        </div>
-        <div class="inp-group" style="margin-bottom:0">
-          <label>Jarak Maks dari Lokasiku (km) &nbsp;<span style="color:var(--muted);font-size:0.78rem">— isi 0 untuk tampilkan semua jarak</span></label>
-          <input type="number" id="inputJarak" placeholder="0 = semua jarak" min="0" max="100" step="0.5" value="0">
-        </div>
-      </div>
-
-      <!-- Bobot -->
-      <div class="card">
-        <div class="card-title">⚖️ Bobot Prioritas Kriteria (Total = 100)</div>
-        <div class="weight-row">
-          <div class="weight-label">Harga <small>Keterjangkauan</small></div>
-          <div class="weight-slider-wrap"><input type="range" id="sliderHarga" min="10" max="70" step="5" value="35"></div>
-          <div class="weight-val" id="valHarga">35</div>
-        </div>
-        <div class="weight-row">
-          <div class="weight-label">Jarak <small>Kedekatan lokasi</small></div>
-          <div class="weight-slider-wrap"><input type="range" id="sliderJarak" min="10" max="70" step="5" value="30"></div>
-          <div class="weight-val" id="valJarak">30</div>
-        </div>
-        <div class="weight-row">
-          <div class="weight-label">Jam Operasional <small>Kesesuaian waktu</small></div>
-          <div class="weight-slider-wrap"><input type="range" id="sliderJam" min="10" max="70" step="5" value="20"></div>
-          <div class="weight-val" id="valJam">20</div>
-        </div>
-        <div class="weight-row">
-          <div class="weight-label">Popularitas <small>Rating &amp; ulasan</small></div>
-          <div class="weight-slider-wrap"><input type="range" id="sliderPopularitas" min="10" max="70" step="5" value="15"></div>
-          <div class="weight-val" id="valPopularitas">15</div>
-        </div>
-        <div class="weight-total ok" id="weightTotal">Total: 100 ✓</div>
-      </div>
-
-    </div>
-
-    <div class="action-row">
-      <button class="btn btn-outline" id="btnBack">← Kembali</button>
-      <button class="btn btn-primary" id="btnProcess">Proses Tsukamoto →</button>
-    </div>
-  </section>
-
-  <!-- STEP 3: RESULTS -->
-  <section class="section" id="sec3">
-    <div id="map"></div>
-    <div id="alertArea" style="margin-top:0.9rem;"></div>
-
-    <div class="results-header">
-      <h2>🏆 Rekomendasi Terbaik</h2>
-      <div style="display:flex;gap:0.6rem">
-        <button class="btn btn-outline btn-sm" id="btnEditPrefs">← Edit Preferensi</button>
-        <button class="btn btn-outline btn-sm" id="btnRestart">↺ Ganti Data</button>
-      </div>
-    </div>
-
-    <div class="top3-grid" id="top3Grid"></div>
-
-    <div class="table-wrap">
-      <div class="table-toggle" id="tableToggle">
-        <h3>📋 Semua Hasil Perhitungan</h3>
-        <span id="toggleIcon" style="font-size:0.8rem;color:var(--muted)">▼ Tampilkan</span>
-      </div>
-      <div id="tableBody" class="hidden">
-        <table>
-          <thead>
-            <tr>
-              <th>Rank</th><th>Nama Kedai</th><th>Kecamatan</th>
-              <th>Jarak</th><th>Harga Min</th><th>Jam Tutup</th>
-              <th>Rating</th><th>Skor Tsukamoto</th>
-            </tr>
-          </thead>
-          <tbody id="tableRows"></tbody>
-        </table>
-      </div>
-    </div>
-  </section>
-
-</main>
-
-<script>
-// =====================================================================
-// STATE
-// =====================================================================
-let shops = [];
-let userLat = null, userLng = null;
-let mapInstance = null;
-let tableOpen = false;
-let weights = { harga: 35, jarak: 30, jam: 20, popularitas: 15 };
-let nowDay = new Date().getDay();      // 0=Sun … 6=Sat
-let nowMinutes = new Date().getHours() * 60 + new Date().getMinutes();
-
-// =====================================================================
-// STEP NAVIGATION
-// =====================================================================
-function goToStep(n) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.getElementById('sec' + n).classList.add('active');
-  [1,2,3].forEach(i => {
-    const el = document.getElementById('stepEl' + i);
-    el.classList.remove('active','done');
-    if (i < n) el.classList.add('done');
-    else if (i === n) el.classList.add('active');
-  });
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// =====================================================================
-// CURRENT TIME DISPLAY
-// =====================================================================
-(function initTimeDisplay() {
-  const days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-  const now = new Date();
-  const dayName = days[now.getDay()];
-  const hh = String(now.getHours()).padStart(2,'0');
-  const mm = String(now.getMinutes()).padStart(2,'0');
-  document.getElementById('timeInfoText').innerHTML =
-    `Hari ini: <strong>${dayName}, ${hh}:${mm} WIB</strong> — filter hanya kedai yang sedang buka`;
-})();
-
-// =====================================================================
-// UPLOAD
-// =====================================================================
-const uploadZone = document.getElementById('uploadZone');
-const fileInput  = document.getElementById('fileInput');
-
-uploadZone.addEventListener('click', () => fileInput.click());
-uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
-uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
-uploadZone.addEventListener('drop', e => {
-  e.preventDefault(); uploadZone.classList.remove('drag-over');
-  if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
-});
-fileInput.addEventListener('change', e => { if (e.target.files[0]) handleFile(e.target.files[0]); });
-
-function handleFile(file, onLoaded) {
-  const reader = new FileReader();
-  reader.onload = e => {
-    try {
-      const wb = XLSX.read(e.target.result, { type: 'binary' });
-      const ws = wb.Sheets[wb.SheetNames[0]];
-      const raw = XLSX.utils.sheet_to_json(ws, { raw: false, defval: '' });
-      shops = raw.map(parseShop).filter(Boolean);
-      document.getElementById('dataCount').textContent = shops.length + ' kedai kopi';
-      document.getElementById('dataFileName').textContent = '📄 ' + file.name;
-      document.getElementById('dataPreview').classList.add('show');
-      if (onLoaded) onLoaded();
-    } catch(err) { alert('Gagal membaca file Excel: ' + err.message); }
-  };
-  reader.readAsBinaryString(file);
-}
-
-// File handed over from the landing page (Upload Data, then Mulai): load it and skip straight to Preferensi.
-(async function loadHandedOverFile() {
-  let raw = null;
-  try { raw = sessionStorage.getItem('spk_upload'); sessionStorage.removeItem('spk_upload'); } catch (e) {}
-  if (!raw) return;
-  try {
-    const { name, dataUrl } = JSON.parse(raw);
-    const blob = await (await fetch(dataUrl)).blob();
-    handleFile(new File([blob], name, { type: blob.type }), () => goToStep(2));
-  } catch (e) { /* fall back to the manual upload step */ }
-})();
-
-function parseShop(row) {
-  try {
-    const num   = s => parseFloat(String(s||'0').replace(/\./g,'').replace(',','.')) || 0;
-    const coord = s => parseFloat(String(s||'0').replace(',','.')) || 0;
-    return {
-      nama:       String(row.nama_maps||'').trim(),
-      kecamatan:  String(row.kecamatan||'').trim(),
-      harga_min:  num(row.harga_min),
-      harga_max:  num(row.harga_max),
-      rating:     coord(row.rating),
-      ulasan:     num(row.jumlah_ulasan),
-      lat:        coord(row.lat),
-      lng:        coord(row.lng),
-      bisa_tempat: String(row.bisa_di_tempat||'').toLowerCase() === 'ya',
-      buka_24jam:  String(row.buka_24_jam||'').toLowerCase() === 'ya',
-      jadwal: {
-        0: { buka: row.minggu_buka,  tutup: row.minggu_tutup  },
-        1: { buka: row.senin_buka,   tutup: row.senin_tutup   },
-        2: { buka: row.selasa_buka,  tutup: row.selasa_tutup  },
-        3: { buka: row.rabu_buka,    tutup: row.rabu_tutup    },
-        4: { buka: row.kamis_buka,   tutup: row.kamis_tutup   },
-        5: { buka: row.jumat_buka,   tutup: row.jumat_tutup   },
-        6: { buka: row.sabtu_buka,   tutup: row.sabtu_tutup   },
-      },
-      link: String(row.link_maps||'').trim(),
-    };
-  } catch { return null; }
-}
-
-document.getElementById('btnToPrefs').addEventListener('click', () => {
-  if (!shops.length) return;
-  goToStep(2);
-});
-
-// =====================================================================
-// GEOLOCATION — auto on page load
-// =====================================================================
-function detectLocation() {
-  const st = document.getElementById('locStatus');
-  st.className = 'loc-status loading';
-  st.textContent = '📡 Mendeteksi lokasi otomatis...';
-  if (!navigator.geolocation) {
-    st.className = 'loc-status err';
-    st.textContent = '✗ Browser tidak mendukung geolocation. Masukkan koordinat manual.';
-    return;
-  }
-  navigator.geolocation.getCurrentPosition(
-    pos => {
-      userLat = pos.coords.latitude;
-      userLng = pos.coords.longitude;
-      document.getElementById('inputLat').value = userLat.toFixed(6);
-      document.getElementById('inputLng').value = userLng.toFixed(6);
-      st.className = 'loc-status ok';
-      st.textContent = `✓ Lokasi terdeteksi: ${userLat.toFixed(5)}, ${userLng.toFixed(5)}`;
-    },
-    () => {
-      st.className = 'loc-status err';
-      st.textContent = '✗ Gagal deteksi. Silakan masukkan koordinat manual di bawah.';
-    },
-    { timeout: 8000 }
-  );
-}
-
-// Auto-detect on page load
-window.addEventListener('DOMContentLoaded', detectLocation);
-document.getElementById('btnRedetect').addEventListener('click', detectLocation);
-
-// Sync manual inputs to userLat/Lng
-document.getElementById('inputLat').addEventListener('input', e => { userLat = parseFloat(e.target.value) || null; });
-document.getElementById('inputLng').addEventListener('input', e => { userLng = parseFloat(e.target.value) || null; });
-
-// =====================================================================
-// WEIGHT SLIDERS
-// =====================================================================
-const sliderKeys = ['harga','jarak','jam','popularitas'];
-function cap(s) { return s[0].toUpperCase() + s.slice(1); }
-
-function updateWeightUI() {
-  sliderKeys.forEach(k => {
-    document.getElementById('slider'+cap(k)).value = weights[k];
-    document.getElementById('val'+cap(k)).textContent = weights[k];
-  });
-  const total = sliderKeys.reduce((s,k) => s + weights[k], 0);
-  const el = document.getElementById('weightTotal');
-  el.textContent = `Total: ${total}${total===100?' ✓':' — harus 100'}`;
-  el.className = 'weight-total ' + (total===100?'ok':'err');
-}
-
-function handleSlider(key, rawVal) {
-  let newVal = Math.round(parseInt(rawVal)/5)*5;
-  newVal = Math.max(10, Math.min(80, newVal));
-  const others = sliderKeys.filter(k => k !== key);
-  if (100 - newVal < others.length * 10) newVal = 100 - others.length * 10;
-  const rem = 100 - newVal;
-  const prevTotal = others.reduce((s,k) => s + weights[k], 0);
-  if (prevTotal === 0) {
-    const each = Math.floor(rem / others.length);
-    others.forEach(k => weights[k] = each);
-    weights[others[0]] += rem - others.reduce((s,k) => s + weights[k], 0);
-  } else {
-    let assigned = 0;
-    others.forEach((k, i) => {
-      if (i < others.length - 1) {
-        const share = Math.round(rem * weights[k] / prevTotal / 5) * 5;
-        weights[k] = Math.max(10, share);
-        assigned += weights[k];
-      } else {
-        weights[k] = Math.max(10, rem - assigned);
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>SPK Coffee Shop – Metode Tsukamoto</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
-    });
-  }
-  weights[key] = newVal;
-  const total = sliderKeys.reduce((s,k) => s + weights[k], 0);
-  if (total !== 100) weights[others[others.length-1]] += 100 - total;
-  updateWeightUI();
-}
+      :root {
+        --bg: #f8f7f3;
+        --surface: #ffffff;
+        --card: #ffffff;
+        --border: #d9d6d0;
+        --track: #efebe4;
+        --accent: #ff7a2f;
+        --accent-dim: #e86a1f;
+        --accent-text: #b24c19;
+        --green: #2f7d4a;
+        --red: #c0392b;
+        --text: #171717;
+        --muted: #74716c;
+        --r: 12px;
+        --shadow:
+          0 1px 2px rgb(23 23 23 / 0.06), 0 8px 24px rgb(23 23 23 / 0.06);
+      }
+      body {
+        font-family: "Onest", ui-sans-serif, system-ui, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        line-height: 1.5;
+      }
 
-sliderKeys.forEach(k => {
-  document.getElementById('slider'+cap(k)).addEventListener('input', e => handleSlider(k, e.target.value));
-});
+      /* HEADER */
+      header {
+        text-align: center;
+        padding: 2.2rem 1rem 1.8rem;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface);
+      }
+      header h1 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--accent-text);
+        letter-spacing: -0.5px;
+      }
+      header p {
+        color: var(--muted);
+        margin-top: 0.35rem;
+        font-size: 0.9rem;
+      }
 
-// =====================================================================
-// TSUKAMOTO FUZZY LOGIC
-// =====================================================================
-function haversine(lat1, lng1, lat2, lng2) {
-  const R = 6371, r = Math.PI/180;
-  const dLat = (lat2-lat1)*r, dLng = (lng2-lng1)*r;
-  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*r)*Math.cos(lat2*r)*Math.sin(dLng/2)**2;
-  return R * 2 * Math.asin(Math.sqrt(a));
-}
+      /* STEPS */
+      .steps {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 1.1rem 1rem;
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+      }
+      .step-item {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.4rem 1rem;
+        border-radius: 999px;
+        font-size: 0.84rem;
+        color: var(--muted);
+        transition: all 0.2s;
+      }
+      .step-item.active {
+        background: var(--accent);
+        color: #171717;
+        font-weight: 600;
+      }
+      .step-item.done {
+        color: var(--green);
+      }
+      .step-num {
+        width: 21px;
+        height: 21px;
+        border-radius: 50%;
+        border: 2px solid currentColor;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+      .step-line {
+        width: 32px;
+        height: 1px;
+        background: var(--border);
+        flex-shrink: 0;
+      }
 
-function parseTime(str) {
-  if (!str || str==='-' || !str.trim()) return null;
-  const p = String(str).split(':');
-  return parseInt(p[0])*60 + (parseInt(p[1])||0);
-}
+      /* MAIN */
+      main {
+        max-width: 940px;
+        margin: 0 auto;
+        padding: 2rem 1rem 4rem;
+      }
+      .section {
+        display: none;
+      }
+      .section.active {
+        display: block;
+      }
 
-function getTodayHours(shop) {
-  if (shop.buka_24jam) return { buka: 0, tutup: 1440 };
-  const j = shop.jadwal[nowDay];
-  if (!j) return null;
-  const buka = parseTime(j.buka), tutup = parseTime(j.tutup);
-  if (buka===null || tutup===null) return null;
-  return { buka, tutup };
-}
+      /* UPLOAD */
+      .upload-zone {
+        border: 2px dashed var(--border);
+        border-radius: var(--r);
+        padding: 3.5rem 2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        background: var(--card);
+      }
+      .upload-zone:hover,
+      .upload-zone.drag-over {
+        border-color: var(--accent);
+        background: rgba(255, 122, 47, 0.06);
+      }
+      .upload-icon {
+        font-size: 2.6rem;
+        margin-bottom: 0.9rem;
+      }
+      .upload-zone h2 {
+        font-size: 1.1rem;
+        margin-bottom: 0.4rem;
+      }
+      .upload-zone p {
+        color: var(--muted);
+        font-size: 0.87rem;
+      }
+      #fileInput {
+        display: none;
+      }
 
-// Tsukamoto defuzzification (weighted average of crisp outputs per rule)
-// Output membership: BAIK (monoton naik) μ(z)=z → z=α
-//                    BURUK (monoton turun) μ(z)=1-z → z=1-α
-function tsukamotoDefuzz(alpha_baik, alpha_buruk) {
-  const z_baik  = alpha_baik;
-  const z_buruk = 1 - alpha_buruk;
-  const sumAlpha = alpha_baik + alpha_buruk;
-  if (sumAlpha === 0) return 0.5;
-  return (alpha_baik * z_baik + alpha_buruk * z_buruk) / sumAlpha;
-}
+      .data-preview {
+        display: none;
+        margin-top: 1.4rem;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--r);
+        padding: 1.1rem 1.4rem;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .data-preview.show {
+        display: flex;
+      }
+      .data-info {
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+      }
+      .badge-green {
+        background: #dff1e4;
+        color: #1f6b3a;
+        border-radius: 999px;
+        padding: 0.22rem 0.85rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
 
-// Harga: himpunan MURAH dan MAHAL terhadap rentang [userMin, userMax]
-function tsukamotoHarga(shop, userMin, userMax) {
-  if (userMax <= 0) return 0.5; // tidak ada batasan harga → netral
-  const h = shop.harga_min;
-  const range = Math.max(1, userMax - userMin);
-  // μ_MURAH: 1 jika h≤userMin, turun linier, 0 jika h≥userMax
-  const mu_murah = h <= userMin ? 1.0 : h < userMax ? (userMax - h) / range : 0.0;
-  // μ_MAHAL: 0 jika h≤userMin, naik linier, 1 jika h≥userMax
-  const mu_mahal = h <= userMin ? 0.0 : h < userMax ? (h - userMin) / range : 1.0;
-  // Rule 1: IF Harga=MURAH THEN Skor=BAIK
-  // Rule 2: IF Harga=MAHAL THEN Skor=BURUK
-  return tsukamotoDefuzz(mu_murah, mu_mahal);
-}
+      /* BUTTONS */
+      .btn {
+        font-family: inherit;
+        padding: 0.6rem 1.3rem;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: all 0.2s;
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: #171717;
+      }
+      .btn-primary:hover {
+        background: #ff8c4d;
+      }
+      .btn-primary:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+      .btn-outline {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text);
+      }
+      .btn-outline:hover {
+        border-color: var(--accent-text);
+        color: var(--accent-text);
+      }
+      .btn-sm {
+        padding: 0.38rem 0.85rem;
+        font-size: 0.82rem;
+      }
 
-// Jarak: himpunan DEKAT dan JAUH terhadap referensi maxJarak (default 10km)
-function tsukamotoJarak(distance, maxJarak) {
-  const ref = maxJarak > 0 ? maxJarak : 10;
-  // μ_DEKAT: 1 di d=0, turun linier ke 0 di d=ref
-  const mu_dekat = Math.max(0, 1 - distance / ref);
-  // μ_JAUH: 0 di d=0, naik linier ke 1 di d=ref
-  const mu_jauh  = Math.min(1, distance / ref);
-  // Rule 1: IF Jarak=DEKAT THEN Skor=BAIK
-  // Rule 2: IF Jarak=JAUH  THEN Skor=BURUK
-  return tsukamotoDefuzz(mu_dekat, mu_jauh);
-}
+      /* CARDS */
+      .card {
+        background: var(--card);
+        border-radius: var(--r);
+        padding: 1.4rem;
+        box-shadow: var(--shadow);
+      }
+      .card-title {
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--accent-text);
+        margin-bottom: 1.1rem;
+      }
+      .prefs-grid {
+        display: grid;
+        gap: 1.1rem;
+      }
 
-// Jam: himpunan CUKUP (sisa ≥120 menit) dan TERBATAS (sisa <60 menit)
-function tsukamotoJam(shop, departMinutes) {
-  if (shop.buka_24jam) return 1.0;
-  const hours = getTodayHours(shop);
-  if (!hours) return 0;
-  const sisa = hours.tutup - departMinutes; // menit tersisa saat berangkat
-  // μ_CUKUP: 0 jika sisa<60, naik linier ke 1 jika sisa≥120
-  const mu_cukup    = sisa >= 120 ? 1.0 : sisa >= 60 ? (sisa - 60) / 60 : 0.0;
-  // μ_TERBATAS: 1 jika sisa<60, turun linier ke 0 jika sisa≥120
-  const mu_terbatas = sisa >= 120 ? 0.0 : sisa >= 60 ? (120 - sisa) / 60 : 1.0;
-  // Rule 1: IF Jam=CUKUP     THEN Skor=BAIK
-  // Rule 2: IF Jam=TERBATAS  THEN Skor=BURUK
-  return tsukamotoDefuzz(mu_cukup, mu_terbatas);
-}
+      /* FORM */
+      .form-row-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.9rem;
+      }
+      .form-row-3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 0.9rem;
+      }
+      .inp-group {
+        margin-bottom: 0.85rem;
+      }
+      .inp-group:last-child {
+        margin-bottom: 0;
+      }
+      label {
+        display: block;
+        font-size: 0.84rem;
+        color: var(--muted);
+        margin-bottom: 0.32rem;
+      }
+      input[type="number"],
+      input[type="time"] {
+        width: 100%;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--text);
+        padding: 0.58rem 0.82rem;
+        font-size: 0.92rem;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      input:focus {
+        border-color: var(--accent);
+      }
+      input::placeholder {
+        color: var(--muted);
+      }
 
-// Popularitas: gabungan himpunan BAGUS/BURUK dari rating dan jumlah ulasan
-function tsukamotoPopularitas(shop) {
-  const rating = shop.rating  || 0;
-  const ulasan  = shop.ulasan || 0;
+      /* INFO BOX */
+      .info-box {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        background: rgba(255, 122, 47, 0.08);
+        border: 1px solid rgba(255, 122, 47, 0.25);
+        font-size: 0.87rem;
+        margin-bottom: 1rem;
+      }
+      .info-box-icon {
+        font-size: 1.1rem;
+        flex-shrink: 0;
+      }
+      .info-box strong {
+        color: var(--accent-text);
+      }
 
-  // μ_RATING_BAGUS: 0 jika <3.5, naik linier ke 1 di ≥4.5
-  const mu_rating_bagus  = rating >= 4.5 ? 1.0 : rating >= 3.5 ? (rating - 3.5) : 0.0;
-  // μ_RATING_BURUK: 1 jika <3.0, turun linier ke 0 di ≥4.0
-  const mu_rating_buruk  = rating >= 4.0 ? 0.0 : rating >= 3.0 ? (4.0 - rating) : 1.0;
+      /* LOC STATUS */
+      .loc-row {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        margin-bottom: 0.9rem;
+      }
+      .loc-status {
+        font-size: 0.82rem;
+        flex: 1;
+      }
+      .loc-status.ok {
+        color: var(--green);
+      }
+      .loc-status.err {
+        color: var(--red);
+      }
+      .loc-status.loading {
+        color: var(--accent-text);
+      }
 
-  // μ_ULASAN_BANYAK: 0 jika <100, naik linier ke 1 di ≥500
-  const mu_ulasan_banyak  = ulasan >= 500 ? 1.0 : ulasan >= 100 ? (ulasan - 100) / 400 : 0.0;
-  // μ_ULASAN_SEDIKIT: 1 jika <50, turun linier ke 0 di ≥300
-  const mu_ulasan_sedikit = ulasan >= 300 ? 0.0 : ulasan >= 50  ? (300 - ulasan) / 250 : 1.0;
+      /* WEIGHT SLIDERS */
+      .weight-row {
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+        margin-bottom: 0.9rem;
+      }
+      .weight-label {
+        width: 150px;
+        font-size: 0.87rem;
+        flex-shrink: 0;
+      }
+      .weight-label small {
+        display: block;
+        font-size: 0.74rem;
+        color: var(--muted);
+        margin-top: 1px;
+      }
+      .weight-slider-wrap {
+        flex: 1;
+      }
+      input[type="range"] {
+        width: 100%;
+        accent-color: var(--accent);
+        cursor: pointer;
+      }
+      .weight-val {
+        width: 42px;
+        text-align: right;
+        font-weight: 700;
+        font-size: 1rem;
+        color: var(--accent);
+        flex-shrink: 0;
+      }
+      .weight-total {
+        text-align: right;
+        font-size: 0.8rem;
+        margin-top: 0.25rem;
+      }
+      .weight-total.ok {
+        color: var(--green);
+      }
+      .weight-total.err {
+        color: var(--red);
+      }
 
-  // Rule 1: IF Rating=BAGUS AND Ulasan=BANYAK  THEN Popularitas=BAIK
-  const alpha_baik  = Math.min(mu_rating_bagus, mu_ulasan_banyak);
-  // Rule 2: IF Rating=BURUK OR  Ulasan=SEDIKIT THEN Popularitas=BURUK
-  const alpha_buruk = Math.max(mu_rating_buruk, mu_ulasan_sedikit);
+      /* ACTION */
+      .action-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1.6rem;
+      }
+      .hidden {
+        display: none !important;
+      }
 
-  return tsukamotoDefuzz(alpha_baik, alpha_buruk);
-}
+      /* MAP */
+      #map {
+        height: 320px;
+        border-radius: var(--r);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+      }
 
-function processShops(prefs) {
-  const { userMin, userMax, maxJarak, departMinutes } = prefs;
-  if (!userLat || !userLng) return [];
+      /* RESULTS */
+      .results-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 1.8rem 0 1rem;
+      }
+      .results-header h2 {
+        font-size: 1.1rem;
+      }
+      .top3-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
 
-  // ── TAHAP 1: FILTER KERAS ─────────────────────────────────────────
-  // Buang data yang tidak memenuhi kriteria sebelum scoring
-  const filtered = shops.filter(shop => {
-    if (!shop.bisa_tempat) return false;
-    if (!shop.lat || !shop.lng) return false;
-    if (userMax > 0 && shop.harga_min > userMax) return false;   // harga terlalu mahal
-    if (!shop.buka_24jam) {
-      const hours = getTodayHours(shop);
-      if (!hours) return false;                                    // tutup hari ini
-      if (nowMinutes < hours.buka || nowMinutes >= hours.tutup) return false; // belum/sudah tutup
-    }
-    return true;
-  });
+      .result-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        border-radius: var(--r);
+        padding: 1.35rem;
+        position: relative;
+        overflow: hidden;
+      }
+      .result-card.rank-1 {
+        border-color: var(--accent);
+      }
+      .result-card.rank-2 {
+        border-color: #9a9a9a;
+      }
+      .result-card.rank-3 {
+        border-color: #c07844;
+      }
+      .rank-badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 0.26rem 0.72rem;
+        font-size: 0.7rem;
+        font-weight: 700;
+        border-bottom-left-radius: 8px;
+      }
+      .rank-1 .rank-badge {
+        background: var(--accent);
+        color: #171717;
+      }
+      .rank-2 .rank-badge {
+        background: #9a9a9a;
+        color: #171717;
+      }
+      .rank-3 .rank-badge {
+        background: #c07844;
+        color: #171717;
+      }
 
-  // Hitung jarak lalu filter berdasarkan maxJarak
-  const withDist = filtered
-    .map(shop => ({ shop, distance: haversine(userLat, userLng, shop.lat, shop.lng) }))
-    .filter(({ distance }) => maxJarak <= 0 || distance <= maxJarak);
+      .rc-name {
+        font-size: 0.98rem;
+        font-weight: 700;
+        margin-bottom: 0.28rem;
+        padding-right: 70px;
+      }
+      .rc-loc {
+        font-size: 0.79rem;
+        color: var(--muted);
+        margin-bottom: 0.85rem;
+      }
+      .rc-score-bar {
+        height: 5px;
+        background: var(--border);
+        border-radius: 999px;
+        margin-bottom: 0.9rem;
+        overflow: hidden;
+      }
+      .rc-score-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--accent-dim), var(--accent));
+        border-radius: 999px;
+      }
+      .rc-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 0.32rem;
+        font-size: 0.83rem;
+      }
+      .rc-meta-item {
+        display: flex;
+        justify-content: space-between;
+      }
+      .rc-meta-item .lbl {
+        color: var(--muted);
+      }
+      .rc-meta-item .val {
+        font-weight: 600;
+      }
 
-  // ── TAHAP 2: SCORING TSUKAMOTO ────────────────────────────────────
-  const scored = withDist.map(({ shop, distance }) => {
-    const sHarga       = tsukamotoHarga(shop, userMin, userMax);
-    const sJarak       = tsukamotoJarak(distance, maxJarak);
-    const sJam         = tsukamotoJam(shop, departMinutes);
-    const sPopularitas = tsukamotoPopularitas(shop);
-    const finalScore   = (
-      weights.harga       * sHarga       +
-      weights.jarak       * sJarak       +
-      weights.jam         * sJam         +
-      weights.popularitas * sPopularitas
-    ) / 100;
-    return { shop, distance, scores: { harga: sHarga, jarak: sJarak, jam: sJam, popularitas: sPopularitas }, finalScore };
-  });
+      .score-breakdown {
+        display: flex;
+        gap: 0.4rem;
+        margin-top: 0.9rem;
+        font-size: 0.74rem;
+      }
+      .score-pill {
+        flex: 1;
+        text-align: center;
+        padding: 0.28rem;
+        background: var(--surface);
+        border-radius: 6px;
+      }
+      .score-pill .sp-label {
+        color: var(--muted);
+        display: block;
+        margin-bottom: 2px;
+      }
+      .sp-val {
+        font-weight: 700;
+      }
+      .sp-val.high {
+        color: var(--green);
+      }
+      .sp-val.mid {
+        color: var(--accent-text);
+      }
+      .sp-val.low {
+        color: var(--red);
+      }
 
-  // ── TAHAP 3: URUT BERDASARKAN SKOR TERTINGGI (SESUAI BOBOT PRIORITAS) ──
-  scored.sort((a, b) => b.finalScore - a.finalScore);
-  return scored;
-}
+      .rc-reason {
+        margin-top: 0.9rem;
+        padding: 0.7rem 0.85rem;
+        background: var(--surface);
+        border-radius: 6px;
+        font-size: 0.79rem;
+        color: var(--muted);
+        line-height: 1.4;
+      }
 
-// =====================================================================
-// RENDER
-// =====================================================================
-function formatRp(n) { return 'Rp' + Math.round(n).toLocaleString('id-ID'); }
-function minsToTime(m) {
-  if (m >= 1440) return '24:00';
-  return String(Math.floor(m/60)).padStart(2,'0') + ':' + String(m%60).padStart(2,'0');
-}
+      /* TABLE */
+      .table-wrap {
+        background: var(--card);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        border-radius: var(--r);
+        overflow: hidden;
+      }
+      .table-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.4rem;
+        cursor: pointer;
+        user-select: none;
+      }
+      .table-toggle:hover {
+        background: rgba(23, 23, 23, 0.03);
+      }
+      .table-toggle h3 {
+        font-size: 0.93rem;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.82rem;
+      }
+      thead th {
+        background: var(--surface);
+        padding: 0.62rem 0.9rem;
+        text-align: left;
+        color: var(--muted);
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.7rem;
+        letter-spacing: 0.05em;
+      }
+      tbody tr {
+        border-bottom: 1px solid var(--border);
+      }
+      tbody tr:last-child {
+        border: none;
+      }
+      tbody td {
+        padding: 0.65rem 0.9rem;
+        vertical-align: middle;
+      }
+      tbody tr:hover {
+        background: rgba(23, 23, 23, 0.025);
+      }
+      .tbl-score-bar {
+        display: inline-block;
+        width: 60px;
+        height: 4px;
+        background: var(--border);
+        border-radius: 999px;
+        vertical-align: middle;
+        overflow: hidden;
+        margin-left: 0.4rem;
+      }
+      .tbl-score-fill {
+        height: 100%;
+        background: var(--accent);
+        border-radius: 999px;
+      }
 
-function generateReason(item) {
-  const { shop, distance, scores } = item;
-  const r = [];
-  if (scores.harga >= 0.9) r.push(`harga sangat pas di kantong (mulai ${formatRp(shop.harga_min)})`);
-  else if (scores.harga >= 0.7) r.push(`harga sesuai budget (mulai ${formatRp(shop.harga_min)})`);
-  else if (scores.harga >= 0.5) r.push(`harga masih dalam batas`);
-  if (scores.jarak >= 0.85) r.push(`sangat dekat (${distance.toFixed(1)} km)`);
-  else if (scores.jarak >= 0.5) r.push(`jarak terjangkau (${distance.toFixed(1)} km)`);
-  if (scores.jam >= 0.9) r.push(`masih buka sampai kamu pulang`);
-  else if (scores.jam >= 0.5) r.push(`jam tutup mendekati waktu kepulanganmu`);
-  if (scores.popularitas >= 0.8) r.push(`sangat populer (${shop.rating}★, ${Math.round(shop.ulasan).toLocaleString('id-ID')} ulasan)`);
-  else if (scores.popularitas >= 0.6) r.push(`cukup populer (${shop.rating}★)`);
-  if (!r.length) r.push('memenuhi semua kriteria');
-  return r.join(', ') + '.';
-}
+      /* ALERT */
+      .alert {
+        padding: 0.8rem 1rem;
+        border-radius: 8px;
+        font-size: 0.87rem;
+        margin-bottom: 0.9rem;
+      }
+      .alert-warn {
+        background: rgba(192, 57, 43, 0.07);
+        border: 1px solid var(--red);
+        color: #9b2c2c;
+      }
+      .alert-info {
+        background: rgba(47, 125, 74, 0.08);
+        border: 1px solid var(--green);
+        color: #1f6b3a;
+      }
 
-function renderResults(results) {
-  // MAP
-  if (!mapInstance) {
-    mapInstance = L.map('map').setView([userLat, userLng], 13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© <a href="https://openstreetmap.org">OpenStreetMap</a>', maxZoom: 18
-    }).addTo(mapInstance);
-  } else {
-    mapInstance.setView([userLat, userLng], 13);
-    mapInstance.eachLayer(l => { if (l instanceof L.Marker || l instanceof L.CircleMarker) mapInstance.removeLayer(l); });
-  }
+      /* LOADING */
+      .loading-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(248, 247, 243, 0.88);
+        z-index: 999;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .loading-overlay.show {
+        display: flex;
+      }
+      .spinner {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 3px solid var(--border);
+        border-top-color: var(--accent);
+        animation: spin 0.75s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
 
-  L.circleMarker([userLat, userLng], { radius: 10, fillColor: '#5a9e6e', color: '#fff', weight: 2, fillOpacity: 0.9 })
-    .addTo(mapInstance).bindPopup('<b>📍 Lokasi Kamu</b>');
+      a {
+        color: var(--accent-text);
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
 
-  results.slice(3).forEach(item => {
-    L.circleMarker([item.shop.lat, item.shop.lng], { radius: 5, fillColor: '#3a3f5a', color: '#2a2f4a', weight: 1, fillOpacity: 0.7 })
-      .addTo(mapInstance).bindPopup(`<b>${item.shop.nama}</b><br>Skor: ${(item.finalScore*100).toFixed(1)}`);
-  });
+      @media (max-width: 600px) {
+        .form-row-2,
+        .form-row-3 {
+          grid-template-columns: 1fr;
+        }
+        .top3-grid {
+          grid-template-columns: 1fr;
+        }
+        .step-item {
+          padding: 0.38rem 0.6rem;
+          font-size: 0.78rem;
+        }
+        .step-line {
+          width: 18px;
+        }
+        .weight-label {
+          width: 115px;
+        }
+      }
 
-  const colors = ['#c9a96e','#c0c0c0','#c07844'];
-  results.slice(0,3).forEach((item, i) => {
-    const icon = L.divIcon({
-      html: `<div style="background:${colors[i]};color:#0d0f18;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.5)">${i+1}</div>`,
-      className:'', iconSize:[30,30], iconAnchor:[15,15]
-    });
-    L.marker([item.shop.lat, item.shop.lng], { icon }).addTo(mapInstance)
-      .bindPopup(`<b>#${i+1} ${item.shop.nama}</b><br>${item.distance.toFixed(2)} km — Skor: ${(item.finalScore*100).toFixed(1)}`);
-  });
+      /* =================================================================
+       FILTER PANEL (.flt-*) — redesign Step 2
+       ================================================================= */
+      .flt-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        align-items: start;
+      }
+      .flt-panel {
+        background: var(--card);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: var(--shadow);
+      }
+      .flt-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      .flt-head h2 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+      .flt-sec + .flt-sec {
+        margin-top: 24px;
+      }
 
-  // Alert
-  const alertEl = document.getElementById('alertArea');
-  if (!results.length) {
-    alertEl.innerHTML = `<div class="alert alert-warn">⚠️ Tidak ada kedai yang memenuhi semua filter saat ini. Coba: perlebar rentang harga, tambah jarak, atau mundurkan waktu kepulangan.</div>`;
-  } else {
-    alertEl.innerHTML = `<div class="alert alert-info">✓ Ditemukan <strong>${results.length} kedai</strong> yang sesuai kriteria. Menampilkan 3 rekomendasi terbaik.</div>`;
-  }
+      .flt-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.85rem;
+        color: var(--muted);
+        margin: 0 0 10px;
+      }
+      .flt-label-row {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .flt-sublabel {
+        display: block;
+        font-size: 0.8rem;
+        color: var(--muted);
+        margin: 14px 0 6px;
+      }
+      .flt-hint {
+        font-size: 0.78rem;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .flt-help {
+        font-size: 0.8rem;
+        color: var(--muted);
+        margin-top: 10px;
+        line-height: 1.45;
+      }
+      .flt-help strong {
+        color: var(--text);
+        font-weight: 600;
+      }
+      .flt-ico {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
 
-  // Top 3 cards
-  const grid = document.getElementById('top3Grid');
-  grid.innerHTML = '';
-  const labels = ['Terbaik','Runner Up','Ketiga'];
+      .flt-pill-btn {
+        border: 1px solid var(--border);
+        background: var(--card);
+        color: var(--text);
+        font: inherit;
+        font-size: 0.82rem;
+        font-weight: 500;
+        padding: 7px 14px;
+        border-radius: 999px;
+        cursor: pointer;
+        transition:
+          border-color 0.18s,
+          background 0.18s,
+          box-shadow 0.18s;
+        white-space: nowrap;
+      }
+      .flt-pill-btn:hover {
+        border-color: var(--text);
+      }
+      .flt-pill-btn:active {
+        background: var(--track);
+      }
 
-  results.slice(0,3).forEach((item, i) => {
-    const { shop, distance, scores, finalScore } = item;
-    const hours = getTodayHours(shop);
-    const tutupStr = !hours ? '—' : shop.buka_24jam ? '24 Jam' : minsToTime(hours.tutup);
-    const sc = s => s >= 0.7 ? 'high' : s >= 0.4 ? 'mid' : 'low';
+      .flt-panel .info-box {
+        margin-bottom: 0;
+        border-radius: 12px;
+      }
+      .flt-panel .loc-row {
+        margin-bottom: 0;
+      }
+      .flt-two {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .flt-panel input.flt-input {
+        width: 100%;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        color: var(--text);
+        padding: 10px 12px;
+        font: inherit;
+        font-size: 0.92rem;
+        transition:
+          border-color 0.18s,
+          box-shadow 0.18s;
+      }
+      .flt-panel input.flt-input:focus {
+        border-color: var(--accent-text);
+      }
+      .flt-panel input.flt-sr {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        border: 0;
+        white-space: nowrap;
+      }
+      .flt-sec {
+        position: relative;
+      }
 
-    const card = document.createElement('div');
-    card.className = `result-card rank-${i+1}`;
-    card.innerHTML = `
-      <div class="rank-badge">#${i+1} ${labels[i]}</div>
+      /* Histogram */
+      .flt-hist {
+        display: flex;
+        align-items: flex-end;
+        gap: 2px;
+        height: 56px;
+        margin-bottom: 10px;
+      }
+      .flt-hist[hidden],
+      .flt-hint[hidden] {
+        display: none;
+      }
+      .flt-bar {
+        flex: 1;
+        min-height: 2px;
+        border-radius: 2px;
+        background: var(--accent);
+        opacity: 0.2;
+        transition: opacity 0.18s;
+      }
+      .flt-bar.in {
+        opacity: 1;
+      }
+
+      /* Slider (tunggal & ganda) */
+      .flt-range,
+      .flt-dual input {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        margin: 0;
+        background: transparent;
+        cursor: pointer;
+      }
+      .flt-range {
+        height: 20px;
+        --p: 0;
+      }
+      .flt-range::-webkit-slider-runnable-track {
+        height: 6px;
+        border-radius: 999px;
+        background: linear-gradient(
+          to right,
+          var(--accent) calc(9px + var(--p) * (100% - 18px)),
+          var(--track) calc(9px + var(--p) * (100% - 18px))
+        );
+      }
+      .flt-range::-moz-range-track {
+        height: 6px;
+        border-radius: 999px;
+        background: var(--track);
+      }
+      .flt-range::-moz-range-progress {
+        height: 6px;
+        border-radius: 999px;
+        background: var(--accent);
+      }
+      .flt-range::-webkit-slider-thumb,
+      .flt-dual input::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #fff;
+        border: 2px solid var(--accent);
+        box-shadow: 0 1px 3px rgb(23 23 23 / 0.2);
+        transition: transform 0.15s;
+      }
+      .flt-range::-webkit-slider-thumb {
+        margin-top: -6px;
+      }
+      .flt-range::-moz-range-thumb,
+      .flt-dual input::-moz-range-thumb {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #fff;
+        border: 2px solid var(--accent);
+        box-shadow: 0 1px 3px rgb(23 23 23 / 0.2);
+      }
+      .flt-range:hover::-webkit-slider-thumb,
+      .flt-dual input:hover::-webkit-slider-thumb {
+        transform: scale(1.1);
+      }
+      .flt-panel .flt-range:focus-visible,
+      .flt-panel .flt-dual input:focus-visible {
+        outline: none;
+      }
+      .flt-range:focus-visible::-webkit-slider-thumb,
+      .flt-dual input:focus-visible::-webkit-slider-thumb {
+        box-shadow:
+          0 0 0 3px #fff,
+          0 0 0 5px var(--accent-text);
+      }
+      .flt-range:focus-visible::-moz-range-thumb,
+      .flt-dual input:focus-visible::-moz-range-thumb {
+        box-shadow:
+          0 0 0 3px #fff,
+          0 0 0 5px var(--accent-text);
+      }
+
+      .flt-dual {
+        position: relative;
+        height: 20px;
+        --a: 0;
+        --b: 1;
+      }
+      .flt-dual-track {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 7px;
+        height: 6px;
+        border-radius: 999px;
+        background: var(--track);
+      }
+      .flt-dual-fill {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        border-radius: 999px;
+        background: var(--accent);
+        left: calc(9px + var(--a) * (100% - 18px));
+        right: calc(9px + (1 - var(--b)) * (100% - 18px));
+      }
+      .flt-dual input {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 20px;
+        pointer-events: none;
+      }
+      .flt-dual input::-webkit-slider-runnable-track {
+        height: 20px;
+        background: transparent;
+      }
+      .flt-dual input::-moz-range-track {
+        background: transparent;
+      }
+      .flt-dual input::-webkit-slider-thumb {
+        pointer-events: auto;
+        margin-top: 1px;
+        cursor: grab;
+      }
+      .flt-dual input::-moz-range-thumb {
+        pointer-events: auto;
+        cursor: grab;
+      }
+
+      /* Badge nilai */
+      .flt-badge {
+        display: inline-block;
+        min-width: 40px;
+        text-align: center;
+        padding: 3px 10px;
+        border-radius: 999px;
+        background: var(--accent);
+        color: #171717;
+        font-size: 0.78rem;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+      }
+      .flt-badges {
+        position: relative;
+        height: 26px;
+        margin-top: 8px;
+      }
+      .flt-badge-pos {
+        position: absolute;
+        top: 0;
+        white-space: nowrap;
+      }
+      #fltBadgeMin {
+        left: calc(9px + var(--a, 0) * (100% - 18px));
+        transform: translateX(calc(-1 * var(--a, 0) * 100%));
+      }
+      #fltBadgeMax {
+        left: calc(9px + var(--b, 1) * (100% - 18px));
+        transform: translateX(calc(-1 * var(--b, 1) * 100%));
+      }
+      #fltBadgeJarak {
+        left: calc(9px + var(--p, 0) * (100% - 18px));
+        transform: translateX(calc(-1 * var(--p, 0) * 100%));
+      }
+      .flt-ends {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.74rem;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+
+      /* Bobot */
+      .flt-wrow {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+      .flt-wlabel {
+        width: 128px;
+        flex-shrink: 0;
+        margin: 0;
+        font-size: 0.9rem;
+        color: var(--text);
+      }
+      .flt-wlabel small {
+        display: block;
+        font-size: 0.74rem;
+        color: var(--muted);
+        margin-top: 1px;
+      }
+      .flt-wrow .flt-range {
+        flex: 1;
+        min-width: 0;
+      }
+      .flt-wrow .flt-badge {
+        width: 46px;
+        flex-shrink: 0;
+      }
+      .flt-panel .weight-total {
+        margin-top: 0;
+        text-align: right;
+      }
+
+      /* Footer sticky */
+      .flt-footer {
+        position: sticky;
+        bottom: 12px;
+        z-index: 5;
+        display: flex;
+        gap: 12px;
+        margin-top: 20px;
+        padding: 12px;
+        background: var(--card);
+        border-radius: 16px;
+        box-shadow:
+          0 -2px 10px rgb(23 23 23 / 0.05),
+          var(--shadow);
+      }
+      .flt-footer .btn {
+        padding: 13px 18px;
+        border-radius: 10px;
+        font-family: inherit;
+      }
+      .flt-footer .btn-outline {
+        flex: 0 0 34%;
+        background: var(--card);
+      }
+      .flt-footer .btn-primary {
+        flex: 1;
+      }
+
+      .flt-panel :focus-visible,
+      .flt-footer :focus-visible,
+      .flt-pill-btn:focus-visible {
+        outline: 2px solid var(--accent-text);
+        outline-offset: 2px;
+      }
+
+      @media (max-width: 767px) {
+        .flt-layout {
+          grid-template-columns: 1fr;
+        }
+        .flt-panel {
+          padding: 20px;
+        }
+        .flt-wlabel {
+          width: 104px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .flt-bar,
+        .flt-pill-btn,
+        .flt-range::-webkit-slider-thumb,
+        .flt-dual input::-webkit-slider-thumb {
+          transition: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="spinner"></div>
+      <div style="color: var(--muted); font-size: 0.9rem">
+        Memproses Tsukamoto...
+      </div>
+    </div>
+
+    <header>
+      <h1>☕ SPK Coffee Shop</h1>
+      <p>
+        Sistem Pendukung Keputusan – Metode Fuzzy Tsukamoto &nbsp;|&nbsp;
+        Kabupaten Sleman &amp; Kota Yogyakarta
+      </p>
+    </header>
+
+    <div class="steps">
+      <div class="step-item active" id="stepEl1">
+        <div class="step-num">1</div>
+        Upload Data
+      </div>
+      <div class="step-line"></div>
+      <div class="step-item" id="stepEl2">
+        <div class="step-num">2</div>
+        Preferensi
+      </div>
+      <div class="step-line"></div>
+      <div class="step-item" id="stepEl3">
+        <div class="step-num">3</div>
+        Hasil
+      </div>
+    </div>
+
+    <main>
+      <!-- STEP 1: UPLOAD -->
+      <section class="section active" id="sec1">
+        <div class="upload-zone" id="uploadZone">
+          <div class="upload-icon">📂</div>
+          <h2>Upload File Data Coffee Shop</h2>
+          <p style="margin-top: 0.5rem">
+            Drag &amp; drop file <strong>.xlsx</strong> ke sini, atau klik untuk
+            memilih
+          </p>
+          <p style="margin-top: 0.8rem; font-size: 0.76rem">
+            Kolom wajib:
+            <code
+              >nama_maps · harga_min · harga_max · lat · lng · bisa_di_tempat ·
+              buka_24_jam · senin_buka · senin_tutup</code
+            >
+            (dst. per hari)
+          </p>
+          <input type="file" id="fileInput" accept=".xlsx,.xls" />
+        </div>
+        <div class="data-preview" id="dataPreview">
+          <div class="data-info">
+            <span class="badge-green" id="dataCount">0 kedai</span>
+            <span
+              id="dataFileName"
+              style="font-size: 0.87rem; color: var(--muted)"
+            ></span>
+          </div>
+          <button class="btn btn-primary" id="btnToPrefs">
+            Lanjut ke Preferensi →
+          </button>
+        </div>
+      </section>
+
+      <!-- STEP 2: PREFERENCES -->
+      <section class="section" id="sec2">
+        <div class="flt-layout">
+          <!-- PANEL FILTER -->
+          <div class="flt-panel" role="group" aria-labelledby="fltTitle">
+            <div class="flt-head">
+              <h2 id="fltTitle">Filter</h2>
+              <button type="button" class="flt-pill-btn" id="fltReset">
+                Reset filter
+              </button>
+            </div>
+
+            <!-- Waktu Kunjungan -->
+            <div class="flt-sec">
+              <div class="flt-label">
+                <svg class="flt-ico" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M12 7v5l3 2" /></svg
+                >Waktu kunjungan
+              </div>
+              <div class="info-box" id="timeInfoBox">
+                <span class="info-box-icon">📅</span>
+                <span id="timeInfoText">Mendeteksi waktu...</span>
+              </div>
+              <p class="flt-help">
+                Sistem otomatis menggunakan hari dan jam saat ini untuk
+                menyaring kedai yang <strong>sedang buka</strong>. Hanya kedai
+                yang buka sekarang yang akan diproses.
+              </p>
+              <label class="flt-sublabel" for="inputJam"
+                >Estimasi jam pulang</label
+              >
+              <input
+                type="time"
+                id="inputJam"
+                class="flt-input"
+                value="22:00"
+              />
+            </div>
+
+            <!-- Lokasi -->
+            <div class="flt-sec">
+              <div class="flt-label">
+                <svg class="flt-ico" viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"
+                  />
+                  <circle cx="12" cy="10" r="2.5" /></svg
+                >Lokasi kamu
+              </div>
+              <div class="loc-row">
+                <span class="loc-status loading" id="locStatus" role="status"
+                  >📡 Mendeteksi lokasi otomatis...</span
+                >
+                <button type="button" class="flt-pill-btn" id="btnRedetect">
+                  ↺ Ulang
+                </button>
+              </div>
+              <div class="flt-two">
+                <div>
+                  <label class="flt-sublabel" for="inputLat">Latitude</label>
+                  <input
+                    type="number"
+                    id="inputLat"
+                    class="flt-input"
+                    placeholder="-7.75638"
+                    step="any"
+                  />
+                </div>
+                <div>
+                  <label class="flt-sublabel" for="inputLng">Longitude</label>
+                  <input
+                    type="number"
+                    id="inputLng"
+                    class="flt-input"
+                    placeholder="110.39322"
+                    step="any"
+                  />
+                </div>
+              </div>
+              <p class="flt-help">
+                Koordinat dapat diedit manual jika deteksi tidak akurat.
+              </p>
+            </div>
+
+            <!-- Harga: slider ganda + histogram -->
+            <div class="flt-sec">
+              <div class="flt-label-row">
+                <div class="flt-label">
+                  <svg class="flt-ico" viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                      d="M3 7h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"
+                    />
+                    <path d="M3 7l12-3v3" />
+                    <circle cx="16.5" cy="13.5" r="1" /></svg
+                  >Rentang harga per orang
+                </div>
+                <span class="flt-hint" id="fltAvg" hidden></span>
+              </div>
+              <div
+                class="flt-hist"
+                id="fltHist"
+                aria-hidden="true"
+                hidden
+              ></div>
+              <div class="flt-dual" id="fltDual">
+                <div class="flt-dual-track">
+                  <div class="flt-dual-fill"></div>
+                </div>
+                <input
+                  type="range"
+                  id="fltPriceMin"
+                  min="0"
+                  max="50000"
+                  step="1000"
+                  value="0"
+                  aria-label="Harga minimum per orang"
+                />
+                <input
+                  type="range"
+                  id="fltPriceMax"
+                  min="0"
+                  max="50000"
+                  step="1000"
+                  value="50000"
+                  aria-label="Harga maksimum per orang"
+                />
+              </div>
+              <div class="flt-badges" id="fltPriceBadges">
+                <span
+                  class="flt-badge flt-badge-pos flt-badge-l"
+                  id="fltBadgeMin"
+                  >Rp0</span
+                >
+                <span
+                  class="flt-badge flt-badge-pos flt-badge-r"
+                  id="fltBadgeMax"
+                  >Rp50.000</span
+                >
+              </div>
+              <div class="flt-ends">
+                <span id="fltEndLo">Rp0</span
+                ><span id="fltEndHi">Rp50.000</span>
+              </div>
+              <!-- sumber nilai asli yang dibaca logika filter -->
+              <input
+                type="number"
+                id="inputHargaMin"
+                class="flt-sr"
+                tabindex="-1"
+                aria-hidden="true"
+                placeholder="0"
+                min="0"
+                step="1000"
+                value="0"
+              />
+              <input
+                type="number"
+                id="inputHargaMax"
+                class="flt-sr"
+                tabindex="-1"
+                aria-hidden="true"
+                placeholder="50000"
+                min="0"
+                step="1000"
+                value="50000"
+              />
+            </div>
+
+            <!-- Jarak: slider tunggal -->
+            <div class="flt-sec">
+              <div class="flt-label-row">
+                <div class="flt-label">
+                  <svg class="flt-ico" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="6" cy="18" r="2" />
+                    <circle cx="18" cy="6" r="2" />
+                    <path d="M8 18h6a3 3 0 0 0 0-6h-4a3 3 0 0 1 0-6h6" /></svg
+                  >Jarak maksimal dari lokasiku
+                </div>
+                <span class="flt-hint">0 = semua jarak</span>
+              </div>
+              <div class="flt-single">
+                <input
+                  type="range"
+                  id="fltJarak"
+                  class="flt-range"
+                  min="0"
+                  max="100"
+                  step="0.5"
+                  value="0"
+                  aria-label="Jarak maksimal dalam kilometer"
+                />
+              </div>
+              <div class="flt-badges" id="fltJarakBadges">
+                <span class="flt-badge flt-badge-pos" id="fltBadgeJarak"
+                  >Semua</span
+                >
+              </div>
+              <div class="flt-ends"><span>0 km</span><span>100 km</span></div>
+              <input
+                type="number"
+                id="inputJarak"
+                class="flt-sr"
+                tabindex="-1"
+                aria-hidden="true"
+                placeholder="0 = semua jarak"
+                min="0"
+                max="100"
+                step="0.5"
+                value="0"
+              />
+            </div>
+          </div>
+
+          <!-- PANEL BOBOT -->
+          <div class="flt-panel" role="group" aria-labelledby="fltWTitle">
+            <div class="flt-head">
+              <h2 id="fltWTitle">Bobot prioritas</h2>
+              <span class="flt-hint">Total = 100</span>
+            </div>
+            <div class="flt-sec">
+              <div class="flt-wrow">
+                <label class="flt-wlabel" for="sliderHarga"
+                  >Harga <small>Keterjangkauan</small></label
+                >
+                <input
+                  type="range"
+                  id="sliderHarga"
+                  class="flt-range"
+                  min="10"
+                  max="70"
+                  step="5"
+                  value="35"
+                />
+                <span class="flt-badge" id="valHarga">35</span>
+              </div>
+              <div class="flt-wrow">
+                <label class="flt-wlabel" for="sliderJarak"
+                  >Jarak <small>Kedekatan lokasi</small></label
+                >
+                <input
+                  type="range"
+                  id="sliderJarak"
+                  class="flt-range"
+                  min="10"
+                  max="70"
+                  step="5"
+                  value="30"
+                />
+                <span class="flt-badge" id="valJarak">30</span>
+              </div>
+              <div class="flt-wrow">
+                <label class="flt-wlabel" for="sliderJam"
+                  >Jam operasional <small>Kesesuaian waktu</small></label
+                >
+                <input
+                  type="range"
+                  id="sliderJam"
+                  class="flt-range"
+                  min="10"
+                  max="70"
+                  step="5"
+                  value="20"
+                />
+                <span class="flt-badge" id="valJam">20</span>
+              </div>
+              <div class="flt-wrow">
+                <label class="flt-wlabel" for="sliderPopularitas"
+                  >Popularitas <small>Rating &amp; ulasan</small></label
+                >
+                <input
+                  type="range"
+                  id="sliderPopularitas"
+                  class="flt-range"
+                  min="10"
+                  max="70"
+                  step="5"
+                  value="15"
+                />
+                <span class="flt-badge" id="valPopularitas">15</span>
+              </div>
+              <div class="weight-total ok" id="weightTotal" role="status">
+                Total: 100 ✓
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FOOTER AKSI (sticky) -->
+        <div class="flt-footer">
+          <button class="btn btn-outline" id="btnBack">← Kembali</button>
+          <button class="btn btn-primary" id="btnProcess">
+            Proses Tsukamoto →
+          </button>
+        </div>
+      </section>
+
+      <!-- STEP 3: RESULTS -->
+      <section class="section" id="sec3">
+        <div id="map"></div>
+        <div id="alertArea" style="margin-top: 0.9rem"></div>
+
+        <div class="results-header">
+          <h2>🏆 Rekomendasi Terbaik</h2>
+          <div style="display: flex; gap: 0.6rem">
+            <button class="btn btn-outline btn-sm" id="btnEditPrefs">
+              ← Edit Preferensi
+            </button>
+            <button class="btn btn-outline btn-sm" id="btnRestart">
+              ↺ Ganti Data
+            </button>
+          </div>
+        </div>
+
+        <div class="top3-grid" id="top3Grid"></div>
+
+        <div class="table-wrap">
+          <div class="table-toggle" id="tableToggle">
+            <h3>📋 Semua Hasil Perhitungan</h3>
+            <span id="toggleIcon" style="font-size: 0.8rem; color: var(--muted)"
+              >▼ Tampilkan</span
+            >
+          </div>
+          <div id="tableBody" class="hidden">
+            <table>
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Nama Kedai</th>
+                  <th>Kecamatan</th>
+                  <th>Jarak</th>
+                  <th>Harga Min</th>
+                  <th>Jam Tutup</th>
+                  <th>Rating</th>
+                  <th>Skor Tsukamoto</th>
+                </tr>
+              </thead>
+              <tbody id="tableRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      // =====================================================================
+      // STATE
+      // =====================================================================
+      let shops = [];
+      let userLat = null,
+        userLng = null;
+      let mapInstance = null;
+      let tableOpen = false;
+      let weights = { harga: 35, jarak: 30, jam: 20, popularitas: 15 };
+      let nowDay = new Date().getDay(); // 0=Sun … 6=Sat
+      let nowMinutes = new Date().getHours() * 60 + new Date().getMinutes();
+
+      // =====================================================================
+      // STEP NAVIGATION
+      // =====================================================================
+      function goToStep(n) {
+        document
+          .querySelectorAll(".section")
+          .forEach((s) => s.classList.remove("active"));
+        document.getElementById("sec" + n).classList.add("active");
+        [1, 2, 3].forEach((i) => {
+          const el = document.getElementById("stepEl" + i);
+          el.classList.remove("active", "done");
+          if (i < n) el.classList.add("done");
+          else if (i === n) el.classList.add("active");
+        });
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      // =====================================================================
+      // CURRENT TIME DISPLAY
+      // =====================================================================
+      (function initTimeDisplay() {
+        const days = [
+          "Minggu",
+          "Senin",
+          "Selasa",
+          "Rabu",
+          "Kamis",
+          "Jumat",
+          "Sabtu",
+        ];
+        const now = new Date();
+        const dayName = days[now.getDay()];
+        const hh = String(now.getHours()).padStart(2, "0");
+        const mm = String(now.getMinutes()).padStart(2, "0");
+        document.getElementById("timeInfoText").innerHTML =
+          `Hari ini: <strong>${dayName}, ${hh}:${mm} WIB</strong> — filter hanya kedai yang sedang buka`;
+      })();
+
+      // =====================================================================
+      // UPLOAD
+      // =====================================================================
+      const uploadZone = document.getElementById("uploadZone");
+      const fileInput = document.getElementById("fileInput");
+
+      uploadZone.addEventListener("click", () => fileInput.click());
+      uploadZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        uploadZone.classList.add("drag-over");
+      });
+      uploadZone.addEventListener("dragleave", () =>
+        uploadZone.classList.remove("drag-over"),
+      );
+      uploadZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove("drag-over");
+        if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+      });
+      fileInput.addEventListener("change", (e) => {
+        if (e.target.files[0]) handleFile(e.target.files[0]);
+      });
+
+      function handleFile(file, onLoaded) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const wb = XLSX.read(e.target.result, { type: "binary" });
+            const ws = wb.Sheets[wb.SheetNames[0]];
+            const raw = XLSX.utils.sheet_to_json(ws, {
+              raw: false,
+              defval: "",
+            });
+            shops = raw.map(parseShop).filter(Boolean);
+            document.getElementById("dataCount").textContent =
+              shops.length + " kedai kopi";
+            document.getElementById("dataFileName").textContent =
+              "📄 " + file.name;
+            document.getElementById("dataPreview").classList.add("show");
+            if (onLoaded) onLoaded();
+          } catch (err) {
+            alert("Gagal membaca file Excel: " + err.message);
+          }
+        };
+        reader.readAsBinaryString(file);
+      }
+
+      // File handed over from the landing page (Upload Data, then Mulai): load it and skip straight to Preferensi.
+      (async function loadHandedOverFile() {
+        let raw = null;
+        try {
+          raw = sessionStorage.getItem("spk_upload");
+          sessionStorage.removeItem("spk_upload");
+        } catch (e) {}
+        if (!raw) return;
+        try {
+          const { name, dataUrl } = JSON.parse(raw);
+          const blob = await (await fetch(dataUrl)).blob();
+          handleFile(new File([blob], name, { type: blob.type }), () =>
+            goToStep(2),
+          );
+        } catch (e) {
+          /* fall back to the manual upload step */
+        }
+      })();
+
+      function parseShop(row) {
+        try {
+          const num = (s) =>
+            parseFloat(
+              String(s || "0")
+                .replace(/\./g, "")
+                .replace(",", "."),
+            ) || 0;
+          const coord = (s) =>
+            parseFloat(String(s || "0").replace(",", ".")) || 0;
+          return {
+            nama: String(row.nama_maps || "").trim(),
+            kecamatan: String(row.kecamatan || "").trim(),
+            harga_min: num(row.harga_min),
+            harga_max: num(row.harga_max),
+            rating: coord(row.rating),
+            ulasan: num(row.jumlah_ulasan),
+            lat: coord(row.lat),
+            lng: coord(row.lng),
+            bisa_tempat:
+              String(row.bisa_di_tempat || "").toLowerCase() === "ya",
+            buka_24jam: String(row.buka_24_jam || "").toLowerCase() === "ya",
+            jadwal: {
+              0: { buka: row.minggu_buka, tutup: row.minggu_tutup },
+              1: { buka: row.senin_buka, tutup: row.senin_tutup },
+              2: { buka: row.selasa_buka, tutup: row.selasa_tutup },
+              3: { buka: row.rabu_buka, tutup: row.rabu_tutup },
+              4: { buka: row.kamis_buka, tutup: row.kamis_tutup },
+              5: { buka: row.jumat_buka, tutup: row.jumat_tutup },
+              6: { buka: row.sabtu_buka, tutup: row.sabtu_tutup },
+            },
+            link: String(row.link_maps || "").trim(),
+          };
+        } catch {
+          return null;
+        }
+      }
+
+      document.getElementById("btnToPrefs").addEventListener("click", () => {
+        if (!shops.length) return;
+        goToStep(2);
+      });
+
+      // =====================================================================
+      // GEOLOCATION — auto on page load
+      // =====================================================================
+      function detectLocation() {
+        const st = document.getElementById("locStatus");
+        st.className = "loc-status loading";
+        st.textContent = "📡 Mendeteksi lokasi otomatis...";
+        if (!navigator.geolocation) {
+          st.className = "loc-status err";
+          st.textContent =
+            "✗ Browser tidak mendukung geolocation. Masukkan koordinat manual.";
+          return;
+        }
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            userLat = pos.coords.latitude;
+            userLng = pos.coords.longitude;
+            document.getElementById("inputLat").value = userLat.toFixed(6);
+            document.getElementById("inputLng").value = userLng.toFixed(6);
+            st.className = "loc-status ok";
+            st.textContent = `✓ Lokasi terdeteksi: ${userLat.toFixed(5)}, ${userLng.toFixed(5)}`;
+          },
+          () => {
+            st.className = "loc-status err";
+            st.textContent =
+              "✗ Gagal deteksi. Silakan masukkan koordinat manual di bawah.";
+          },
+          { timeout: 8000 },
+        );
+      }
+
+      // Auto-detect on page load
+      window.addEventListener("DOMContentLoaded", detectLocation);
+      document
+        .getElementById("btnRedetect")
+        .addEventListener("click", detectLocation);
+
+      // Sync manual inputs to userLat/Lng
+      document.getElementById("inputLat").addEventListener("input", (e) => {
+        userLat = parseFloat(e.target.value) || null;
+      });
+      document.getElementById("inputLng").addEventListener("input", (e) => {
+        userLng = parseFloat(e.target.value) || null;
+      });
+
+      // =====================================================================
+      // WEIGHT SLIDERS
+      // =====================================================================
+      const sliderKeys = ["harga", "jarak", "jam", "popularitas"];
+      function cap(s) {
+        return s[0].toUpperCase() + s.slice(1);
+      }
+
+      function updateWeightUI() {
+        sliderKeys.forEach((k) => {
+          document.getElementById("slider" + cap(k)).value = weights[k];
+          document.getElementById("val" + cap(k)).textContent = weights[k];
+        });
+        const total = sliderKeys.reduce((s, k) => s + weights[k], 0);
+        const el = document.getElementById("weightTotal");
+        el.textContent = `Total: ${total}${total === 100 ? " ✓" : " — harus 100"}`;
+        el.className = "weight-total " + (total === 100 ? "ok" : "err");
+      }
+
+      function handleSlider(key, rawVal) {
+        let newVal = Math.round(parseInt(rawVal) / 5) * 5;
+        newVal = Math.max(10, Math.min(80, newVal));
+        const others = sliderKeys.filter((k) => k !== key);
+        if (100 - newVal < others.length * 10)
+          newVal = 100 - others.length * 10;
+        const rem = 100 - newVal;
+        const prevTotal = others.reduce((s, k) => s + weights[k], 0);
+        if (prevTotal === 0) {
+          const each = Math.floor(rem / others.length);
+          others.forEach((k) => (weights[k] = each));
+          weights[others[0]] +=
+            rem - others.reduce((s, k) => s + weights[k], 0);
+        } else {
+          let assigned = 0;
+          others.forEach((k, i) => {
+            if (i < others.length - 1) {
+              const share = Math.round((rem * weights[k]) / prevTotal / 5) * 5;
+              weights[k] = Math.max(10, share);
+              assigned += weights[k];
+            } else {
+              weights[k] = Math.max(10, rem - assigned);
+            }
+          });
+        }
+        weights[key] = newVal;
+        const total = sliderKeys.reduce((s, k) => s + weights[k], 0);
+        if (total !== 100) weights[others[others.length - 1]] += 100 - total;
+        updateWeightUI();
+      }
+
+      sliderKeys.forEach((k) => {
+        document
+          .getElementById("slider" + cap(k))
+          .addEventListener("input", (e) => handleSlider(k, e.target.value));
+      });
+
+      // =====================================================================
+      // TSUKAMOTO FUZZY LOGIC
+      // =====================================================================
+      function haversine(lat1, lng1, lat2, lng2) {
+        const R = 6371,
+          r = Math.PI / 180;
+        const dLat = (lat2 - lat1) * r,
+          dLng = (lng2 - lng1) * r;
+        const a =
+          Math.sin(dLat / 2) ** 2 +
+          Math.cos(lat1 * r) * Math.cos(lat2 * r) * Math.sin(dLng / 2) ** 2;
+        return R * 2 * Math.asin(Math.sqrt(a));
+      }
+
+      function parseTime(str) {
+        if (!str || str === "-" || !str.trim()) return null;
+        const p = String(str).split(":");
+        return parseInt(p[0]) * 60 + (parseInt(p[1]) || 0);
+      }
+
+      function getTodayHours(shop) {
+        if (shop.buka_24jam) return { buka: 0, tutup: 1440 };
+        const j = shop.jadwal[nowDay];
+        if (!j) return null;
+        const buka = parseTime(j.buka),
+          tutup = parseTime(j.tutup);
+        if (buka === null || tutup === null) return null;
+        return { buka, tutup };
+      }
+
+      // Tsukamoto defuzzification (weighted average of crisp outputs per rule)
+      // Output membership: BAIK (monoton naik) μ(z)=z → z=α
+      //                    BURUK (monoton turun) μ(z)=1-z → z=1-α
+      function tsukamotoDefuzz(alpha_baik, alpha_buruk) {
+        const z_baik = alpha_baik;
+        const z_buruk = 1 - alpha_buruk;
+        const sumAlpha = alpha_baik + alpha_buruk;
+        if (sumAlpha === 0) return 0.5;
+        return (alpha_baik * z_baik + alpha_buruk * z_buruk) / sumAlpha;
+      }
+
+      // Harga: himpunan MURAH dan MAHAL terhadap rentang [userMin, userMax]
+      function tsukamotoHarga(shop, userMin, userMax) {
+        if (userMax <= 0) return 0.5; // tidak ada batasan harga → netral
+        const h = shop.harga_min;
+        const range = Math.max(1, userMax - userMin);
+        // μ_MURAH: 1 jika h≤userMin, turun linier, 0 jika h≥userMax
+        const mu_murah =
+          h <= userMin ? 1.0 : h < userMax ? (userMax - h) / range : 0.0;
+        // μ_MAHAL: 0 jika h≤userMin, naik linier, 1 jika h≥userMax
+        const mu_mahal =
+          h <= userMin ? 0.0 : h < userMax ? (h - userMin) / range : 1.0;
+        // Rule 1: IF Harga=MURAH THEN Skor=BAIK
+        // Rule 2: IF Harga=MAHAL THEN Skor=BURUK
+        return tsukamotoDefuzz(mu_murah, mu_mahal);
+      }
+
+      // Jarak: himpunan DEKAT dan JAUH terhadap referensi maxJarak (default 10km)
+      function tsukamotoJarak(distance, maxJarak) {
+        const ref = maxJarak > 0 ? maxJarak : 10;
+        // μ_DEKAT: 1 di d=0, turun linier ke 0 di d=ref
+        const mu_dekat = Math.max(0, 1 - distance / ref);
+        // μ_JAUH: 0 di d=0, naik linier ke 1 di d=ref
+        const mu_jauh = Math.min(1, distance / ref);
+        // Rule 1: IF Jarak=DEKAT THEN Skor=BAIK
+        // Rule 2: IF Jarak=JAUH  THEN Skor=BURUK
+        return tsukamotoDefuzz(mu_dekat, mu_jauh);
+      }
+
+      // Jam: himpunan CUKUP (sisa ≥120 menit) dan TERBATAS (sisa <60 menit)
+      function tsukamotoJam(shop, departMinutes) {
+        if (shop.buka_24jam) return 1.0;
+        const hours = getTodayHours(shop);
+        if (!hours) return 0;
+        const sisa = hours.tutup - departMinutes; // menit tersisa saat berangkat
+        // μ_CUKUP: 0 jika sisa<60, naik linier ke 1 jika sisa≥120
+        const mu_cukup =
+          sisa >= 120 ? 1.0 : sisa >= 60 ? (sisa - 60) / 60 : 0.0;
+        // μ_TERBATAS: 1 jika sisa<60, turun linier ke 0 jika sisa≥120
+        const mu_terbatas =
+          sisa >= 120 ? 0.0 : sisa >= 60 ? (120 - sisa) / 60 : 1.0;
+        // Rule 1: IF Jam=CUKUP     THEN Skor=BAIK
+        // Rule 2: IF Jam=TERBATAS  THEN Skor=BURUK
+        return tsukamotoDefuzz(mu_cukup, mu_terbatas);
+      }
+
+      // Popularitas: gabungan himpunan BAGUS/BURUK dari rating dan jumlah ulasan
+      function tsukamotoPopularitas(shop) {
+        const rating = shop.rating || 0;
+        const ulasan = shop.ulasan || 0;
+
+        // μ_RATING_BAGUS: 0 jika <3.5, naik linier ke 1 di ≥4.5
+        const mu_rating_bagus =
+          rating >= 4.5 ? 1.0 : rating >= 3.5 ? rating - 3.5 : 0.0;
+        // μ_RATING_BURUK: 1 jika <3.0, turun linier ke 0 di ≥4.0
+        const mu_rating_buruk =
+          rating >= 4.0 ? 0.0 : rating >= 3.0 ? 4.0 - rating : 1.0;
+
+        // μ_ULASAN_BANYAK: 0 jika <100, naik linier ke 1 di ≥500
+        const mu_ulasan_banyak =
+          ulasan >= 500 ? 1.0 : ulasan >= 100 ? (ulasan - 100) / 400 : 0.0;
+        // μ_ULASAN_SEDIKIT: 1 jika <50, turun linier ke 0 di ≥300
+        const mu_ulasan_sedikit =
+          ulasan >= 300 ? 0.0 : ulasan >= 50 ? (300 - ulasan) / 250 : 1.0;
+
+        // Rule 1: IF Rating=BAGUS AND Ulasan=BANYAK  THEN Popularitas=BAIK
+        const alpha_baik = Math.min(mu_rating_bagus, mu_ulasan_banyak);
+        // Rule 2: IF Rating=BURUK OR  Ulasan=SEDIKIT THEN Popularitas=BURUK
+        const alpha_buruk = Math.max(mu_rating_buruk, mu_ulasan_sedikit);
+
+        return tsukamotoDefuzz(alpha_baik, alpha_buruk);
+      }
+
+      function processShops(prefs) {
+        const { userMin, userMax, maxJarak, departMinutes } = prefs;
+        if (!userLat || !userLng) return [];
+
+        // ── TAHAP 1: FILTER KERAS ─────────────────────────────────────────
+        // Buang data yang tidak memenuhi kriteria sebelum scoring
+        const filtered = shops.filter((shop) => {
+          if (!shop.bisa_tempat) return false;
+          if (!shop.lat || !shop.lng) return false;
+          if (userMax > 0 && shop.harga_min > userMax) return false; // harga terlalu mahal
+          if (!shop.buka_24jam) {
+            const hours = getTodayHours(shop);
+            if (!hours) return false; // tutup hari ini
+            if (nowMinutes < hours.buka || nowMinutes >= hours.tutup)
+              return false; // belum/sudah tutup
+          }
+          return true;
+        });
+
+        // Hitung jarak lalu filter berdasarkan maxJarak
+        const withDist = filtered
+          .map((shop) => ({
+            shop,
+            distance: haversine(userLat, userLng, shop.lat, shop.lng),
+          }))
+          .filter(({ distance }) => maxJarak <= 0 || distance <= maxJarak);
+
+        // ── TAHAP 2: SCORING TSUKAMOTO ────────────────────────────────────
+        const scored = withDist.map(({ shop, distance }) => {
+          const sHarga = tsukamotoHarga(shop, userMin, userMax);
+          const sJarak = tsukamotoJarak(distance, maxJarak);
+          const sJam = tsukamotoJam(shop, departMinutes);
+          const sPopularitas = tsukamotoPopularitas(shop);
+          const finalScore =
+            (weights.harga * sHarga +
+              weights.jarak * sJarak +
+              weights.jam * sJam +
+              weights.popularitas * sPopularitas) /
+            100;
+          return {
+            shop,
+            distance,
+            scores: {
+              harga: sHarga,
+              jarak: sJarak,
+              jam: sJam,
+              popularitas: sPopularitas,
+            },
+            finalScore,
+          };
+        });
+
+        // ── TAHAP 3: URUT BERDASARKAN SKOR TERTINGGI (SESUAI BOBOT PRIORITAS) ──
+        scored.sort((a, b) => b.finalScore - a.finalScore);
+        return scored;
+      }
+
+      // =====================================================================
+      // RENDER
+      // =====================================================================
+      function formatRp(n) {
+        return "Rp" + Math.round(n).toLocaleString("id-ID");
+      }
+      function minsToTime(m) {
+        if (m >= 1440) return "24:00";
+        return (
+          String(Math.floor(m / 60)).padStart(2, "0") +
+          ":" +
+          String(m % 60).padStart(2, "0")
+        );
+      }
+
+      function generateReason(item) {
+        const { shop, distance, scores } = item;
+        const r = [];
+        if (scores.harga >= 0.9)
+          r.push(
+            `harga sangat pas di kantong (mulai ${formatRp(shop.harga_min)})`,
+          );
+        else if (scores.harga >= 0.7)
+          r.push(`harga sesuai budget (mulai ${formatRp(shop.harga_min)})`);
+        else if (scores.harga >= 0.5) r.push(`harga masih dalam batas`);
+        if (scores.jarak >= 0.85)
+          r.push(`sangat dekat (${distance.toFixed(1)} km)`);
+        else if (scores.jarak >= 0.5)
+          r.push(`jarak terjangkau (${distance.toFixed(1)} km)`);
+        if (scores.jam >= 0.9) r.push(`masih buka sampai kamu pulang`);
+        else if (scores.jam >= 0.5)
+          r.push(`jam tutup mendekati waktu kepulanganmu`);
+        if (scores.popularitas >= 0.8)
+          r.push(
+            `sangat populer (${shop.rating}★, ${Math.round(shop.ulasan).toLocaleString("id-ID")} ulasan)`,
+          );
+        else if (scores.popularitas >= 0.6)
+          r.push(`cukup populer (${shop.rating}★)`);
+        if (!r.length) r.push("memenuhi semua kriteria");
+        return r.join(", ") + ".";
+      }
+
+      function renderResults(results) {
+        // MAP
+        if (!mapInstance) {
+          mapInstance = L.map("map").setView([userLat, userLng], 13);
+          L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution:
+              '© <a href="https://openstreetmap.org">OpenStreetMap</a>',
+            maxZoom: 18,
+          }).addTo(mapInstance);
+        } else {
+          mapInstance.setView([userLat, userLng], 13);
+          mapInstance.eachLayer((l) => {
+            if (l instanceof L.Marker || l instanceof L.CircleMarker)
+              mapInstance.removeLayer(l);
+          });
+        }
+
+        L.circleMarker([userLat, userLng], {
+          radius: 10,
+          fillColor: "#5a9e6e",
+          color: "#fff",
+          weight: 2,
+          fillOpacity: 0.9,
+        })
+          .addTo(mapInstance)
+          .bindPopup("<b>📍 Lokasi Kamu</b>");
+
+        results.slice(3).forEach((item) => {
+          L.circleMarker([item.shop.lat, item.shop.lng], {
+            radius: 5,
+            fillColor: "#3a3f5a",
+            color: "#2a2f4a",
+            weight: 1,
+            fillOpacity: 0.7,
+          })
+            .addTo(mapInstance)
+            .bindPopup(
+              `<b>${item.shop.nama}</b><br>Skor: ${(item.finalScore * 100).toFixed(1)}`,
+            );
+        });
+
+        const colors = ["#ff7a2f", "#c0c0c0", "#c07844"];
+        results.slice(0, 3).forEach((item, i) => {
+          const icon = L.divIcon({
+            html: `<div style="background:${colors[i]};color:#171717;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.5)">${i + 1}</div>`,
+            className: "",
+            iconSize: [30, 30],
+            iconAnchor: [15, 15],
+          });
+          L.marker([item.shop.lat, item.shop.lng], { icon })
+            .addTo(mapInstance)
+            .bindPopup(
+              `<b>#${i + 1} ${item.shop.nama}</b><br>${item.distance.toFixed(2)} km — Skor: ${(item.finalScore * 100).toFixed(1)}`,
+            );
+        });
+
+        // Alert
+        const alertEl = document.getElementById("alertArea");
+        if (!results.length) {
+          alertEl.innerHTML = `<div class="alert alert-warn">⚠️ Tidak ada kedai yang memenuhi semua filter saat ini. Coba: perlebar rentang harga, tambah jarak, atau mundurkan waktu kepulangan.</div>`;
+        } else {
+          alertEl.innerHTML = `<div class="alert alert-info">✓ Ditemukan <strong>${results.length} kedai</strong> yang sesuai kriteria. Menampilkan 3 rekomendasi terbaik.</div>`;
+        }
+
+        // Top 3 cards
+        const grid = document.getElementById("top3Grid");
+        grid.innerHTML = "";
+        const labels = ["Terbaik", "Runner Up", "Ketiga"];
+
+        results.slice(0, 3).forEach((item, i) => {
+          const { shop, distance, scores, finalScore } = item;
+          const hours = getTodayHours(shop);
+          const tutupStr = !hours
+            ? "—"
+            : shop.buka_24jam
+              ? "24 Jam"
+              : minsToTime(hours.tutup);
+          const sc = (s) => (s >= 0.7 ? "high" : s >= 0.4 ? "mid" : "low");
+
+          const card = document.createElement("div");
+          card.className = `result-card rank-${i + 1}`;
+          card.innerHTML = `
+      <div class="rank-badge">#${i + 1} ${labels[i]}</div>
       <div class="rc-name">${shop.nama}</div>
-      <div class="rc-loc">📍 ${shop.kecamatan}${shop.kecamatan?' · ':''}${distance.toFixed(2)} km dari kamu</div>
-      <div class="rc-score-bar"><div class="rc-score-fill" style="width:${finalScore*100}%"></div></div>
+      <div class="rc-loc">📍 ${shop.kecamatan}${shop.kecamatan ? " · " : ""}${distance.toFixed(2)} km dari kamu</div>
+      <div class="rc-score-bar"><div class="rc-score-fill" style="width:${finalScore * 100}%"></div></div>
       <div class="rc-meta">
-        <div class="rc-meta-item"><span class="lbl">Skor Akhir</span><span class="val">${(finalScore*100).toFixed(1)} / 100</span></div>
+        <div class="rc-meta-item"><span class="lbl">Skor Akhir</span><span class="val">${(finalScore * 100).toFixed(1)} / 100</span></div>
         <div class="rc-meta-item"><span class="lbl">Harga Mulai</span><span class="val">${formatRp(shop.harga_min)}</span></div>
         <div class="rc-meta-item"><span class="lbl">Jam Tutup Hari Ini</span><span class="val">${tutupStr}</span></div>
-        <div class="rc-meta-item"><span class="lbl">Rating</span><span class="val">⭐ ${shop.rating||'—'} (${Math.round(shop.ulasan).toLocaleString('id-ID')} ulasan)</span></div>
+        <div class="rc-meta-item"><span class="lbl">Rating</span><span class="val">⭐ ${shop.rating || "—"} (${Math.round(shop.ulasan).toLocaleString("id-ID")} ulasan)</span></div>
       </div>
       <div class="score-breakdown">
-        <div class="score-pill"><span class="sp-label">Harga (${weights.harga}%)</span><span class="sp-val ${sc(scores.harga)}">${(scores.harga*100).toFixed(0)}</span></div>
-        <div class="score-pill"><span class="sp-label">Jarak (${weights.jarak}%)</span><span class="sp-val ${sc(scores.jarak)}">${(scores.jarak*100).toFixed(0)}</span></div>
-        <div class="score-pill"><span class="sp-label">Jam (${weights.jam}%)</span><span class="sp-val ${sc(scores.jam)}">${(scores.jam*100).toFixed(0)}</span></div>
-        <div class="score-pill"><span class="sp-label">Popularitas (${weights.popularitas}%)</span><span class="sp-val ${sc(scores.popularitas)}">${(scores.popularitas*100).toFixed(0)}</span></div>
+        <div class="score-pill"><span class="sp-label">Harga (${weights.harga}%)</span><span class="sp-val ${sc(scores.harga)}">${(scores.harga * 100).toFixed(0)}</span></div>
+        <div class="score-pill"><span class="sp-label">Jarak (${weights.jarak}%)</span><span class="sp-val ${sc(scores.jarak)}">${(scores.jarak * 100).toFixed(0)}</span></div>
+        <div class="score-pill"><span class="sp-label">Jam (${weights.jam}%)</span><span class="sp-val ${sc(scores.jam)}">${(scores.jam * 100).toFixed(0)}</span></div>
+        <div class="score-pill"><span class="sp-label">Popularitas (${weights.popularitas}%)</span><span class="sp-val ${sc(scores.popularitas)}">${(scores.popularitas * 100).toFixed(0)}</span></div>
       </div>
       <div class="rc-reason">💡 ${generateReason(item)}</div>
-      ${shop.link ? `<div style="margin-top:0.85rem"><a href="${shop.link}" target="_blank" rel="noopener">🗺️ Buka di Google Maps</a></div>` : ''}
+      ${shop.link ? `<div style="margin-top:0.85rem"><a href="${shop.link}" target="_blank" rel="noopener">🗺️ Buka di Google Maps</a></div>` : ""}
     `;
-    grid.appendChild(card);
-  });
+          grid.appendChild(card);
+        });
 
-  // Full table
-  const tbody = document.getElementById('tableRows');
-  tbody.innerHTML = '';
-  results.forEach((item, i) => {
-    const { shop, distance, finalScore } = item;
-    const hours = getTodayHours(shop);
-    const tutup = !hours ? '—' : shop.buka_24jam ? '24J' : minsToTime(hours.tutup);
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td><strong style="color:${i<3?'var(--accent)':'inherit'}">${i+1}</strong></td>
-      <td>${shop.nama}</td><td>${shop.kecamatan||'—'}</td>
+        // Full table
+        const tbody = document.getElementById("tableRows");
+        tbody.innerHTML = "";
+        results.forEach((item, i) => {
+          const { shop, distance, finalScore } = item;
+          const hours = getTodayHours(shop);
+          const tutup = !hours
+            ? "—"
+            : shop.buka_24jam
+              ? "24J"
+              : minsToTime(hours.tutup);
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+      <td><strong style="color:${i < 3 ? "var(--accent-text)" : "inherit"}">${i + 1}</strong></td>
+      <td>${shop.nama}</td><td>${shop.kecamatan || "—"}</td>
       <td>${distance.toFixed(2)} km</td><td>${formatRp(shop.harga_min)}</td>
-      <td>${tutup}</td><td>${shop.rating||'—'}</td>
-      <td>${(finalScore*100).toFixed(1)}<span class="tbl-score-bar"><span class="tbl-score-fill" style="width:${finalScore*100}%"></span></span></td>
+      <td>${tutup}</td><td>${shop.rating || "—"}</td>
+      <td>${(finalScore * 100).toFixed(1)}<span class="tbl-score-bar"><span class="tbl-score-fill" style="width:${finalScore * 100}%"></span></span></td>
     `;
-    tbody.appendChild(tr);
-  });
-}
+          tbody.appendChild(tr);
+        });
+      }
 
-// =====================================================================
-// PROCESS
-// =====================================================================
-document.getElementById('btnProcess').addEventListener('click', () => {
-  const lat = parseFloat(document.getElementById('inputLat').value);
-  const lng = parseFloat(document.getElementById('inputLng').value);
-  if (!lat || !lng) { alert('Koordinat lokasi belum terisi. Tunggu deteksi GPS atau masukkan manual.'); return; }
+      // =====================================================================
+      // PROCESS
+      // =====================================================================
+      document.getElementById("btnProcess").addEventListener("click", () => {
+        const lat = parseFloat(document.getElementById("inputLat").value);
+        const lng = parseFloat(document.getElementById("inputLng").value);
+        if (!lat || !lng) {
+          alert(
+            "Koordinat lokasi belum terisi. Tunggu deteksi GPS atau masukkan manual.",
+          );
+          return;
+        }
 
-  const total = sliderKeys.reduce((s,k) => s + weights[k], 0);
-  if (total !== 100) { alert('Total bobot harus tepat 100.'); return; }
+        const total = sliderKeys.reduce((s, k) => s + weights[k], 0);
+        if (total !== 100) {
+          alert("Total bobot harus tepat 100.");
+          return;
+        }
 
-  userLat = lat; userLng = lng;
+        userLat = lat;
+        userLng = lng;
 
-  const userMin      = parseFloat(document.getElementById('inputHargaMin').value) || 0;
-  const userMax      = parseFloat(document.getElementById('inputHargaMax').value) || 0;
-  const maxJarak     = parseFloat(document.getElementById('inputJarak').value)    || 0;
-  const jamVal       = document.getElementById('inputJam').value || '22:00';
-  const [jh, jm]    = jamVal.split(':').map(Number);
-  const departMins   = jh * 60 + jm;
+        const userMin =
+          parseFloat(document.getElementById("inputHargaMin").value) || 0;
+        const userMax =
+          parseFloat(document.getElementById("inputHargaMax").value) || 0;
+        const maxJarak =
+          parseFloat(document.getElementById("inputJarak").value) || 0;
+        const jamVal = document.getElementById("inputJam").value || "22:00";
+        const [jh, jm] = jamVal.split(":").map(Number);
+        const departMins = jh * 60 + jm;
 
-  // Refresh current time at moment of processing
-  const now = new Date();
-  nowDay     = now.getDay();
-  nowMinutes = now.getHours() * 60 + now.getMinutes();
+        // Refresh current time at moment of processing
+        const now = new Date();
+        nowDay = now.getDay();
+        nowMinutes = now.getHours() * 60 + now.getMinutes();
 
-  document.getElementById('loadingOverlay').classList.add('show');
-  setTimeout(() => {
-    const results = processShops({ userMin, userMax, maxJarak, departMinutes: departMins });
-    goToStep(3);
-    renderResults(results);
-    document.getElementById('loadingOverlay').classList.remove('show');
-    setTimeout(() => mapInstance && mapInstance.invalidateSize(), 350);
-  }, 80);
-});
+        document.getElementById("loadingOverlay").classList.add("show");
+        setTimeout(() => {
+          const results = processShops({
+            userMin,
+            userMax,
+            maxJarak,
+            departMinutes: departMins,
+          });
+          goToStep(3);
+          renderResults(results);
+          document.getElementById("loadingOverlay").classList.remove("show");
+          setTimeout(() => mapInstance && mapInstance.invalidateSize(), 350);
+        }, 80);
+      });
 
-// =====================================================================
-// OTHER BUTTONS
-// =====================================================================
-document.getElementById('btnBack').addEventListener('click', () => goToStep(1));
-document.getElementById('btnEditPrefs').addEventListener('click', () => goToStep(2));
-document.getElementById('btnRestart').addEventListener('click', () => {
-  shops = [];
-  document.getElementById('dataPreview').classList.remove('show');
-  goToStep(1);
-});
-document.getElementById('tableToggle').addEventListener('click', () => {
-  tableOpen = !tableOpen;
-  document.getElementById('tableBody').classList.toggle('hidden', !tableOpen);
-  document.getElementById('toggleIcon').textContent = tableOpen ? '▲ Sembunyikan' : '▼ Tampilkan';
-});
-</script>
-</body>
+      // =====================================================================
+      // OTHER BUTTONS
+      // =====================================================================
+      document
+        .getElementById("btnBack")
+        .addEventListener("click", () => goToStep(1));
+      document
+        .getElementById("btnEditPrefs")
+        .addEventListener("click", () => goToStep(2));
+      document.getElementById("btnRestart").addEventListener("click", () => {
+        shops = [];
+        document.getElementById("dataPreview").classList.remove("show");
+        goToStep(1);
+      });
+      document.getElementById("tableToggle").addEventListener("click", () => {
+        tableOpen = !tableOpen;
+        document
+          .getElementById("tableBody")
+          .classList.toggle("hidden", !tableOpen);
+        document.getElementById("toggleIcon").textContent = tableOpen
+          ? "▲ Sembunyikan"
+          : "▼ Tampilkan";
+      });
+    </script>
+    <script>
+      // =====================================================================
+      // FILTER PANEL UI (.flt-*) — hanya lapisan tampilan.
+      // Nilai tetap dibaca logika lama dari input#inputHargaMin/Max/Jarak,
+      // slider bobot memakai handleSlider/updateWeightUI yang sama.
+      // =====================================================================
+      (function () {
+        const $ = (id) => document.getElementById(id);
+        const fire = (el) =>
+          el.dispatchEvent(new Event("input", { bubbles: true }));
+        const num = (el) => parseFloat(el.value) || 0;
+        const clamp01 = (x) => Math.max(0, Math.min(1, x));
+
+        const nMin = $("inputHargaMin"),
+          nMax = $("inputHargaMax"),
+          nJarak = $("inputJarak"),
+          nJam = $("inputJam");
+        const rMin = $("fltPriceMin"),
+          rMax = $("fltPriceMax"),
+          dual = $("fltDual");
+        const hist = $("fltHist"),
+          rJarak = $("fltJarak");
+        const BINS = 36;
+        let lo = 0,
+          hi = 50000,
+          bars = [];
+
+        // ---- Harga: domain, histogram ----
+        function setDomain() {
+          const vals = shops.map((s) => s.harga_min).filter(Number.isFinite);
+          if (vals.length) {
+            lo = Math.min(
+              Math.floor(Math.min(...vals) / 1000) * 1000,
+              num(nMin),
+            );
+            hi = Math.max(
+              Math.ceil(Math.max(...vals) / 5000) * 5000,
+              num(nMax),
+            );
+          } else {
+            lo = Math.min(0, num(nMin));
+            hi = Math.max(num(nMax), 5000);
+          }
+          if (hi <= lo) hi = lo + 5000;
+          rMin.min = rMax.min = lo;
+          rMin.max = rMax.max = hi;
+          $("fltEndLo").textContent = formatRp(lo);
+          $("fltEndHi").textContent = formatRp(hi);
+
+          hist.innerHTML = "";
+          bars = [];
+          const avg = $("fltAvg");
+          if (!vals.length) {
+            hist.hidden = true;
+            avg.hidden = true;
+            return;
+          }
+          const counts = new Array(BINS).fill(0),
+            span = hi - lo;
+          vals.forEach((v) => {
+            counts[
+              Math.min(
+                BINS - 1,
+                Math.max(0, Math.floor(((v - lo) / span) * BINS)),
+              )
+            ]++;
+          });
+          const peak = Math.max(...counts) || 1;
+          counts.forEach((c, i) => {
+            const b = document.createElement("span");
+            b.className = "flt-bar";
+            b.style.height = Math.max(3, Math.round((c / peak) * 100)) + "%";
+            b.dataset.center = lo + ((i + 0.5) * span) / BINS;
+            hist.appendChild(b);
+            bars.push(b);
+          });
+          hist.hidden = false;
+          avg.textContent =
+            "Rata-rata " +
+            formatRp(vals.reduce((a, b) => a + b, 0) / vals.length);
+          avg.hidden = false;
+        }
+
+        function renderPrice() {
+          const a = num(nMin),
+            b = num(nMax),
+            span = hi - lo || 1;
+          rMin.value = a;
+          rMax.value = b;
+          const pa = clamp01((a - lo) / span),
+            pb = clamp01((b - lo) / span);
+          dual.style.setProperty("--a", pa);
+          dual.style.setProperty("--b", pb);
+          $("fltPriceBadges").style.setProperty("--a", pa);
+          $("fltPriceBadges").style.setProperty("--b", pb);
+          $("fltBadgeMin").textContent = formatRp(a);
+          $("fltBadgeMax").textContent = formatRp(b);
+          rMin.setAttribute("aria-valuetext", formatRp(a));
+          rMax.setAttribute("aria-valuetext", formatRp(b));
+          rMin.style.zIndex = pa > 0.5 ? 5 : 3;
+          rMax.style.zIndex = 4;
+          bars.forEach((el) => {
+            const c = +el.dataset.center;
+            el.classList.toggle("in", c >= a && c <= b);
+          });
+        }
+
+        rMin.addEventListener("input", () => {
+          const v = Math.min(num(rMin), num(nMax));
+          nMin.value = v;
+          fire(nMin);
+          renderPrice();
+        });
+        rMax.addEventListener("input", () => {
+          const v = Math.max(num(rMax), num(nMin));
+          nMax.value = v;
+          fire(nMax);
+          renderPrice();
+        });
+
+        // ---- Jarak ----
+        function renderJarak() {
+          const v = num(nJarak);
+          rJarak.value = v;
+          const p = clamp01(v / (+rJarak.max || 100));
+          rJarak.style.setProperty("--p", p);
+          $("fltJarakBadges").style.setProperty("--p", p);
+          const txt = v > 0 ? v + " km" : "Semua";
+          $("fltBadgeJarak").textContent = txt;
+          rJarak.setAttribute("aria-valuetext", v > 0 ? txt : "Semua jarak");
+        }
+        rJarak.addEventListener("input", () => {
+          nJarak.value = rJarak.value;
+          fire(nJarak);
+          renderJarak();
+        });
+
+        // ---- Bobot: isi track mengikuti nilai (nilai & auto-balance tetap dari logika lama) ----
+        const wSliders = [
+          "sliderHarga",
+          "sliderJarak",
+          "sliderJam",
+          "sliderPopularitas",
+        ].map($);
+        function renderWeights() {
+          wSliders.forEach((s) =>
+            s.style.setProperty(
+              "--p",
+              clamp01((s.value - s.min) / (s.max - s.min)),
+            ),
+          );
+        }
+        const origUpdateWeightUI = updateWeightUI;
+        updateWeightUI = function () {
+          origUpdateWeightUI();
+          renderWeights();
+        };
+
+        // ---- Jumlah hasil di tombol utama ----
+        const btnProcess = $("btnProcess");
+        const DEFAULT_LABEL = "Proses Tsukamoto →";
+        let countTimer = null;
+        function updateCount() {
+          if (!shops.length || !userLat || !userLng) {
+            btnProcess.textContent = DEFAULT_LABEL;
+            return;
+          }
+          const [h, m] = (nJam.value || "22:00").split(":").map(Number);
+          try {
+            const n = processShops({
+              userMin: num(nMin),
+              userMax: num(nMax),
+              maxJarak: num(nJarak),
+              departMinutes: h * 60 + m,
+            }).length;
+            btnProcess.textContent = `Tampilkan ${n.toLocaleString("id-ID")} hasil →`;
+          } catch (e) {
+            btnProcess.textContent = DEFAULT_LABEL;
+          }
+        }
+        const scheduleCount = () => {
+          clearTimeout(countTimer);
+          countTimer = setTimeout(updateCount, 120);
+        };
+        $("sec2").addEventListener("input", scheduleCount);
+        $("sec2").addEventListener("change", scheduleCount);
+        new MutationObserver(scheduleCount).observe($("locStatus"), {
+          childList: true,
+          characterData: true,
+          subtree: true,
+        });
+
+        // ---- Reset ke nilai default ----
+        $("fltReset").addEventListener("click", () => {
+          nJam.value = "22:00";
+          nMin.value = 0;
+          nMax.value = 50000;
+          nJarak.value = 0;
+          weights = { harga: 35, jarak: 30, jam: 20, popularitas: 15 };
+          updateWeightUI();
+          refreshAll();
+        });
+
+        function refreshAll() {
+          setDomain();
+          renderPrice();
+          renderJarak();
+          renderWeights();
+          updateCount();
+        }
+
+        const origGoToStep = goToStep;
+        goToStep = function (n) {
+          origGoToStep(n);
+          if (n === 2) refreshAll();
+        };
+
+        refreshAll();
+      })();
+    </script>
+  </body>
 </html>
