@@ -3,3 +3,6 @@
 *.bkp
 node_modules/
 dist/
+*.drawio
+png/
+*.xlsx

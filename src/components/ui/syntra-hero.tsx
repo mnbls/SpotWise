@@ -1911,7 +1911,7 @@ const HeroCopy = ({ onUpload, onStart, fileName }: HeroCopyProps) => {
 
       <p
         {...rise(0.3)}
-        className='n3-rise text-(color:--color-n3-grey) mt-[clamp(1rem,3vh,1.75rem)] max-w-[30rem] text-[17px] leading-[1.6] lg:text-[clamp(16px,2.3vh,19px)]'
+        className='n3-rise text-(color:--color-n3-grey) mt-[clamp(1rem,3vh,1.75rem)] max-w-[30rem] text-[17px] leading-[1.6] lg:text-[clamp(15px,2.1vh,19px)]'
       >
         {COPY.body}
       </p>

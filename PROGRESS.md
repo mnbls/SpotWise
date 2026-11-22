@@ -1,86 +1,59 @@
-# SpotWise – SPK Coffee Shop Yogyakarta
+# SpotWise – SPK Rekomendasi Tempat (Fuzzy Tsukamoto)
 
 **Repo:** https://github.com/mnbls/SpotWise.git  
-**Live:** https://mnbls.github.io/SpotWise/  
-**Struktur (Vite + React + TS + Tailwind v4, struktur shadcn):**
-- `src/components/ui/syntra-hero.tsx` — dashboard/landing (hero 3D; kartu 3D = penjelasan metode)
-- `src/demo.tsx` — tombol Upload Data (simpan file ke sessionStorage lalu buka app) & Mulai (buka app)
-- `public/app.html` — aplikasi SPK (HTML tunggal, dulu `spk-coffee.html`); memuat file titipan dashboard otomatis
-- Dev: `npm run dev` (port 5174) · Build: `npm run build` → `dist/`
-- Deploy: `.github/workflows/deploy.yml`; di GitHub Pages sumber harus **GitHub Actions** (bukan "Deploy from a branch")
+**Live:** https://mnbls.github.io/SpotWise/
 
----
+## Struktur (Vite + React + TS + Tailwind v4, struktur shadcn)
+- `src/components/ui/syntra-hero.tsx` — dashboard/landing: hero 3D, kartu 3D = penjelasan metode, tombol Upload Data & Mulai
+- `src/demo.tsx` — Upload Data menyimpan file ke `sessionStorage`; Mulai nonaktif sampai ada file, lalu membuka app
+- `public/app.html` — aplikasi SPK (HTML tunggal, JS biasa, tampilan di-restyle kontributor lain). Memuat file titipan dashboard otomatis dan langsung ke langkah Preferensi
+- Dev: `npm run dev` (port 5174) · Build: `npm run build` → `dist/`
+- Deploy: `.github/workflows/deploy.yml`. Di GitHub Pages, sumber harus **GitHub Actions** (bukan "Deploy from a branch")
 
 ## Status
-- [x] Website SPK selesai dibangun
-- [x] Metode Fuzzy Tsukamoto diimplementasi
-- [x] Push ke GitHub (master branch)
-- [x] Deploy ke GitHub Pages (aktif)
-
----
+- [x] Aplikasi SPK dengan Fuzzy Tsukamoto, 4 kriteria
+- [x] Dashboard 3D, muat satu layar di zoom 100% pada desktop
+- [x] Alur: upload di dashboard → Mulai → Preferensi → Hasil
+- [ ] Push commit terbaru ke GitHub dan pastikan sumber Pages = GitHub Actions
 
 ## Alur Aplikasi
-1. **Upload Data** → drag/drop `.xlsx` (SheetJS v0.18.5)
-2. **Preferensi** → isi harga min/max, jarak maks, jam berangkat, bobot 3 kriteria (total=100)
+1. **Dashboard** → Upload Data (`.xlsx`); Mulai aktif setelah file ada
+2. **Preferensi** → rentang harga, jarak maks, jam pulang, lokasi (GPS/manual), bobot 4 kriteria (total 100)
 3. **Hasil** → Top 3 rekomendasi + peta Leaflet + tabel semua hasil
 
----
+## Pipeline Pemrosesan
+1. **Filter keras** (buang yang tidak lolos): `bisa_di_tempat = Ya`, sedang buka (hari & jam saat web dibuka), `harga_min ≤ harga maks`, `jarak ≤ jarak maks` (0 = semua jarak)
+2. **Skor Tsukamoto** per kriteria
+3. **Skor akhir terbobot**, lalu diurutkan dari tertinggi
 
 ## Metode: Fuzzy Tsukamoto
+Output monoton: **BAIK** μ(z)=z → z=α · **BURUK** μ(z)=1−z → z=1−α
 
-Setiap kriteria dihitung terpisah, lalu digabung dengan bobot user.
-
-### Fungsi keanggotaan input
 | Kriteria | Set BAIK | Set BURUK |
 |----------|----------|-----------|
-| Harga | MURAH: 1 jika ≤minHarga, linier ke 0 di maxHarga | MAHAL: kebalikannya |
-| Jarak | DEKAT: 1 di 0km, linier ke 0 di ref (maxJarak / 10km) | JAUH: kebalikannya |
-| Jam | CUKUP: 0 jika sisa<60 mnt, naik ke 1 di ≥120 mnt | TERBATAS: kebalikannya |
+| Harga | MURAH: 1 jika ≤ harga min, turun linier ke 0 di harga maks | MAHAL: kebalikannya |
+| Jarak | DEKAT: 1 di 0 km, turun linier ke 0 di batas (jarak maks, atau 10 km) | JAUH: kebalikannya |
+| Jam | CUKUP: 0 jika sisa < 60 mnt, naik ke 1 di ≥ 120 mnt | TERBATAS: kebalikannya |
+| Popularitas | Rating BAGUS (≥4,5) AND ulasan BANYAK (≥500) | Rating BURUK (≤3,0) OR ulasan SEDIKIT (≤50) |
 
-### Output monoton (Tsukamoto)
-- **BAIK** (monoton naik): μ(z) = z → z = α
-- **BURUK** (monoton turun): μ(z) = 1−z → z = 1−α
-
-### Defuzzifikasi
 ```
 z* = (α_baik × z_baik + α_buruk × z_buruk) / (α_baik + α_buruk)
+skor akhir = (w_harga·sHarga + w_jarak·sJarak + w_jam·sJam + w_popularitas·sPopularitas) / 100
 ```
-
-### Skor akhir
-```
-finalScore = (w_harga×sHarga + w_jarak×sJarak + w_jam×sJam) / 100
-```
-
----
-
-## Hard Filter (pra-scoring)
-- `bisa_di_tempat = Ya`
-- Toko buka hari ini dan sekarang (auto-detect hari & jam saat web dibuka)
-- `harga_min ≤ userMax` (jika userMax > 0)
-- `distance ≤ maxJarak` (jika maxJarak > 0)
-
----
+Bobot default 35 / 30 / 20 / 15.
 
 ## Struktur Excel Input
-Kolom wajib (nama persis di baris header):
-`nama_maps, harga_min, harga_max, lat, lng, bisa_di_tempat, buka_24_jam`  
-`senin_buka, senin_tutup, selasa_buka, ..., minggu_tutup`  
-`alamat, link_maps`
+Kolom wajib: `nama_maps, harga_min, harga_max, rating, jumlah_ulasan, lat, lng, bisa_di_tempat, buka_24_jam`, `senin_buka … minggu_tutup`, `alamat, link_maps`.  
+Format angka Indonesia: titik ribuan (`25.000`→25000), koma desimal (`4,7`→4.7, koordinat `-7,756`→-7.756).
 
-Parsing angka: format Indonesia — titik ribuan (`25.000`→25000), koma desimal (`4,7`→4.7), koordinat (`-7,756`→-7.756).
-
----
-
-## Library (semua CDN, tanpa build step)
-- SheetJS `xlsx.js v0.18.5` — baca .xlsx di browser
-- Leaflet.js `v1.9.4` + OpenStreetMap — peta interaktif
-- Haversine formula (inline) — hitung jarak GPS
-
----
+## Library
+- Dashboard: React 19, motion, lucide-react, Tailwind v4 (lewat npm)
+- App: SheetJS `xlsx.js v0.18.5` dan Leaflet `v1.9.4` + OpenStreetMap (lewat CDN)
+- Jarak: rumus Haversine (inline)
 
 ## Hal yang Perlu Diketahui
-- GPS auto-detect saat halaman dibuka; fallback: input manual lat/lng
-- Bobot 3 slider saling terkait (total selalu = 100, min 10 per slider)
-- Local dev: Python HTTP server port 7721 (config di `.claude/launch.json`)
-- Push **tanpa** Claude sebagai contributor (author di-set ke `SpotWise <noreply@github.com>`)
-- `.gitignore` mengecualikan `.claude/`, `*.bkp`, file drawio, png/, xlsx
+- GPS auto-detect saat app dibuka; fallback: input manual lat/lng
+- Bobot 4 slider saling terkait (total selalu 100, minimum 10 per slider)
+- `sessionStorage` kunci `spk_upload` dipakai untuk menitipkan file dari dashboard ke app
+- Commit tanpa Claude sebagai contributor (author `SpotWise <noreply@github.com>`, tanpa trailer Co-Authored-By)
+- `.gitignore` mengecualikan `.claude/`, `node_modules/`, `dist/`, `*.bkp`, `*.drawio`, `png/`, `*.xlsx`
