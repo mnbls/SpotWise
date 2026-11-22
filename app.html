@@ -1120,6 +1120,1294 @@
         }
       }
 
+      /* =================================================================
+       HASIL — dashboard
+       ================================================================= */
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        padding: 0;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+        border: 0;
+      }
+      .res-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 22px 0 18px;
+      }
+      .res-title {
+        font-size: clamp(1.9rem, 1rem + 2.2vw, 3rem);
+        font-weight: 500;
+        letter-spacing: -0.035em;
+        line-height: 1.08;
+      }
+      .res-sub {
+        margin-top: 8px;
+        max-width: 62ch;
+        font-size: 0.95rem;
+        color: var(--muted);
+      }
+      .res-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .res-actions .flt-pill-btn {
+        padding: 11px 20px;
+        font-size: 0.88rem;
+        background: #fff;
+      }
+      #alertArea:not(:empty) {
+        margin-bottom: 14px;
+      }
+
+      .tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+      .tab {
+        display: inline-flex;
+        align-items: center;
+        padding: 11px 22px;
+        border: 1px solid transparent;
+        border-radius: 999px;
+        background: #ecebe6;
+        color: #5f5c57;
+        font: inherit;
+        font-size: 0.92rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition:
+          background 0.18s,
+          color 0.18s;
+      }
+      .tab:hover {
+        color: var(--text);
+      }
+      .tab[aria-selected="true"] {
+        background: #fff;
+        color: var(--text);
+        border-color: rgb(23 23 23 / 0.06);
+        box-shadow:
+          0 1px 2px rgb(23 23 23 / 0.05),
+          0 8px 20px -12px rgb(23 23 23 / 0.2);
+      }
+      .tab:focus-visible {
+        outline: 2px solid var(--accent-text);
+        outline-offset: 2px;
+      }
+      .tab-count {
+        margin-left: 8px;
+        padding: 1px 8px;
+        border-radius: 999px;
+        background: var(--accent);
+        color: #171717;
+        font-size: 0.72rem;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+      }
+      .tab-panel[hidden] {
+        display: none;
+      }
+      #sec3.res-empty .tabs,
+      #sec3.res-empty .tab-panel {
+        display: none;
+      }
+
+      /* Kartu */
+      .ov-grid,
+      .calc-grid {
+        display: grid;
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        gap: 16px;
+      }
+      .ov-card {
+        min-width: 0;
+        padding: 22px 24px 24px;
+        border-radius: 28px;
+        background: #fff;
+        color: var(--text);
+        border: 1px solid rgb(23 23 23 / 0.05);
+        box-shadow:
+          0 1px 2px rgb(23 23 23 / 0.04),
+          0 12px 32px -16px rgb(23 23 23 / 0.12);
+      }
+      .ov-head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+        min-height: 40px;
+      }
+      .ov-head h2 {
+        font-size: 1.02rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        line-height: 1.25;
+      }
+      .ov-head h2 small {
+        margin-left: 6px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--muted);
+      }
+      .ov-dark {
+        background: #171717;
+        color: #fff;
+        border-color: #171717;
+      }
+      .ov-dark .bento-ico {
+        border-color: rgb(255 255 255 / 0.22);
+        color: #fff;
+      }
+      .ov-orange {
+        background: linear-gradient(155deg, #ffb07c 0%, #ff7a2f 100%);
+        color: #171717;
+        border-color: transparent;
+      }
+      .ov-orange .bento-ico {
+        border-color: rgb(23 23 23 / 0.3);
+        color: #171717;
+      }
+      .ov-map {
+        grid-column: span 7;
+        grid-row: span 2;
+        display: flex;
+        flex-direction: column;
+      }
+      .ov-rank {
+        grid-column: span 5;
+      }
+      .ov-rating {
+        grid-column: span 5;
+      }
+      .ov-sm {
+        grid-column: span 3;
+      }
+      .ov-legend {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+        margin-left: auto;
+      }
+      .legend-note {
+        margin-left: 6px;
+        font-size: 0.78rem;
+        color: var(--muted);
+      }
+
+      /* Peta */
+      .ov-map-wrap {
+        position: relative;
+        flex: 1;
+        min-height: 440px;
+      }
+      .ov-map-wrap #map {
+        position: absolute;
+        inset: 0;
+        height: auto;
+        border: 0;
+        border-radius: 20px;
+        box-shadow: none;
+      }
+      .map-focus {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 900;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 16px;
+        border-radius: 0 0 20px 20px;
+        background: rgb(255 255 255 / 0.94);
+        -webkit-backdrop-filter: blur(8px);
+        backdrop-filter: blur(8px);
+        border-top: 1px solid rgb(23 23 23 / 0.08);
+      }
+      .map-focus-text {
+        min-width: 0;
+        flex: 1;
+      }
+      .map-focus-text strong {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 0.95rem;
+        font-weight: 600;
+      }
+      .map-focus-text small {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 0.8rem;
+        color: var(--muted);
+      }
+      .map-link {
+        flex-shrink: 0;
+        padding: 9px 16px;
+        border-radius: 999px;
+        background: #171717;
+        color: #fff;
+        font-size: 0.85rem;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .map-link[hidden] {
+        display: none;
+      }
+      .map-link:hover {
+        background: #333;
+        text-decoration: none;
+      }
+      .map-link:focus-visible {
+        outline: 2px solid var(--accent-text);
+        outline-offset: 2px;
+      }
+
+      /* Chip peringkat */
+      .chip {
+        display: inline-grid;
+        place-items: center;
+        min-width: 28px;
+        height: 24px;
+        padding: 0 8px;
+        border-radius: 999px;
+        border: 1px solid transparent;
+        background: var(--track);
+        color: var(--text);
+        font-size: 0.72rem;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+      }
+      .chip.r1 {
+        background: #ff7a2f;
+        color: #171717;
+      }
+      .chip.r2 {
+        background: #171717;
+        color: #fff;
+        border-color: rgb(255 255 255 / 0.4);
+      }
+      .chip.r3 {
+        background: #ffb07c;
+        color: #171717;
+      }
+      .ov-orange .chip.r1 {
+        background: #171717;
+        color: #fff;
+      }
+      .ov-orange .chip.r2 {
+        background: #fff;
+        color: #171717;
+        border-color: rgb(23 23 23 / 0.2);
+      }
+      .ov-orange .chip.r3 {
+        background: rgb(255 255 255 / 0.45);
+        color: #171717;
+      }
+
+      /* Angka besar */
+      .ov-focus-name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+      .ov-dark .ov-focus-name {
+        color: rgb(255 255 255 / 0.72);
+      }
+      .ov-orange .ov-focus-name {
+        color: rgb(23 23 23 / 0.75);
+      }
+      .big {
+        margin-top: 6px;
+        font-size: clamp(2.6rem, 3.6vw, 3.8rem);
+        font-weight: 500;
+        letter-spacing: -0.04em;
+        line-height: 1;
+        font-variant-numeric: tabular-nums;
+      }
+      .big.md {
+        font-size: clamp(1.7rem, 2.1vw, 2.2rem);
+      }
+      .big small {
+        margin-left: 4px;
+        font-size: 1rem;
+        font-weight: 500;
+        letter-spacing: 0;
+        opacity: 0.6;
+      }
+      .big-sub {
+        margin-top: 4px;
+        font-size: 0.8rem;
+        color: var(--muted);
+      }
+      .big-row {
+        display: flex;
+        align-items: flex-end;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+      .stars {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 6px;
+        font-size: 1.5rem;
+        letter-spacing: 2px;
+        line-height: 1;
+      }
+      .stars-bg {
+        color: rgb(23 23 23 / 0.25);
+      }
+      .stars-fg {
+        position: absolute;
+        left: 0;
+        top: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        color: #171717;
+      }
+
+      /* Baris perbandingan 3 teratas */
+      .cmp-rows {
+        display: grid;
+        gap: 4px;
+        margin-top: 16px;
+      }
+      .cmp-row {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        grid-template-areas:
+          "chip name val"
+          "bar bar bar";
+        align-items: center;
+        gap: 7px 10px;
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid transparent;
+        border-radius: 16px;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+      .cmp-row:hover {
+        background: rgb(23 23 23 / 0.04);
+      }
+      .cmp-row.is-focus {
+        background: var(--bg);
+        border-color: var(--border);
+      }
+      .cmp-row:focus-visible {
+        outline: 2px solid var(--accent-text);
+        outline-offset: 1px;
+      }
+      .cmp-chip {
+        grid-area: chip;
+      }
+      .cmp-name {
+        grid-area: name;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 0.88rem;
+      }
+      .cmp-val {
+        grid-area: val;
+        font-size: 0.9rem;
+        font-weight: 600;
+        white-space: nowrap;
+        font-variant-numeric: tabular-nums;
+      }
+      .cmp-bar {
+        grid-area: bar;
+        height: 6px;
+        border-radius: 999px;
+        background: var(--track);
+        overflow: hidden;
+      }
+      .cmp-bar > i {
+        display: block;
+        height: 100%;
+        border-radius: 999px;
+        background: var(--accent);
+      }
+      .ov-dark .cmp-row:hover {
+        background: rgb(255 255 255 / 0.07);
+      }
+      .ov-dark .cmp-row.is-focus {
+        background: rgb(255 255 255 / 0.1);
+        border-color: rgb(255 255 255 / 0.2);
+      }
+      .ov-dark .cmp-bar {
+        background: rgb(255 255 255 / 0.14);
+      }
+      .ov-orange .cmp-row:hover {
+        background: rgb(23 23 23 / 0.08);
+      }
+      .ov-orange .cmp-row.is-focus {
+        background: rgb(255 255 255 / 0.4);
+        border-color: rgb(23 23 23 / 0.15);
+      }
+      .ov-orange .cmp-bar {
+        background: rgb(23 23 23 / 0.16);
+      }
+      .ov-orange .cmp-bar > i {
+        background: #171717;
+      }
+
+      /* Skor bertumpuk (kartu urutan) */
+      .stack {
+        display: flex;
+        height: 100%;
+        border-radius: 999px;
+        overflow: hidden;
+      }
+      .stack > i {
+        display: block;
+        height: 100%;
+        border-radius: 0;
+        background: transparent;
+      }
+      .rank-focus {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .rank-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 14px;
+        margin: 14px 0 0;
+        padding: 0 12px;
+        list-style: none;
+        font-size: 0.78rem;
+        color: rgb(255 255 255 / 0.78);
+      }
+      .rank-legend li {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .rank-legend i {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+      }
+      .rank-legend b {
+        color: #fff;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+      }
+      .rank-reason {
+        margin-top: 14px;
+        padding: 12px 14px;
+        border-radius: 16px;
+        background: rgb(255 255 255 / 0.08);
+        font-size: 0.82rem;
+        line-height: 1.5;
+        color: rgb(255 255 255 / 0.86);
+      }
+
+      /* Garis waktu jam operasional */
+      .tl {
+        position: relative;
+        height: 8px;
+        border-radius: 999px;
+        background: var(--track);
+      }
+      .tl-fill {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        border-radius: 999px;
+        background: var(--accent);
+      }
+      .tl-now {
+        position: absolute;
+        top: -3px;
+        bottom: -3px;
+        width: 2px;
+        border-radius: 2px;
+        background: #171717;
+      }
+      .tl-dep {
+        position: absolute;
+        top: -2px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #171717;
+        background: #fff;
+        transform: translateX(-50%);
+      }
+      .cmp-row .tl {
+        grid-area: bar;
+      }
+      .tl-legend {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 10px;
+        padding: 0 12px;
+        font-size: 0.74rem;
+        color: var(--muted);
+      }
+      .tl-legend .k {
+        display: inline-block;
+        margin-left: 6px;
+      }
+      .tl-legend .k.now {
+        width: 2px;
+        height: 12px;
+        border-radius: 2px;
+        background: #171717;
+      }
+      .tl-legend .k.dep {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        border: 2px solid #171717;
+        background: #fff;
+      }
+
+      /* Tabel */
+      .table-scroll {
+        overflow-x: auto;
+      }
+      .res-table th,
+      .res-table td {
+        padding: 0.7rem 0.85rem;
+        white-space: nowrap;
+      }
+      .res-table th.num,
+      .res-table td.num {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+      .res-table td.tbl-name {
+        font-weight: 500;
+        white-space: normal;
+        min-width: 180px;
+      }
+      .res-table tbody tr.is-top td:first-child {
+        font-weight: 700;
+        color: var(--accent-text);
+      }
+      .res-table tbody tr[hidden] {
+        display: none;
+      }
+      .row-btn {
+        padding: 6px 14px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: #fff;
+        color: var(--text);
+        font: inherit;
+        font-size: 0.78rem;
+        font-weight: 500;
+        cursor: pointer;
+      }
+      .row-btn:hover {
+        border-color: var(--text);
+      }
+      .row-btn:focus-visible {
+        outline: 2px solid var(--accent-text);
+        outline-offset: 2px;
+      }
+      .tbl-search {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-left: auto;
+        padding: 0 14px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: var(--bg);
+      }
+      .tbl-search svg {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+        fill: none;
+        stroke: var(--muted);
+        stroke-width: 1.8;
+        stroke-linecap: round;
+      }
+      .tbl-search input {
+        width: 220px;
+        max-width: 100%;
+        padding: 10px 0;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        color: var(--text);
+        font: inherit;
+        font-size: 0.88rem;
+      }
+      .tbl-search:focus-within {
+        border-color: var(--accent-text);
+      }
+
+      /* Perhitungan fuzzy */
+      .calc-main,
+      .calc-how {
+        grid-column: span 12;
+      }
+      .calc-select {
+        margin-left: auto;
+        min-width: 0;
+      }
+      .calc-select select {
+        max-width: 280px;
+        padding: 10px 40px 10px 16px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: var(--bg)
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23171717' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")
+          no-repeat right 14px center / 16px;
+        -webkit-appearance: none;
+        appearance: none;
+        color: var(--text);
+        font: inherit;
+        font-size: 0.88rem;
+        cursor: pointer;
+      }
+      .calc-select select:focus-visible {
+        outline: 2px solid var(--accent-text);
+        outline-offset: 2px;
+      }
+      .calc-summary {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+      .calc-summary h3 {
+        font-size: 1.15rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+      .calc-summary p {
+        margin-top: 2px;
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+      .calc-score {
+        text-align: right;
+      }
+      .calc-score .big {
+        margin-top: 0;
+      }
+      .calc-params {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+      .calc-params span {
+        padding: 5px 12px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: var(--bg);
+        font-size: 0.78rem;
+        color: #5f5c57;
+      }
+      .calc-table td small {
+        display: block;
+        max-width: 230px;
+        margin-top: 2px;
+        white-space: normal;
+        font-size: 0.72rem;
+        font-weight: 400;
+        color: var(--muted);
+      }
+      .calc-table td.note {
+        white-space: normal;
+        text-align: center;
+        font-size: 0.82rem;
+        color: var(--muted);
+      }
+      .calc-table td.strong {
+        font-weight: 700;
+      }
+      .calc-table tfoot td {
+        border-top: 2px solid var(--border);
+        font-weight: 700;
+      }
+      .calc-formula {
+        margin-top: 14px;
+        padding: 12px 14px;
+        border-radius: 16px;
+        background: var(--bg);
+        font-size: 0.85rem;
+        line-height: 1.55;
+        color: #5f5c57;
+        font-variant-numeric: tabular-nums;
+      }
+      .how-steps {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        gap: 16px 24px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        counter-reset: how;
+      }
+      .how-steps li {
+        position: relative;
+        padding-left: 40px;
+        font-size: 0.85rem;
+        line-height: 1.55;
+        color: rgb(255 255 255 / 0.82);
+        counter-increment: how;
+      }
+      .how-steps li::before {
+        content: counter(how);
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 28px;
+        height: 28px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: var(--accent);
+        color: #171717;
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+      .how-steps b {
+        color: #fff;
+      }
+
+      @media (max-width: 1023px) {
+        .ov-map,
+        .ov-rank,
+        .ov-rating {
+          grid-column: span 12;
+          grid-row: auto;
+        }
+        .ov-map-wrap {
+          min-height: 380px;
+        }
+        .ov-sm {
+          grid-column: span 6;
+        }
+      }
+      @media (max-width: 639px) {
+        .tabs {
+          flex-wrap: nowrap;
+          overflow-x: auto;
+          padding-bottom: 6px;
+          scrollbar-width: none;
+        }
+        .tabs::-webkit-scrollbar {
+          display: none;
+        }
+        .tab {
+          flex-shrink: 0;
+          white-space: nowrap;
+        }
+        .ov-card {
+          padding: 18px 18px 20px;
+          border-radius: 24px;
+        }
+        .ov-sm {
+          grid-column: span 12;
+        }
+        .ov-map-wrap {
+          min-height: 340px;
+        }
+        .map-focus {
+          flex-wrap: wrap;
+        }
+        .map-link {
+          flex: 1 1 100%;
+          text-align: center;
+        }
+        .legend-note {
+          flex: 1 1 100%;
+          margin-left: 0;
+        }
+        .ov-legend {
+          margin-left: 0;
+        }
+        .ov-map .ov-head {
+          flex-wrap: wrap;
+        }
+        .tbl-search {
+          margin-left: 0;
+          flex: 1 1 100%;
+        }
+        .tbl-search input {
+          width: 100%;
+        }
+        .ov-head:has(.tbl-search),
+        .ov-head:has(.calc-select) {
+          flex-wrap: wrap;
+        }
+        .calc-select {
+          flex: 1 1 100%;
+          margin-left: 0;
+        }
+        .calc-select select {
+          width: 100%;
+          max-width: none;
+        }
+      }
+
+      /* =================================================================
+       RINGKASAN — 7 kotak ringkas (proporsi seperti referensi)
+       ================================================================= */
+      .res-title {
+        font-size: clamp(1.7rem, 1rem + 1.5vw, 2.3rem);
+      }
+      .res-head {
+        padding: 14px 0 12px;
+      }
+      .tabs-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px 16px;
+        margin-bottom: 14px;
+      }
+      .tabs-row .tabs {
+        margin-bottom: 0;
+      }
+      .tab {
+        padding: 9px 20px;
+        font-size: 0.88rem;
+      }
+      .focus-wrap {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .focus-wrap[hidden] {
+        display: none;
+      }
+      .focus-label {
+        font-size: 0.8rem;
+        color: var(--muted);
+      }
+      .fp-list {
+        display: inline-flex;
+        gap: 6px;
+      }
+      .fp {
+        min-width: 40px;
+        height: 32px;
+        padding: 0 12px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: #fff;
+        color: var(--text);
+        font: inherit;
+        font-size: 0.8rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+      .fp:hover {
+        border-color: var(--text);
+      }
+      .fp.is-on {
+        border-color: transparent;
+      }
+      .fp.is-on.r1 {
+        background: #ff7a2f;
+        color: #171717;
+      }
+      .fp.is-on.r2 {
+        background: #171717;
+        color: #fff;
+      }
+      .fp.is-on.r3 {
+        background: #ffb07c;
+        color: #171717;
+      }
+      .fp:focus-visible,
+      .mb:focus-visible,
+      .col:focus-visible,
+      .cx:focus-visible {
+        outline: 2px solid var(--accent-text);
+        outline-offset: 2px;
+      }
+
+      /* Satu grid bersama: kolom kiri dan kanan memakai baris yang sama,
+         jadi garis batas antar kotak sejajar. */
+      .ov2 {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+        align-items: stretch;
+      }
+      .ov-left,
+      .ov-right {
+        display: contents;
+      }
+      .ov-chart {
+        grid-column: 1 / 3;
+        grid-row: 1 / 3;
+      }
+      .ov-mapcard {
+        grid-column: 1 / 3;
+        grid-row: 3;
+      }
+      .ov-reviews {
+        grid-column: 3 / 5;
+        grid-row: 3;
+      }
+      .ov2 .ov-card {
+        padding: 16px 18px 18px;
+        border-radius: 24px;
+      }
+      .ov2 .ov-head {
+        gap: 10px;
+        margin-bottom: 10px;
+        min-height: 34px;
+      }
+      .ov2 .bento-ico {
+        width: 34px;
+        height: 34px;
+      }
+      .ov2 .ov-head h2 {
+        font-size: 0.95rem;
+      }
+      .ov2 .big {
+        margin-top: 2px;
+        font-size: clamp(1.8rem, 2.5vw, 2.6rem);
+      }
+      .ov2 .big small {
+        font-size: 0.85rem;
+      }
+      .ov-mapcard {
+        display: flex;
+        flex-direction: column;
+      }
+      .ov-mapcard .ov-map-wrap {
+        flex: 1;
+        height: auto;
+        min-height: 330px;
+      }
+
+      /* Kotak kecil + mini-bar */
+      .mini-body {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .mini-bars {
+        display: flex;
+        align-items: flex-end;
+        gap: 6px;
+        height: 66px;
+        flex-shrink: 0;
+      }
+      .mb {
+        display: grid;
+        grid-template-rows: 1fr auto;
+        gap: 4px;
+        width: 26px;
+        height: 100%;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: var(--muted);
+        font: inherit;
+        cursor: pointer;
+      }
+      .mb-track {
+        display: flex;
+        align-items: flex-end;
+      }
+      .mb-track i {
+        display: block;
+        width: 100%;
+        border-radius: 7px;
+        background: var(--track);
+        transition: background 0.15s;
+      }
+      .mb:hover .mb-track i {
+        background: #ffb07c;
+      }
+      .mb.is-focus .mb-track i {
+        background: var(--accent);
+      }
+      .mb-x {
+        font-size: 0.64rem;
+        font-weight: 700;
+        line-height: 1;
+      }
+      .mb.is-focus .mb-x {
+        color: var(--text);
+      }
+      .ov-orange .mb {
+        color: rgb(23 23 23 / 0.7);
+      }
+      .ov-orange .mb-track i {
+        background: rgb(23 23 23 / 0.22);
+      }
+      .ov-orange .mb:hover .mb-track i {
+        background: rgb(23 23 23 / 0.45);
+      }
+      .ov-orange .mb.is-focus .mb-track i {
+        background: #171717;
+      }
+      .ov-orange .mb.is-focus .mb-x {
+        color: #171717;
+      }
+      .ov2 .stars {
+        margin: 4px 0 0;
+        font-size: 1.1rem;
+      }
+      .ov-reviews {
+        display: flex;
+        flex-direction: column;
+      }
+      .ov-reviews .cmp-rows {
+        flex: 1;
+        align-content: space-evenly;
+        margin-top: 6px;
+      }
+      .ov-reviews .cmp-row {
+        padding: 8px 10px;
+      }
+      .ov2 .big.sm {
+        font-size: clamp(1.35rem, 1.9vw, 1.9rem);
+      }
+      .tl-solo {
+        margin-top: 14px;
+      }
+      .tl-solo + .tl-legend {
+        margin-top: 10px;
+        padding: 0;
+      }
+
+      /* Diagram batang bertumpuk */
+      .chart-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .chart-wrap {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 0 8px;
+        margin-top: 22px;
+      }
+      .chart-y {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 120px;
+        font-size: 0.68rem;
+        line-height: 1;
+        text-align: right;
+        color: var(--muted);
+        font-variant-numeric: tabular-nums;
+      }
+      .chart-main {
+        position: relative;
+        min-width: 0;
+      }
+      .chart-grid {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 120px;
+        pointer-events: none;
+      }
+      .chart-grid i {
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: rgb(23 23 23 / 0.08);
+      }
+      .chart-grid i:nth-child(1) {
+        top: 0;
+      }
+      .chart-grid i:nth-child(2) {
+        top: 25%;
+      }
+      .chart-grid i:nth-child(3) {
+        top: 50%;
+      }
+      .chart-grid i:nth-child(4) {
+        top: 75%;
+      }
+      .chart-plot {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr));
+        height: 120px;
+        border-bottom: 1px solid rgb(23 23 23 / 0.14);
+      }
+      .col {
+        position: relative;
+        height: 100%;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        opacity: 0.5;
+        cursor: pointer;
+        transition: opacity 0.15s;
+      }
+      .col:hover,
+      .col.is-focus {
+        opacity: 1;
+      }
+      .col-stack {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: clamp(34px, 52%, 80px);
+        height: calc(var(--v) * 1%);
+        display: flex;
+        flex-direction: column-reverse;
+        border-radius: 10px 10px 0 0;
+        overflow: hidden;
+        transform: translateX(-50%);
+      }
+      .col-stack > i {
+        display: block;
+        width: 100%;
+      }
+      .col-tag {
+        position: absolute;
+        left: 50%;
+        bottom: calc(var(--v) * 1% + 6px);
+        padding: 2px 9px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: #fff;
+        font-size: 0.72rem;
+        font-weight: 700;
+        white-space: nowrap;
+        font-variant-numeric: tabular-nums;
+        transform: translateX(-50%);
+      }
+      .col.is-focus .col-tag {
+        border-color: transparent;
+        background: var(--accent);
+        color: #171717;
+      }
+      .chart-x {
+        display: grid;
+        grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr));
+        margin-top: 8px;
+      }
+      .cx {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        padding: 2px;
+        border: 0;
+        background: transparent;
+        color: var(--muted);
+        font: inherit;
+        font-size: 0.76rem;
+        cursor: pointer;
+      }
+      .cx.is-focus {
+        color: var(--text);
+        font-weight: 600;
+      }
+      .cx-name {
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .chart-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 14px;
+        margin: 10px 0 0;
+        padding: 0;
+        list-style: none;
+        font-size: 0.74rem;
+        color: var(--muted);
+      }
+      .chart-legend li {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .chart-legend i {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+      }
+      .chart-legend b {
+        color: var(--text);
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+      }
+      .chart-reason {
+        margin-top: 8px;
+        font-size: 0.8rem;
+        line-height: 1.5;
+        color: #5f5c57;
+      }
+
+      @media (max-width: 1099px) {
+        .ov2 {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .ov-chart,
+        .ov-mapcard,
+        .ov-reviews {
+          grid-column: 1 / -1;
+          grid-row: auto;
+        }
+      }
+      @media (max-width: 639px) {
+        .ov2 .ov-card {
+          padding: 14px 14px 16px;
+          border-radius: 22px;
+        }
+        .mini-body {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .ov-mapcard .ov-map-wrap {
+          height: 300px;
+        }
+        .focus-wrap {
+          width: 100%;
+        }
+      }
+
       /* Cincin total bobot */
       .weight-ring-wrap {
         display: flex;
@@ -2045,48 +3333,275 @@
 
       <!-- STEP 3: RESULTS -->
       <section class="section" id="sec3">
-        <div id="map"></div>
-        <div id="alertArea" style="margin-top: 0.9rem"></div>
-
-        <div class="results-header">
-          <h2>🏆 Rekomendasi Terbaik</h2>
-          <div style="display: flex; gap: 0.6rem">
-            <button class="btn btn-outline btn-sm" id="btnEditPrefs">
+        <div class="res-head">
+          <div class="res-head-text">
+            <h1 class="res-title">Hasil Rekomendasi</h1>
+            <p class="res-sub" id="resSub">Menghitung…</p>
+          </div>
+          <div class="res-actions">
+            <button type="button" class="flt-pill-btn" id="btnEditPrefs">
               ← Edit Preferensi
             </button>
-            <button class="btn btn-outline btn-sm" id="btnRestart">
+            <button type="button" class="flt-pill-btn" id="btnRestart">
               ↺ Ganti Data
             </button>
           </div>
         </div>
 
-        <div class="top3-grid" id="top3Grid"></div>
+        <div id="alertArea"></div>
 
-        <div id="bentoRoot" hidden></div>
-
-        <div class="table-wrap">
-          <div class="table-toggle" id="tableToggle">
-            <h3>📋 Semua Hasil Perhitungan</h3>
-            <span id="toggleIcon" style="font-size: 0.8rem; color: var(--muted)"
-              >▼ Tampilkan</span
-            >
+        <div class="tabs-row">
+          <div class="tabs" role="tablist" aria-label="Bagian hasil" id="resTabs">
+            <button type="button" role="tab" class="tab" id="tabRingkasan" aria-controls="panelRingkasan" aria-selected="true">Ringkasan</button>
+            <button type="button" role="tab" class="tab" id="tabAnalisis" aria-controls="panelAnalisis" aria-selected="false" tabindex="-1">Analisis</button>
+            <button type="button" role="tab" class="tab" id="tabSemua" aria-controls="panelSemua" aria-selected="false" tabindex="-1">Semua Hasil<span class="tab-count" id="tabCount">0</span></button>
+            <button type="button" role="tab" class="tab" id="tabHitung" aria-controls="panelHitung" aria-selected="false" tabindex="-1">Perhitungan Fuzzy</button>
           </div>
-          <div id="tableBody" class="hidden">
-            <table>
-              <thead>
-                <tr>
-                  <th>Rank</th>
-                  <th>Nama Tempat</th>
-                  <th>Kecamatan</th>
-                  <th>Jarak</th>
-                  <th>Harga Min</th>
-                  <th>Jam Tutup</th>
-                  <th>Rating</th>
-                  <th>Skor Tsukamoto</th>
-                </tr>
-              </thead>
-              <tbody id="tableRows"></tbody>
-            </table>
+          <div class="focus-wrap" id="focusWrap">
+            <span class="focus-label">Bandingkan</span>
+            <span class="fp-list" id="focusPills"></span>
+          </div>
+        </div>
+
+        <!-- TAB 1: RINGKASAN (3 teratas, 7 kotak) -->
+        <div class="tab-panel" id="panelRingkasan" role="tabpanel" aria-labelledby="tabRingkasan">
+          <div class="ov2" id="ovGrid">
+            <div class="ov-left">
+              <!-- 2. Urutan + diagram skor fuzzy -->
+              <section class="ov-card ov-chart" aria-labelledby="ovRankT">
+                <div class="ov-head">
+                  <span class="bento-ico" aria-hidden="true">
+                    <svg class="flt-ico" viewBox="0 0 24 24"><path d="M5 20V11M12 20V4M19 20v-6" /></svg>
+                  </span>
+                  <h2 id="ovRankT">Urutan &amp; skor fuzzy</h2>
+                </div>
+                <div class="chart-top">
+                  <div class="chart-top-text">
+                    <p class="ov-focus-name" id="chartName"></p>
+                    <div class="big" id="chartBig">0</div>
+                  </div>
+                  <span class="chip r1" id="chartChip">#1</span>
+                </div>
+                <div class="chart-wrap">
+                  <div class="chart-y" aria-hidden="true"><span>100</span><span>75</span><span>50</span><span>25</span><span>0</span></div>
+                  <div class="chart-main">
+                    <div class="chart-grid" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+                    <div class="chart-plot" id="colChart"></div>
+                    <div class="chart-x" id="chartX"></div>
+                  </div>
+                </div>
+                <ul class="chart-legend" id="rankLegend"></ul>
+              </section>
+
+              <!-- 1. Peta -->
+              <section class="ov-card ov-mapcard" aria-labelledby="ovMapT">
+                <div class="ov-head">
+                  <span class="bento-ico" aria-hidden="true">
+                    <svg class="flt-ico" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z" /><circle cx="12" cy="10" r="2.5" /></svg>
+                  </span>
+                  <h2 id="ovMapT">Peta lokasi</h2>
+                  <div class="ov-legend">
+                    <span class="chip r1">#1</span><span class="chip r2">#2</span><span class="chip r3">#3</span>
+                  </div>
+                </div>
+                <div class="ov-map-wrap">
+                  <div id="map"></div>
+                  <div class="map-focus" id="mapFocus">
+                    <span class="chip r1" id="mfRank">#1</span>
+                    <div class="map-focus-text">
+                      <strong id="mfName"></strong>
+                      <small id="mfMeta"></small>
+                    </div>
+                    <a class="map-link" id="mfLink" target="_blank" rel="noopener" hidden>Buka di Google Maps</a>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <div class="ov-right">
+              <!-- 5. Jam operasional -->
+              <section class="ov-card ov-mini" aria-labelledby="ovHourT">
+                <div class="ov-head">
+                  <span class="bento-ico" aria-hidden="true">
+                    <svg class="flt-ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+                  </span>
+                  <h2 id="ovHourT">Jam operasional</h2>
+                </div>
+                <div class="mini-body">
+                  <div>
+                    <div class="big sm" id="hourBig">–</div>
+                    <p class="big-sub">buka hari ini</p>
+                  </div>
+                  <div class="mini-bars" id="hourBars" role="group" aria-label="Perbandingan lama buka 3 tempat"></div>
+                </div>
+                <div class="tl tl-solo" id="hourTl" aria-hidden="true"></div>
+                <p class="tl-legend"><span class="k now"></span>sekarang <span class="k dep"></span>jam pulang</p>
+              </section>
+
+              <!-- 6. Harga -->
+              <section class="ov-card ov-mini" aria-labelledby="ovPriceT">
+                <div class="ov-head">
+                  <span class="bento-ico" aria-hidden="true">
+                    <svg class="flt-ico" viewBox="0 0 24 24"><path d="M3 7h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" /><path d="M3 7l12-3v3" /><circle cx="16.5" cy="13.5" r="1" /></svg>
+                  </span>
+                  <h2 id="ovPriceT">Harga mulai</h2>
+                </div>
+                <div class="mini-body">
+                  <div>
+                    <div class="big" id="priceBig">–</div>
+                    <p class="big-sub" id="priceSub"></p>
+                  </div>
+                  <div class="mini-bars" id="priceBars" role="group" aria-label="Perbandingan harga 3 tempat"></div>
+                </div>
+              </section>
+
+              <!-- 7. Jarak -->
+              <section class="ov-card ov-mini" aria-labelledby="ovDistT">
+                <div class="ov-head">
+                  <span class="bento-ico" aria-hidden="true">
+                    <svg class="flt-ico" viewBox="0 0 24 24"><circle cx="6" cy="18" r="2" /><circle cx="18" cy="6" r="2" /><path d="M8 18h6a3 3 0 0 0 0-6h-4a3 3 0 0 1 0-6h6" /></svg>
+                  </span>
+                  <h2 id="ovDistT">Jarak</h2>
+                </div>
+                <div class="mini-body">
+                  <div>
+                    <div class="big" id="distBig">–</div>
+                    <p class="big-sub">dari lokasimu</p>
+                  </div>
+                  <div class="mini-bars" id="distBars" role="group" aria-label="Perbandingan jarak 3 tempat"></div>
+                </div>
+              </section>
+
+              <!-- 3. Rating -->
+              <section class="ov-card ov-orange ov-mini" aria-labelledby="ovRatingT">
+                <div class="ov-head">
+                  <span class="bento-ico" aria-hidden="true">
+                    <svg class="flt-ico" viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.2 1 5.9L12 17l-5.2 2.8 1-5.9-4.3-4.2 5.9-.8z" /></svg>
+                  </span>
+                  <h2 id="ovRatingT">Rating</h2>
+                </div>
+                <div class="mini-body">
+                  <div>
+                    <div class="big" id="ratingBig">0</div>
+                    <span class="stars" aria-hidden="true"><span class="stars-bg">★★★★★</span><span class="stars-fg" id="ratingStars">★★★★★</span></span>
+                  </div>
+                  <div class="mini-bars" id="ratingBars" role="group" aria-label="Perbandingan rating 3 tempat"></div>
+                </div>
+              </section>
+
+              <!-- 4. Ulasan -->
+              <section class="ov-card ov-dark ov-reviews" aria-labelledby="ovRevT">
+                <div class="ov-head">
+                  <span class="bento-ico" aria-hidden="true">
+                    <svg class="flt-ico" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z" /></svg>
+                  </span>
+                  <h2 id="ovRevT">Jumlah ulasan</h2>
+                </div>
+                <div class="chart-top">
+                  <div class="chart-top-text">
+                    <p class="ov-focus-name" id="revName"></p>
+                    <div class="big" id="revBig">0</div>
+                  </div>
+                  <span class="chip r1" id="revChip">#1</span>
+                </div>
+                <div class="cmp-rows" id="revRows"></div>
+              </section>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: ANALISIS -->
+        <div class="tab-panel" id="panelAnalisis" role="tabpanel" aria-labelledby="tabAnalisis" hidden>
+          <div id="bentoRoot" hidden></div>
+        </div>
+
+        <!-- TAB 3: SEMUA HASIL -->
+        <div class="tab-panel" id="panelSemua" role="tabpanel" aria-labelledby="tabSemua" hidden>
+          <section class="ov-card" aria-labelledby="allT">
+            <div class="ov-head">
+              <span class="bento-ico" aria-hidden="true">
+                <svg class="flt-ico" viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01" /></svg>
+              </span>
+              <h2 id="allT">Semua hasil <small id="tblCount"></small></h2>
+              <label class="tbl-search">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6" /><path d="M16 16l4 4" /></svg>
+                <input type="search" id="tblSearch" placeholder="Cari nama atau kecamatan" aria-label="Cari nama atau kecamatan" />
+              </label>
+            </div>
+            <div class="table-scroll">
+              <table class="res-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Nama Tempat</th>
+                    <th>Kecamatan</th>
+                    <th class="num">Jarak</th>
+                    <th class="num">Harga Min</th>
+                    <th class="num">Jam Tutup</th>
+                    <th class="num">Rating</th>
+                    <th class="num">Ulasan</th>
+                    <th class="num">Skor Fuzzy</th>
+                    <th><span class="sr-only">Rincian</span></th>
+                  </tr>
+                </thead>
+                <tbody id="tableRows"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+
+        <!-- TAB 4: PERHITUNGAN FUZZY -->
+        <div class="tab-panel" id="panelHitung" role="tabpanel" aria-labelledby="tabHitung" hidden>
+          <div class="calc-grid">
+            <section class="ov-card calc-main" aria-labelledby="calcT">
+              <div class="ov-head">
+                <span class="bento-ico" aria-hidden="true">
+                  <svg class="flt-ico" viewBox="0 0 24 24"><path d="M18 5H7l6 7-6 7h11" /></svg>
+                </span>
+                <h2 id="calcT">Perhitungan skor fuzzy</h2>
+                <label class="calc-select">
+                  <span class="sr-only">Pilih tempat</span>
+                  <select id="calcSelect"></select>
+                </label>
+              </div>
+              <div class="calc-summary" id="calcSummary"></div>
+              <div class="calc-params" id="calcParams"></div>
+              <div class="table-scroll">
+                <table class="res-table calc-table">
+                  <thead>
+                    <tr>
+                      <th>Kriteria</th>
+                      <th>Nilai masukan</th>
+                      <th class="num">α BAIK</th>
+                      <th class="num">α BURUK</th>
+                      <th class="num">z BAIK</th>
+                      <th class="num">z BURUK</th>
+                      <th class="num">Skor z*</th>
+                      <th class="num">Bobot</th>
+                      <th class="num">Kontribusi</th>
+                    </tr>
+                  </thead>
+                  <tbody id="calcRows"></tbody>
+                  <tfoot id="calcFoot"></tfoot>
+                </table>
+              </div>
+              <p class="calc-formula" id="calcFormula"></p>
+            </section>
+
+            <section class="ov-card ov-dark calc-how" aria-labelledby="howT">
+              <div class="ov-head">
+                <span class="bento-ico" aria-hidden="true">
+                  <svg class="flt-ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 8v.01M11 12h1v4h1" /></svg>
+                </span>
+                <h2 id="howT">Cara membaca</h2>
+              </div>
+              <ol class="how-steps">
+                <li><b>Fuzzifikasi.</b> Nilai masukan (harga, jarak, sisa jam buka, rating, ulasan) diubah menjadi derajat keanggotaan α pada himpunan seperti MURAH/MAHAL atau DEKAT/JAUH.</li>
+                <li><b>Inferensi.</b> Tiap himpunan punya aturan: <em>JIKA</em> baik <em>MAKA</em> skor BAIK, <em>JIKA</em> buruk <em>MAKA</em> skor BURUK. Pada popularitas, AND memakai nilai terkecil dan OR nilai terbesar.</li>
+                <li><b>Defuzzifikasi Tsukamoto.</b> z BAIK = α BAIK, z BURUK = 1 − α BURUK. Skor kriteria <b>z*</b> = (α BAIK·z BAIK + α BURUK·z BURUK) ÷ (α BAIK + α BURUK).</li>
+                <li><b>Pembobotan.</b> Skor akhir = Σ (bobot × z*) ÷ 100, lalu semua tempat diurutkan dari skor tertinggi.</li>
+              </ol>
+            </section>
           </div>
         </div>
       </section>
@@ -2127,7 +3642,6 @@
       let userLat = null,
         userLng = null;
       let mapInstance = null;
-      let tableOpen = false;
       let weights = { harga: 35, jarak: 30, jam: 20, popularitas: 15 };
       let nowDay = new Date().getDay(); // 0=Sun … 6=Sat
       let nowMinutes = new Date().getHours() * 60 + new Date().getMinutes();
@@ -2789,6 +4303,9 @@
       }
 
       function renderResults(results) {
+        // The dashboard opens on its first tab, so the map is visible while it is sized.
+        selectTab("Ringkasan");
+
         // MAP
         if (!mapInstance) {
           mapInstance = L.map("map").setView([userLat, userLng], 13);
@@ -2804,6 +4321,7 @@
               mapInstance.removeLayer(l);
           });
         }
+        rankMarkers = [];
 
         L.circleMarker([userLat, userLng], {
           radius: 10,
@@ -2825,98 +4343,545 @@
           })
             .addTo(mapInstance)
             .bindPopup(
-              `<b>${item.shop.nama}</b><br>Skor: ${(item.finalScore * 100).toFixed(1)}`,
+              `<b>${esc(item.shop.nama)}</b><br>Skor: ${(item.finalScore * 100).toFixed(1)}`,
             );
         });
 
-        const colors = ["#ff7a2f", "#171717", "#ffb07c"];
         const inks = ["#171717", "#ffffff", "#171717"];
         results.slice(0, 3).forEach((item, i) => {
           const icon = L.divIcon({
-            html: `<div style="background:${colors[i]};color:${inks[i]};width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.5)">${i + 1}</div>`,
+            html: `<div style="background:${RANK_COLORS[i]};color:${inks[i]};width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.5)">${i + 1}</div>`,
             className: "",
             iconSize: [30, 30],
             iconAnchor: [15, 15],
           });
-          L.marker([item.shop.lat, item.shop.lng], { icon })
+          const marker = L.marker([item.shop.lat, item.shop.lng], { icon })
             .addTo(mapInstance)
             .bindPopup(
-              `<b>#${i + 1} ${item.shop.nama}</b><br>${item.distance.toFixed(2)} km — Skor: ${(item.finalScore * 100).toFixed(1)}`,
+              `<b>#${i + 1} ${esc(item.shop.nama)}</b><br>${item.distance.toFixed(2)} km — Skor: ${(item.finalScore * 100).toFixed(1)}`,
             );
+          marker.on("click", () => setFocus(i, false));
+          rankMarkers.push(marker);
         });
 
-        // Alert
-        const alertEl = document.getElementById("alertArea");
-        if (!results.length) {
-          alertEl.innerHTML = `<div class="alert alert-warn">⚠️ Tidak ada tempat yang memenuhi semua filter saat ini. Coba: perlebar rentang harga, tambah jarak, atau mundurkan waktu kepulangan.</div>`;
-        } else {
-          alertEl.innerHTML = `<div class="alert alert-info">✓ Ditemukan <strong>${results.length} tempat</strong> yang sesuai kriteria. Menampilkan 3 rekomendasi terbaik.</div>`;
-        }
+        // Frame the user and the top 3 together.
+        mapBounds = results.length
+          ? L.latLngBounds([
+              [userLat, userLng],
+              ...results.slice(0, 3).map((r) => [r.shop.lat, r.shop.lng]),
+            ])
+          : null;
+        if (mapBounds)
+          mapInstance.fitBounds(mapBounds, { padding: [56, 56], maxZoom: 15 });
 
-        // Top 3 cards
-        const grid = document.getElementById("top3Grid");
-        grid.innerHTML = "";
-        const labels = ["Terbaik", "Runner Up", "Ketiga"];
+        // Alert (only when nothing matches; the subtitle carries the count otherwise)
+        $id("alertArea").innerHTML = results.length
+          ? ""
+          : `<div class="alert alert-warn">⚠️ Tidak ada tempat yang memenuhi semua filter saat ini. Coba: perlebar rentang harga, tambah jarak, atau mundurkan waktu kepulangan.</div>`;
 
-        results.slice(0, 3).forEach((item, i) => {
-          const { shop, distance, scores, finalScore } = item;
-          const hours = getTodayHours(shop);
-          const tutupStr = !hours
-            ? "—"
-            : shop.buka_24jam
-              ? "24 Jam"
-              : minsToTime(hours.tutup);
-          const sc = (s) => (s >= 0.7 ? "high" : s >= 0.4 ? "mid" : "low");
-
-          const card = document.createElement("div");
-          card.className = `result-card rank-${i + 1}`;
-          card.innerHTML = `
-      <div class="rank-badge">#${i + 1} ${labels[i]}</div>
-      <div class="rc-name">${shop.nama}</div>
-      <div class="rc-loc">📍 ${shop.kecamatan}${shop.kecamatan ? " · " : ""}${distance.toFixed(2)} km dari kamu</div>
-      <div class="rc-score-bar"><div class="rc-score-fill" style="width:${finalScore * 100}%"></div></div>
-      <div class="rc-meta">
-        <div class="rc-meta-item"><span class="lbl">Skor Akhir</span><span class="val">${(finalScore * 100).toFixed(1)} / 100</span></div>
-        <div class="rc-meta-item"><span class="lbl">Harga Mulai</span><span class="val">${formatRp(shop.harga_min)}</span></div>
-        <div class="rc-meta-item"><span class="lbl">Jam Tutup Hari Ini</span><span class="val">${tutupStr}</span></div>
-        <div class="rc-meta-item"><span class="lbl">Rating</span><span class="val">⭐ ${shop.rating || "—"} (${Math.round(shop.ulasan).toLocaleString("id-ID")} ulasan)</span></div>
-      </div>
-      <div class="score-breakdown">
-        <div class="score-pill"><span class="sp-label">Harga (${weights.harga}%)</span><span class="sp-val ${sc(scores.harga)}">${(scores.harga * 100).toFixed(0)}</span></div>
-        <div class="score-pill"><span class="sp-label">Jarak (${weights.jarak}%)</span><span class="sp-val ${sc(scores.jarak)}">${(scores.jarak * 100).toFixed(0)}</span></div>
-        <div class="score-pill"><span class="sp-label">Jam (${weights.jam}%)</span><span class="sp-val ${sc(scores.jam)}">${(scores.jam * 100).toFixed(0)}</span></div>
-        <div class="score-pill"><span class="sp-label">Popularitas (${weights.popularitas}%)</span><span class="sp-val ${sc(scores.popularitas)}">${(scores.popularitas * 100).toFixed(0)}</span></div>
-      </div>
-      <div class="rc-reason">💡 ${generateReason(item)}</div>
-      ${shop.link ? `<div style="margin-top:0.85rem"><a href="${shop.link}" target="_blank" rel="noopener">🗺️ Buka di Google Maps</a></div>` : ""}
-    `;
-          grid.appendChild(card);
-        });
-
-        // Full table
-        const tbody = document.getElementById("tableRows");
-        tbody.innerHTML = "";
-        results.forEach((item, i) => {
-          const { shop, distance, finalScore } = item;
-          const hours = getTodayHours(shop);
-          const tutup = !hours
-            ? "—"
-            : shop.buka_24jam
-              ? "24J"
-              : minsToTime(hours.tutup);
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-      <td><strong style="color:${i < 3 ? "var(--accent-text)" : "inherit"}">${i + 1}</strong></td>
-      <td>${shop.nama}</td><td>${shop.kecamatan || "—"}</td>
-      <td>${distance.toFixed(2)} km</td><td>${formatRp(shop.harga_min)}</td>
-      <td>${tutup}</td><td>${shop.rating || "—"}</td>
-      <td>${(finalScore * 100).toFixed(1)}<span class="tbl-score-bar"><span class="tbl-score-fill" style="width:${finalScore * 100}%"></span></span></td>
-    `;
-          tbody.appendChild(tr);
-        });
-
+        renderDashboard(results);
         renderBento(results);
       }
+
+      // =====================================================================
+      // HASIL: dashboard (ringkasan 3 teratas, semua hasil, perhitungan fuzzy)
+      // =====================================================================
+      const RANK_COLORS = ["#ff7a2f", "#171717", "#ffb07c"];
+      const CRITERIA = [
+        { key: "harga", label: "Harga", color: "#ff7a2f" },
+        { key: "jarak", label: "Jarak", color: "#171717" },
+        { key: "jam", label: "Jam", color: "#ffb07c" },
+        { key: "popularitas", label: "Popularitas", color: "#c9c5bc" },
+      ];
+      const TAB_NAMES = ["Ringkasan", "Analisis", "Semua", "Hitung"];
+      let resState = { results: [], focus: 0, calcIdx: 0 };
+      let lastPrefs = null; // preferensi saat terakhir diproses
+      let lastWeights = null;
+      let rankMarkers = [];
+      let mapBounds = null;
+
+      const $id = (id) => document.getElementById(id);
+      const esc = (s) =>
+        String(s ?? "").replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[c],
+        );
+      const fnum = (n, d = 0) =>
+        Number(n).toLocaleString("id-ID", {
+          minimumFractionDigits: d,
+          maximumFractionDigits: d,
+        });
+      const pctW = (v) => Math.max(0, Math.min(100, v * 100)).toFixed(1) + "%";
+      const hoursOf = (shop) => {
+        const h = getTodayHours(shop);
+        return h ? { buka: h.buka, tutup: h.tutup, all: !!shop.buka_24jam } : null;
+      };
+      const hoursText = (shop) => {
+        const h = hoursOf(shop);
+        return !h
+          ? "—"
+          : h.all
+            ? "24 Jam"
+            : minsToTime(h.buka) + "–" + minsToTime(h.tutup);
+      };
+      // harga_min below Rp1.000 is a placeholder in the data (the real bound is harga_max), so show that instead.
+      const priceText = (shop) =>
+        shop.harga_min >= 1000
+          ? formatRp(shop.harga_min)
+          : shop.harga_max > 0
+            ? "≤ " + formatRp(shop.harga_max)
+            : "—";
+      const priceVal = (shop) =>
+        shop.harga_min >= 1000 ? shop.harga_min : shop.harga_max > 0 ? shop.harga_max : 0;
+      const safeUrl = (u) => (/^https?:\/\//i.test(u || "") ? u : "");
+
+      // ---- Tab ----
+      function selectTab(name) {
+        TAB_NAMES.forEach((t) => {
+          const on = t === name;
+          const tab = $id("tab" + t);
+          tab.setAttribute("aria-selected", String(on));
+          tab.tabIndex = on ? 0 : -1;
+          $id("panel" + t).hidden = !on;
+        });
+        $id("focusWrap").hidden = name !== "Ringkasan";
+        if (name === "Ringkasan" && mapInstance)
+          setTimeout(() => {
+            mapInstance.invalidateSize();
+            if (mapBounds)
+              mapInstance.fitBounds(mapBounds, { padding: [56, 56], maxZoom: 15 });
+          }, 60);
+      }
+
+      // ---- Ringkasan: 7 kartu untuk 3 tempat teratas ----
+      function cmpRow(i, item, valueHtml, barHtml) {
+        const on = i === resState.focus;
+        return `<button type="button" class="cmp-row${on ? " is-focus" : ""}" data-focus="${i}" aria-pressed="${on}">
+          <span class="cmp-chip chip r${i + 1}">#${i + 1}</span>
+          <span class="cmp-name">${esc(item.shop.nama)}</span>
+          <span class="cmp-val">${valueHtml}</span>
+          ${barHtml}
+        </button>`;
+      }
+      const barHtml = (frac) =>
+        `<span class="cmp-bar"><i style="width:${pctW(frac)}"></i></span>`;
+
+      // Mini-bar: tiga batang kecil (#1 #2 #3) untuk membandingkan satu ukuran; klik memindahkan fokus.
+      function miniBars(top, values, label) {
+        const max = Math.max(...values, 0.0001);
+        return top
+          .map((it, i) => {
+            const name = `#${i + 1} ${it.shop.nama}: ${label(values[i])}`;
+            return `<button type="button" class="mb${i === resState.focus ? " is-focus" : ""}" data-focus="${i}" title="${esc(name)}" aria-label="${esc(name)}">
+              <span class="mb-track"><i style="height:${Math.max(10, (values[i] / max) * 100).toFixed(0)}%"></i></span>
+              <span class="mb-x">#${i + 1}</span>
+            </button>`;
+          })
+          .join("");
+      }
+
+      function renderOverview() {
+        const top = resState.results.slice(0, 3);
+        if (!top.length) return;
+        const fi = Math.min(resState.focus, top.length - 1);
+        resState.focus = fi;
+        const f = top[fi],
+          s = f.shop,
+          W = lastWeights;
+
+        // Pil fokus
+        $id("focusPills").innerHTML = top
+          .map(
+            (it, i) =>
+              `<button type="button" class="fp r${i + 1}${i === fi ? " is-on" : ""}" data-focus="${i}" aria-pressed="${i === fi}" title="${esc(it.shop.nama)}">#${i + 1}</button>`,
+          )
+          .join("");
+
+        // 2. Diagram batang bertumpuk: tinggi = skor akhir, segmen = kontribusi tiap kriteria
+        $id("chartName").textContent = s.nama;
+        $id("chartBig").innerHTML = `${fnum(f.finalScore * 100, 1)}<small>/100</small>`;
+        const cc = $id("chartChip");
+        cc.className = `chip r${fi + 1}`;
+        cc.textContent = "#" + (fi + 1);
+        $id("colChart").style.setProperty("--n", top.length);
+        $id("chartX").style.setProperty("--n", top.length);
+        $id("colChart").innerHTML = top
+          .map((it, i) => {
+            const total = Math.max(it.finalScore * 100, 0.0001);
+            const segs = CRITERIA.map(
+              (c) =>
+                `<i style="height:${((W[c.key] * it.scores[c.key]) / total) * 100}%;background:${c.color}"></i>`,
+            ).join("");
+            const label = `#${i + 1} ${it.shop.nama}: skor ${fnum(it.finalScore * 100, 1)}`;
+            return `<button type="button" class="col${i === fi ? " is-focus" : ""}" data-focus="${i}" title="${esc(label)}" aria-label="${esc(label)}" style="--v:${(it.finalScore * 100).toFixed(1)}">
+              <span class="col-tag">${fnum(it.finalScore * 100, 1)}</span>
+              <span class="col-stack">${segs}</span>
+            </button>`;
+          })
+          .join("");
+        $id("chartX").innerHTML = top
+          .map(
+            (it, i) =>
+              `<button type="button" class="cx${i === fi ? " is-focus" : ""}" data-focus="${i}"><span class="chip r${i + 1}">#${i + 1}</span><span class="cx-name">${esc(it.shop.nama)}</span></button>`,
+          )
+          .join("");
+        $id("rankLegend").innerHTML = CRITERIA.map(
+          (c) =>
+            `<li><i style="background:${c.color}"></i>${c.label} ${W[c.key]}% <b>+${fnum(W[c.key] * f.scores[c.key], 1)}</b></li>`,
+        ).join("");
+
+        // 1. Peta: keterangan tempat terpilih + penanda di depan
+        const mc = $id("mfRank");
+        mc.className = `chip r${fi + 1}`;
+        mc.textContent = "#" + (fi + 1);
+        $id("mfName").textContent = s.nama;
+        $id("mfMeta").textContent = [
+          s.kecamatan,
+          `${fnum(f.distance, 2)} km dari kamu`,
+          `skor ${fnum(f.finalScore * 100, 1)}`,
+        ]
+          .filter(Boolean)
+          .join(" · ");
+        const link = $id("mfLink");
+        const url = safeUrl(s.link);
+        if (url) {
+          link.href = url;
+          link.hidden = false;
+        } else link.hidden = true;
+        rankMarkers.forEach((m, i) => m.setZIndexOffset(i === fi ? 1000 : 0));
+
+        // 3. Rating
+        $id("ratingBig").textContent = s.rating ? fnum(s.rating, 1) : "—";
+        $id("ratingStars").style.width = pctW((s.rating || 0) / 5);
+        $id("ratingBars").innerHTML = miniBars(
+          top,
+          top.map((t) => t.shop.rating || 0),
+          (v) => (v ? fnum(v, 1) + " dari 5" : "—"),
+        );
+
+        // 4. Jumlah ulasan (kotak hitam lebar)
+        const maxRev = Math.max(1, ...top.map((t) => t.shop.ulasan || 0));
+        $id("revName").textContent = s.nama;
+        $id("revBig").innerHTML = `${fnum(s.ulasan || 0)}<small>ulasan</small>`;
+        const rv = $id("revChip");
+        rv.className = `chip r${fi + 1}`;
+        rv.textContent = "#" + (fi + 1);
+        $id("revRows").innerHTML = top
+          .map((it, i) =>
+            cmpRow(i, it, fnum(it.shop.ulasan || 0), barHtml((it.shop.ulasan || 0) / maxRev)),
+          )
+          .join("");
+
+        // 6. Harga
+        $id("priceBig").textContent = priceText(s);
+        $id("priceSub").textContent =
+          s.harga_min >= 1000 && s.harga_max > 0 ? "s.d. " + formatRp(s.harga_max) : "per orang";
+        $id("priceBars").innerHTML = miniBars(
+          top,
+          top.map((t) => priceVal(t.shop)),
+          (v) => (v ? formatRp(v) : "—"),
+        );
+
+        // 7. Jarak
+        $id("distBig").innerHTML = `${fnum(f.distance, 2)}<small>km</small>`;
+        $id("distBars").innerHTML = miniBars(
+          top,
+          top.map((t) => t.distance),
+          (v) => fnum(v, 2) + " km",
+        );
+
+        // 5. Jam operasional (kotak kecil): jam buka tempat terpilih, lama buka tiap tempat, garis waktu 00–24
+        const dep = lastPrefs ? lastPrefs.departMinutes : null;
+        const at = (m) => ((Math.min(Math.max(m, 0), 1440) / 1440) * 100).toFixed(1) + "%";
+        $id("hourBig").textContent = hoursText(s);
+        $id("hourBars").innerHTML = miniBars(
+          top,
+          top.map((t) => {
+            const h = hoursOf(t.shop);
+            return h ? Math.min(h.tutup, 1440) - h.buka : 0;
+          }),
+          (v) => (v ? fnum(v / 60, 1) + " jam buka" : "—"),
+        );
+        const hs = hoursOf(s);
+        $id("hourTl").innerHTML =
+          (hs
+            ? `<i class="tl-fill" style="left:${at(hs.buka)};width:${(((Math.min(hs.tutup, 1440) - hs.buka) / 1440) * 100).toFixed(1)}%"></i>`
+            : "") +
+          `<b class="tl-now" style="left:${at(nowMinutes)}"></b>` +
+          (dep != null ? `<b class="tl-dep" style="left:${at(dep)}"></b>` : "");
+      }
+
+      function setFocus(i, fly = true) {
+        resState.focus = i;
+        resState.calcIdx = i;
+        renderOverview();
+        syncCalc();
+        if (fly && mapInstance && rankMarkers[i])
+          mapInstance.flyTo(
+            rankMarkers[i].getLatLng(),
+            Math.max(mapInstance.getZoom(), 14),
+            { duration: 0.6 },
+          );
+      }
+
+      // ---- Semua hasil ----
+      function renderTable() {
+        const { results } = resState;
+        $id("tableRows").innerHTML = results
+          .map((it, i) => {
+            const s = it.shop,
+              h = hoursOf(s);
+            const tutup = !h ? "—" : h.all ? "24 Jam" : minsToTime(h.tutup);
+            return `<tr class="${i < 3 ? "is-top" : ""}" data-search="${esc((s.nama + " " + (s.kecamatan || "")).toLowerCase())}">
+              <td>${i + 1}</td>
+              <td class="tbl-name">${esc(s.nama)}</td>
+              <td>${esc(s.kecamatan || "—")}</td>
+              <td class="num">${fnum(it.distance, 2)} km</td>
+              <td class="num">${priceText(s)}</td>
+              <td class="num">${tutup}</td>
+              <td class="num">${s.rating ? fnum(s.rating, 1) : "—"}</td>
+              <td class="num">${fnum(s.ulasan || 0)}</td>
+              <td class="num"><strong>${fnum(it.finalScore * 100, 1)}</strong></td>
+              <td><button type="button" class="row-btn" data-calc="${i}">Rincian</button></td>
+            </tr>`;
+          })
+          .join("");
+        $id("tblSearch").value = "";
+        filterTable("");
+      }
+
+      function filterTable(q) {
+        q = q.trim().toLowerCase();
+        let n = 0;
+        $id("tableRows")
+          .querySelectorAll("tr")
+          .forEach((tr) => {
+            const show = !q || tr.dataset.search.includes(q);
+            tr.hidden = !show;
+            if (show) n++;
+          });
+        const total = resState.results.length;
+        $id("tblCount").textContent = q ? `(${n} dari ${total})` : `(${total})`;
+      }
+
+      // ---- Perhitungan fuzzy: rumus yang sama dengan tsukamoto*() di atas ----
+      function explainShop(item) {
+        const { shop, distance } = item,
+          p = lastPrefs,
+          w = lastWeights,
+          rows = [];
+        const push = (r) => {
+          r.w = w[r.key];
+          r.contrib = r.w * r.z;
+          rows.push(r);
+        };
+
+        // Harga
+        const hargaBase = { key: "harga", label: "Harga", sets: "MURAH → BAIK · MAHAL → BURUK" };
+        if (p.userMax <= 0) {
+          push({ ...hargaBase, input: formatRp(shop.harga_min), z: 0.5, note: "Tanpa batas harga, skor dibuat netral 0,500" });
+        } else {
+          const h = shop.harga_min,
+            range = Math.max(1, p.userMax - p.userMin);
+          const aB = h <= p.userMin ? 1 : h < p.userMax ? (p.userMax - h) / range : 0;
+          const aK = h <= p.userMin ? 0 : h < p.userMax ? (h - p.userMin) / range : 1;
+          push({
+            ...hargaBase,
+            input: formatRp(shop.harga_min),
+            inputSub: `rentang ${formatRp(p.userMin)}–${formatRp(p.userMax)}${shop.harga_min < 1000 ? " · harga_min pada data" : ""}`,
+            aB,
+            aK,
+            z: tsukamotoDefuzz(aB, aK),
+          });
+        }
+
+        // Jarak
+        {
+          const ref = p.maxJarak > 0 ? p.maxJarak : 10;
+          const aB = Math.max(0, 1 - distance / ref),
+            aK = Math.min(1, distance / ref);
+          push({
+            key: "jarak",
+            label: "Jarak",
+            sets: "DEKAT → BAIK · JAUH → BURUK",
+            input: `${fnum(distance, 2)} km`,
+            inputSub: p.maxJarak > 0 ? `batas ${fnum(ref, 1)} km` : "acuan 10 km (tanpa batas)",
+            aB,
+            aK,
+            z: tsukamotoDefuzz(aB, aK),
+          });
+        }
+
+        // Jam
+        const jamBase = { key: "jam", label: "Jam", sets: "CUKUP → BAIK · TERBATAS → BURUK" };
+        if (shop.buka_24jam) {
+          push({ ...jamBase, input: "Buka 24 jam", z: 1, note: "Buka 24 jam, skor langsung 1,000" });
+        } else {
+          const hrs = getTodayHours(shop);
+          if (!hrs) {
+            push({ ...jamBase, input: "Tutup hari ini", z: 0, note: "Tutup hari ini, skor 0" });
+          } else {
+            const sisa = hrs.tutup - p.departMinutes;
+            const aB = sisa >= 120 ? 1 : sisa >= 60 ? (sisa - 60) / 60 : 0;
+            const aK = sisa >= 120 ? 0 : sisa >= 60 ? (120 - sisa) / 60 : 1;
+            push({
+              ...jamBase,
+              input: `Tutup ${minsToTime(hrs.tutup)}`,
+              inputSub: `pulang ${minsToTime(p.departMinutes)} · sisa ${fnum(sisa)} menit`,
+              aB,
+              aK,
+              z: tsukamotoDefuzz(aB, aK),
+            });
+          }
+        }
+
+        // Popularitas
+        {
+          const rating = shop.rating || 0,
+            ulasan = shop.ulasan || 0;
+          const rBagus = rating >= 4.5 ? 1 : rating >= 3.5 ? rating - 3.5 : 0;
+          const rBuruk = rating >= 4.0 ? 0 : rating >= 3.0 ? 4.0 - rating : 1;
+          const uBanyak = ulasan >= 500 ? 1 : ulasan >= 100 ? (ulasan - 100) / 400 : 0;
+          const uSedikit = ulasan >= 300 ? 0 : ulasan >= 50 ? (300 - ulasan) / 250 : 1;
+          const aB = Math.min(rBagus, uBanyak),
+            aK = Math.max(rBuruk, uSedikit);
+          push({
+            key: "popularitas",
+            label: "Popularitas",
+            sets: "BAGUS DAN BANYAK → BAIK · BURUK ATAU SEDIKIT → BURUK",
+            input: `${fnum(rating, 1)}★ · ${fnum(ulasan)} ulasan`,
+            aBNote: `min(rating bagus ${fnum(rBagus, 2)}; ulasan banyak ${fnum(uBanyak, 2)})`,
+            aKNote: `maks(rating buruk ${fnum(rBuruk, 2)}; ulasan sedikit ${fnum(uSedikit, 2)})`,
+            aB,
+            aK,
+            z: tsukamotoDefuzz(aB, aK),
+          });
+        }
+        return rows;
+      }
+
+      function fillCalcSelect() {
+        const sel = $id("calcSelect");
+        sel.innerHTML = resState.results
+          .map((it, i) => `<option value="${i}">${i + 1}. ${esc(it.shop.nama)}</option>`)
+          .join("");
+        sel.value = resState.calcIdx;
+      }
+
+      function syncCalc() {
+        $id("calcSelect").value = resState.calcIdx;
+        renderCalc();
+      }
+
+      function renderCalc() {
+        const { results, calcIdx } = resState,
+          item = results[calcIdx];
+        if (!item || !lastPrefs) return;
+        const rows = explainShop(item),
+          s = item.shop,
+          p = lastPrefs;
+        const chip = `<span class="chip${calcIdx < 3 ? " r" + (calcIdx + 1) : ""}">#${calcIdx + 1}</span> `;
+
+        $id("calcSummary").innerHTML = `<div>
+            <h3>${chip}${esc(s.nama)}</h3>
+            <p>${esc(s.kecamatan || "—")} · ${fnum(item.distance, 2)} km dari kamu</p>
+          </div>
+          <div class="calc-score">
+            <p>Skor akhir</p>
+            <div class="big">${fnum(item.finalScore * 100, 1)}<small>/100</small></div>
+          </div>`;
+
+        $id("calcParams").innerHTML = [
+          `Harga ${p.userMax > 0 ? formatRp(p.userMin) + "–" + formatRp(p.userMax) : "tanpa batas"}`,
+          `Jarak ${p.maxJarak > 0 ? "≤ " + fnum(p.maxJarak, 1) + " km" : "tanpa batas (acuan 10 km)"}`,
+          `Jam pulang ${minsToTime(p.departMinutes)}`,
+          `Bobot ${CRITERIA.map((c) => c.label + " " + lastWeights[c.key]).join(" · ")}`,
+        ]
+          .map((t) => `<span>${esc(t)}</span>`)
+          .join("");
+
+        const alpha = (v, note) =>
+          fnum(v, 3) + (note ? `<small>${esc(note)}</small>` : "");
+        $id("calcRows").innerHTML = rows
+          .map((r) => {
+            const head = `<td><strong>${r.label}</strong><small>${r.sets}</small></td>
+              <td>${esc(r.input)}${r.inputSub ? `<small>${esc(r.inputSub)}</small>` : ""}</td>`;
+            const mid = r.note
+              ? `<td class="note" colspan="4">${esc(r.note)}</td>`
+              : `<td class="num">${alpha(r.aB, r.aBNote)}</td>
+                 <td class="num">${alpha(r.aK, r.aKNote)}</td>
+                 <td class="num">${fnum(r.aB, 3)}</td>
+                 <td class="num">${fnum(1 - r.aK, 3)}</td>`;
+            return `<tr>${head}${mid}
+              <td class="num strong">${fnum(r.z, 3)}</td>
+              <td class="num">${r.w}</td>
+              <td class="num">${fnum(r.contrib, 1)}</td></tr>`;
+          })
+          .join("");
+        const wSum = rows.reduce((a, r) => a + r.w, 0);
+        $id("calcFoot").innerHTML = `<tr><td colspan="7">Skor akhir (Σ bobot × z* ÷ 100)</td>
+          <td class="num">${wSum}</td><td class="num">${fnum(item.finalScore * 100, 1)}</td></tr>`;
+        $id("calcFormula").textContent =
+          `Skor akhir = (${rows.map((r) => `${r.w}×${fnum(r.z, 3)}`).join(" + ")}) ÷ 100 = ${fnum(item.finalScore, 4)}, atau ${fnum(item.finalScore * 100, 1)} dari 100.`;
+      }
+
+      function renderDashboard(results) {
+        resState = { results, focus: 0, calcIdx: 0 };
+        const n = results.length;
+        $id("sec3").classList.toggle("res-empty", !n);
+        $id("tabCount").textContent = n;
+        $id("resSub").textContent = n
+          ? n >= 3
+            ? `Dari ${fnum(n)} tempat yang lolos filter, ini 3 yang paling cocok untukmu. Dihitung dengan Fuzzy Tsukamoto.`
+            : `Hanya ${n} tempat yang lolos filter. Dihitung dengan Fuzzy Tsukamoto.`
+          : "Belum ada tempat yang cocok dengan filter ini.";
+        if (!n) return;
+        renderOverview();
+        renderTable();
+        fillCalcSelect();
+        renderCalc();
+      }
+
+      $id("resTabs").addEventListener("click", (e) => {
+        const t = e.target.closest('[role="tab"]');
+        if (t) selectTab(t.id.slice(3));
+      });
+      $id("resTabs").addEventListener("keydown", (e) => {
+        if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+        const i = TAB_NAMES.findIndex(
+          (n) => $id("tab" + n).getAttribute("aria-selected") === "true",
+        );
+        const next =
+          TAB_NAMES[(i + (e.key === "ArrowRight" ? 1 : -1) + TAB_NAMES.length) % TAB_NAMES.length];
+        selectTab(next);
+        $id("tab" + next).focus();
+      });
+      ["ovGrid", "focusPills"].forEach((id) =>
+        $id(id).addEventListener("click", (e) => {
+          const r = e.target.closest("[data-focus]");
+          if (r) setFocus(+r.dataset.focus);
+        }),
+      );
+      $id("tableRows").addEventListener("click", (e) => {
+        const b = e.target.closest("[data-calc]");
+        if (!b) return;
+        resState.calcIdx = +b.dataset.calc;
+        syncCalc();
+        selectTab("Hitung");
+        $id("resTabs").scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+      $id("tblSearch").addEventListener("input", (e) => filterTable(e.target.value));
+      $id("calcSelect").addEventListener("change", (e) => {
+        resState.calcIdx = +e.target.value;
+        renderCalc();
+      });
 
       // =====================================================================
       // PROCESS
@@ -2956,6 +4921,14 @@
         nowMinutes = now.getHours() * 60 + now.getMinutes();
 
         document.getElementById("loadingOverlay").classList.add("show");
+        lastPrefs = {
+          userMin,
+          userMax,
+          maxJarak,
+          departMinutes: departMins,
+        };
+        lastWeights = { ...weights };
+
         setTimeout(() => {
           const results = processShops({
             userMin,
@@ -2966,7 +4939,12 @@
           goToStep(3);
           renderResults(results);
           document.getElementById("loadingOverlay").classList.remove("show");
-          setTimeout(() => mapInstance && mapInstance.invalidateSize(), 350);
+          setTimeout(() => {
+            if (!mapInstance) return;
+            mapInstance.invalidateSize();
+            if (mapBounds)
+              mapInstance.fitBounds(mapBounds, { padding: [56, 56], maxZoom: 15 });
+          }, 350);
         }, 80);
       });
 
@@ -2983,15 +4961,6 @@
           sessionStorage.removeItem(UPLOAD_KEY);
         } catch (e) {}
         goHome();
-      });
-      document.getElementById("tableToggle").addEventListener("click", () => {
-        tableOpen = !tableOpen;
-        document
-          .getElementById("tableBody")
-          .classList.toggle("hidden", !tableOpen);
-        document.getElementById("toggleIcon").textContent = tableOpen
-          ? "▲ Sembunyikan"
-          : "▼ Tampilkan";
       });
     </script>
     <script>

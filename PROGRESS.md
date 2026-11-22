@@ -20,7 +20,11 @@
 ## Alur Aplikasi
 1. **Beranda** → satu-satunya tempat upload (`.xlsx`); Mulai nonaktif sampai file ada. File disimpan di `sessionStorage` (`spk_upload`)
 2. **Preferensi** (langkah 1 di app, tata letak bento: topbar, hero "Temukan tempat terbaik dari data yang kamu unggah", lalu kartu Lokasi / Jam pulang / Bobot (dengan cincin total) / Rentang harga / Jarak) → lokasi (GPS/manual), jam pulang, rentang harga, jarak maks, bobot 4 kriteria (total 100)
-3. **Hasil** (langkah 2 di app) → Top 3 + peta Leaflet + Ringkasan Analisis + tabel semua hasil
+3. **Hasil** (langkah 2 di app, dashboard dengan 4 tab):
+   - **Ringkasan** — 3 tempat teratas dalam 7 kotak ringkas (proporsi seperti referensi): kiri peta dan diagram batang bertumpuk skor fuzzy (kontribusi tiap kriteria); kanan ulasan, harga, jarak, rating (oranye), dan jam operasional (hitam). Pil "Bandingkan #1/#2/#3", batang diagram, mini-bar, atau penanda peta mengubah fokus semua kotak
+   - **Analisis** — bento React (Ringkasan Analisis)
+   - **Semua Hasil** — tabel seluruh hasil, bisa dicari; tombol "Rincian" membuka perhitungannya
+   - **Perhitungan Fuzzy** — langkah demi langkah per tempat: α BAIK/BURUK, z, skor z*, bobot, kontribusi, lalu skor akhir (`explainShop()` meniru `tsukamoto*()` dan cocok dengan skor sistem sampai 1e-14)
 
 `app.html` tidak punya halaman upload. Dibuka tanpa file, ia langsung mengarahkan ke `index.html`. "← Beranda" mempertahankan file; "Ganti Data" menghapusnya.
 
