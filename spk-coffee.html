@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SPK Coffee Shop – Fuzzy Logic</title>
+  <title>SPK Coffee Shop – Metode Tsukamoto</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -192,12 +192,12 @@
 
 <div class="loading-overlay" id="loadingOverlay">
   <div class="spinner"></div>
-  <div style="color:var(--muted);font-size:0.9rem">Memproses Fuzzy Logic...</div>
+  <div style="color:var(--muted);font-size:0.9rem">Memproses Tsukamoto...</div>
 </div>
 
 <header>
   <h1>☕ SPK Coffee Shop</h1>
-  <p>Sistem Pendukung Keputusan – Metode Fuzzy Logic &nbsp;|&nbsp; Kabupaten Sleman &amp; Kota Yogyakarta</p>
+  <p>Sistem Pendukung Keputusan – Metode Fuzzy Tsukamoto &nbsp;|&nbsp; Kabupaten Sleman &amp; Kota Yogyakarta</p>
 </header>
 
 <div class="steps">
@@ -314,7 +314,7 @@
 
     <div class="action-row">
       <button class="btn btn-outline" id="btnBack">← Kembali</button>
-      <button class="btn btn-primary" id="btnProcess">Proses Fuzzy Logic →</button>
+      <button class="btn btn-primary" id="btnProcess">Proses Tsukamoto →</button>
     </div>
   </section>
 
@@ -344,7 +344,7 @@
             <tr>
               <th>Rank</th><th>Nama Kedai</th><th>Kecamatan</th>
               <th>Jarak</th><th>Harga Min</th><th>Jam Tutup</th>
-              <th>Rating</th><th>Skor Fuzzy</th>
+              <th>Rating</th><th>Skor Tsukamoto</th>
             </tr>
           </thead>
           <tbody id="tableRows"></tbody>
@@ -548,7 +548,7 @@ sliderKeys.forEach(k => {
 });
 
 // =====================================================================
-// FUZZY LOGIC
+// TSUKAMOTO FUZZY LOGIC
 // =====================================================================
 function haversine(lat1, lng1, lat2, lng2) {
   const R = 6371, r = Math.PI/180;
@@ -572,42 +572,56 @@ function getTodayHours(shop) {
   return { buka, tutup };
 }
 
-/** Harga: rentang user [userMin, userMax] vs shop.harga_min */
-function fuzzyHarga(shop, userMin, userMax) {
-  if (userMax <= 0) return 0.5;                      // no budget set → neutral
-  if (shop.harga_min > userMax) return 0;            // too expensive, filtered
-
-  // Sweet spot: shop_harga_min is within user's range
-  if (shop.harga_min >= userMin && shop.harga_min <= userMax) {
-    // Score = 1.0 when exactly at userMin, 0.6 at userMax
-    const range = Math.max(1, userMax - userMin);
-    return 1.0 - 0.4 * (shop.harga_min - userMin) / range;
-  }
-  if (shop.harga_min < userMin) {
-    // Cheaper than expected: still good (0.85)
-    return 0.85;
-  }
-  return 0; // above userMax
+// Tsukamoto defuzzification (weighted average of crisp outputs per rule)
+// Output membership: BAIK (monoton naik) μ(z)=z → z=α
+//                    BURUK (monoton turun) μ(z)=1-z → z=1-α
+function tsukamotoDefuzz(alpha_baik, alpha_buruk) {
+  const z_baik  = alpha_baik;
+  const z_buruk = 1 - alpha_buruk;
+  const sumAlpha = alpha_baik + alpha_buruk;
+  if (sumAlpha === 0) return 0.5;
+  return (alpha_baik * z_baik + alpha_buruk * z_buruk) / sumAlpha;
 }
 
-/** Jarak: closer = higher score. maxJarak=0 means no limit */
-function fuzzyJarak(distance, maxJarak) {
-  if (maxJarak > 0 && distance > maxJarak) return 0;  // hard filter
-  // Score: 1.0 at 0km, decreasing. With no limit use reference of 10km.
+// Harga: himpunan MURAH dan MAHAL terhadap rentang [userMin, userMax]
+function tsukamotoHarga(shop, userMin, userMax) {
+  if (userMax <= 0) return 0.5; // tidak ada batasan harga → netral
+  const h = shop.harga_min;
+  const range = Math.max(1, userMax - userMin);
+  // μ_MURAH: 1 jika h≤userMin, turun linier, 0 jika h≥userMax
+  const mu_murah = h <= userMin ? 1.0 : h < userMax ? (userMax - h) / range : 0.0;
+  // μ_MAHAL: 0 jika h≤userMin, naik linier, 1 jika h≥userMax
+  const mu_mahal = h <= userMin ? 0.0 : h < userMax ? (h - userMin) / range : 1.0;
+  // Rule 1: IF Harga=MURAH THEN Skor=BAIK
+  // Rule 2: IF Harga=MAHAL THEN Skor=BURUK
+  return tsukamotoDefuzz(mu_murah, mu_mahal);
+}
+
+// Jarak: himpunan DEKAT dan JAUH terhadap referensi maxJarak (default 10km)
+function tsukamotoJarak(distance, maxJarak) {
   const ref = maxJarak > 0 ? maxJarak : 10;
-  return Math.max(0.05, 1 - 0.95 * (distance / ref));
+  // μ_DEKAT: 1 di d=0, turun linier ke 0 di d=ref
+  const mu_dekat = Math.max(0, 1 - distance / ref);
+  // μ_JAUH: 0 di d=0, naik linier ke 1 di d=ref
+  const mu_jauh  = Math.min(1, distance / ref);
+  // Rule 1: IF Jarak=DEKAT THEN Skor=BAIK
+  // Rule 2: IF Jarak=JAUH  THEN Skor=BURUK
+  return tsukamotoDefuzz(mu_dekat, mu_jauh);
 }
 
-/** Jam: score based on close time vs departure time */
-function fuzzyJam(shop, departMinutes) {
+// Jam: himpunan CUKUP (sisa ≥120 menit) dan TERBATAS (sisa <60 menit)
+function tsukamotoJam(shop, departMinutes) {
   if (shop.buka_24jam) return 1.0;
   const hours = getTodayHours(shop);
   if (!hours) return 0;
-  // diff > 0 → closes AFTER departure (good)
-  const diff = hours.tutup - departMinutes;
-  if (diff >= 0) return 1.0;
-  if (diff >= -60) return 1.0 + diff / 120;   // 1.0 → 0.5 as diff: 0 → -60
-  return 0;
+  const sisa = hours.tutup - departMinutes; // menit tersisa saat berangkat
+  // μ_CUKUP: 0 jika sisa<60, naik linier ke 1 jika sisa≥120
+  const mu_cukup    = sisa >= 120 ? 1.0 : sisa >= 60 ? (sisa - 60) / 60 : 0.0;
+  // μ_TERBATAS: 1 jika sisa<60, turun linier ke 0 jika sisa≥120
+  const mu_terbatas = sisa >= 120 ? 0.0 : sisa >= 60 ? (120 - sisa) / 60 : 1.0;
+  // Rule 1: IF Jam=CUKUP     THEN Skor=BAIK
+  // Rule 2: IF Jam=TERBATAS  THEN Skor=BURUK
+  return tsukamotoDefuzz(mu_cukup, mu_terbatas);
 }
 
 function processShops(prefs) {
@@ -634,9 +648,9 @@ function processShops(prefs) {
       if (nowMinutes < hours.buka || nowMinutes >= hours.tutup) continue; // not open now
     }
 
-    const sHarga = fuzzyHarga(shop, userMin, userMax);
-    const sJarak = fuzzyJarak(distance, maxJarak);
-    const sJam   = fuzzyJam(shop, departMinutes);
+    const sHarga = tsukamotoHarga(shop, userMin, userMax);
+    const sJarak = tsukamotoJarak(distance, maxJarak);
+    const sJam   = tsukamotoJam(shop, departMinutes);
 
     const finalScore = (weights.harga * sHarga + weights.jarak * sJarak + weights.jam * sJam) / 100;
     results.push({ shop, distance, scores: { harga: sHarga, jarak: sJarak, jam: sJam }, finalScore });
