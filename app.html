@@ -17,6 +17,13 @@
     />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
     <script type="module" src="/src/bento-entry.tsx"></script>
+    <script>
+      // No uploaded file means the user skipped the homepage: send them back before anything renders.
+      try {
+        if (!sessionStorage.getItem("spk_upload"))
+          window.location.replace("./index.html");
+      } catch (e) {}
+    </script>
     <style>
       *,
       *::before,
@@ -1124,58 +1131,20 @@
     </header>
 
     <div class="steps">
-      <div class="step-item active" id="stepEl1">
+      <div class="step-item active" id="stepEl2">
         <div class="step-num">1</div>
-        Upload Data
-      </div>
-      <div class="step-line"></div>
-      <div class="step-item" id="stepEl2">
-        <div class="step-num">2</div>
         Preferensi
       </div>
       <div class="step-line"></div>
       <div class="step-item" id="stepEl3">
-        <div class="step-num">3</div>
+        <div class="step-num">2</div>
         Hasil
       </div>
     </div>
 
     <main>
-      <!-- STEP 1: UPLOAD -->
-      <section class="section active" id="sec1">
-        <div class="upload-zone" id="uploadZone">
-          <div class="upload-icon">📂</div>
-          <h2>Upload File Data Coffee Shop</h2>
-          <p style="margin-top: 0.5rem">
-            Drag &amp; drop file <strong>.xlsx</strong> ke sini, atau klik untuk
-            memilih
-          </p>
-          <p style="margin-top: 0.8rem; font-size: 0.76rem">
-            Kolom wajib:
-            <code
-              >nama_maps · harga_min · harga_max · lat · lng · bisa_di_tempat ·
-              buka_24_jam · senin_buka · senin_tutup</code
-            >
-            (dst. per hari)
-          </p>
-          <input type="file" id="fileInput" accept=".xlsx,.xls" />
-        </div>
-        <div class="data-preview" id="dataPreview">
-          <div class="data-info">
-            <span class="badge-green" id="dataCount">0 kedai</span>
-            <span
-              id="dataFileName"
-              style="font-size: 0.87rem; color: var(--muted)"
-            ></span>
-          </div>
-          <button class="btn btn-primary" id="btnToPrefs">
-            Lanjut ke Preferensi →
-          </button>
-        </div>
-      </section>
-
-      <!-- STEP 2: PREFERENCES -->
-      <section class="section" id="sec2">
+      <!-- STEP 1: PREFERENCES (the file is uploaded on the homepage) -->
+      <section class="section active" id="sec2">
         <div class="flt-layout">
           <!-- PANEL FILTER -->
           <div class="flt-panel" role="group" aria-labelledby="fltTitle">
@@ -1464,7 +1433,7 @@
 
         <!-- FOOTER AKSI (sticky) -->
         <div class="flt-footer">
-          <button class="btn btn-outline" id="btnBack">← Kembali</button>
+          <button class="btn btn-outline" id="btnBack">← Beranda</button>
           <button class="btn btn-primary" id="btnProcess">
             Proses Tsukamoto →
           </button>
@@ -1541,7 +1510,7 @@
           .querySelectorAll(".section")
           .forEach((s) => s.classList.remove("active"));
         document.getElementById("sec" + n).classList.add("active");
-        [1, 2, 3].forEach((i) => {
+        [2, 3].forEach((i) => {
           const el = document.getElementById("stepEl" + i);
           el.classList.remove("active", "done");
           if (i < n) el.classList.add("done");
@@ -1572,29 +1541,16 @@
       })();
 
       // =====================================================================
-      // UPLOAD
+      // DATA: the Excel file is uploaded on the homepage and kept in sessionStorage
       // =====================================================================
-      const uploadZone = document.getElementById("uploadZone");
-      const fileInput = document.getElementById("fileInput");
+      const HOME_URL = "./index.html";
+      const UPLOAD_KEY = "spk_upload";
 
-      uploadZone.addEventListener("click", () => fileInput.click());
-      uploadZone.addEventListener("dragover", (e) => {
-        e.preventDefault();
-        uploadZone.classList.add("drag-over");
-      });
-      uploadZone.addEventListener("dragleave", () =>
-        uploadZone.classList.remove("drag-over"),
-      );
-      uploadZone.addEventListener("drop", (e) => {
-        e.preventDefault();
-        uploadZone.classList.remove("drag-over");
-        if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
-      });
-      fileInput.addEventListener("change", (e) => {
-        if (e.target.files[0]) handleFile(e.target.files[0]);
-      });
+      function goHome() {
+        window.location.replace(HOME_URL);
+      }
 
-      function handleFile(file, onLoaded) {
+      function handleFile(file) {
         const reader = new FileReader();
         reader.onload = (e) => {
           try {
@@ -1605,35 +1561,32 @@
               defval: "",
             });
             shops = raw.map(parseShop).filter(Boolean);
-            document.getElementById("dataCount").textContent =
-              shops.length + " kedai kopi";
-            document.getElementById("dataFileName").textContent =
-              "📄 " + file.name;
-            document.getElementById("dataPreview").classList.add("show");
-            if (onLoaded) onLoaded();
+            if (!shops.length) throw new Error("tidak ada data kedai yang terbaca");
           } catch (err) {
             alert("Gagal membaca file Excel: " + err.message);
+            try {
+              sessionStorage.removeItem(UPLOAD_KEY);
+            } catch (e2) {}
+            goHome();
           }
         };
         reader.readAsBinaryString(file);
       }
 
-      // File handed over from the landing page (Upload Data, then Mulai): load it and skip straight to Preferensi.
-      (async function loadHandedOverFile() {
+      // Load the stored file. The file stays stored so a page refresh keeps working;
+      // "Ganti Data" is what clears it.
+      (async function loadStoredFile() {
         let raw = null;
         try {
-          raw = sessionStorage.getItem("spk_upload");
-          sessionStorage.removeItem("spk_upload");
+          raw = sessionStorage.getItem(UPLOAD_KEY);
         } catch (e) {}
-        if (!raw) return;
+        if (!raw) return goHome();
         try {
           const { name, dataUrl } = JSON.parse(raw);
           const blob = await (await fetch(dataUrl)).blob();
-          handleFile(new File([blob], name, { type: blob.type }), () =>
-            goToStep(2),
-          );
+          handleFile(new File([blob], name, { type: blob.type }));
         } catch (e) {
-          /* fall back to the manual upload step */
+          goHome();
         }
       })();
 
@@ -1679,11 +1632,6 @@
           return null;
         }
       }
-
-      document.getElementById("btnToPrefs").addEventListener("click", () => {
-        if (!shops.length) return;
-        goToStep(2);
-      });
 
       // =====================================================================
       // GEOLOCATION — auto on page load
@@ -2360,16 +2308,16 @@
       // =====================================================================
       // OTHER BUTTONS
       // =====================================================================
-      document
-        .getElementById("btnBack")
-        .addEventListener("click", () => goToStep(1));
+      document.getElementById("btnBack").addEventListener("click", goHome);
       document
         .getElementById("btnEditPrefs")
         .addEventListener("click", () => goToStep(2));
       document.getElementById("btnRestart").addEventListener("click", () => {
         shops = [];
-        document.getElementById("dataPreview").classList.remove("show");
-        goToStep(1);
+        try {
+          sessionStorage.removeItem(UPLOAD_KEY);
+        } catch (e) {}
+        goHome();
       });
       document.getElementById("tableToggle").addEventListener("click", () => {
         tableOpen = !tableOpen;

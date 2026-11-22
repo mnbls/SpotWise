@@ -18,9 +18,11 @@
 - [ ] Push commit terbaru ke GitHub dan pastikan sumber Pages = GitHub Actions
 
 ## Alur Aplikasi
-1. **Dashboard** → Upload Data (`.xlsx`); Mulai aktif setelah file ada
-2. **Preferensi** → rentang harga, jarak maks, jam pulang, lokasi (GPS/manual), bobot 4 kriteria (total 100)
-3. **Hasil** → Top 3 rekomendasi + peta Leaflet + tabel semua hasil
+1. **Beranda** → satu-satunya tempat upload (`.xlsx`); Mulai nonaktif sampai file ada. File disimpan di `sessionStorage` (`spk_upload`)
+2. **Preferensi** (langkah 1 di app) → rentang harga, jarak maks, jam pulang, lokasi (GPS/manual), bobot 4 kriteria (total 100)
+3. **Hasil** (langkah 2 di app) → Top 3 + peta Leaflet + Ringkasan Analisis + tabel semua hasil
+
+`app.html` tidak punya halaman upload. Dibuka tanpa file, ia langsung mengarahkan ke `index.html`. "← Beranda" mempertahankan file; "Ganti Data" menghapusnya.
 
 ## Pipeline Pemrosesan
 1. **Filter keras** (buang yang tidak lolos): `bisa_di_tempat = Ya`, sedang buka (hari & jam saat web dibuka), `harga_min ≤ harga maks`, `jarak ≤ jarak maks` (0 = semua jarak)
